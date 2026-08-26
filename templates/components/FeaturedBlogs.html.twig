@@ -1,0 +1,24 @@
+<div {{ attributes }}>
+    {% if this.featuredBlogs %}
+        <h5 class="mb-3">{{ 'blogs_sidebar.featured_posts'|trans({}, 'text') }}</h5>
+        {% for blog in this.featuredBlogs %}
+            {# @var blog \App\Entity\Blog #}
+
+            <div class="d-flex gap-2 mb-3">
+                <div class="col-2">
+                    <twig:Img src="{{ blog.primaryImage ? blog.primaryImage }}" width="65" height="65" alt="{{ blog.title }}" />
+                </div>
+                <div>
+                    <div>
+                        <a href="{{ path('blog.show', {slug: blog.slug}) }}">{{ blog.title }}</a>
+                    </div>
+                    <div class="small d-flex align-items-center gap-2 text-muted">
+                        <i class="fa fa-calendar"></i> {{ blog.createdAt|date('d.m.Y') }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {{ 'no_blog_items'|trans({}, 'text') }}
+        {% endfor %}
+    {% endif %}
+</div>

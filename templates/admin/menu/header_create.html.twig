@@ -1,0 +1,11 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+{% block title %}{{ 'admin.menu.header'|trans({}, 'admin') }}{% endblock %}
+{% block heading %}{{ 'admin.menu.header'|trans({}, 'admin') }}{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

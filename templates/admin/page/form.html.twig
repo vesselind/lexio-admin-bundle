@@ -1,0 +1,30 @@
+{% extends '@LexioAdmin/admin/base_crud/form.html.twig' %}
+
+{% block content %}
+
+    <div class="col-12">
+        <turbo-frame id="main-tabs">
+        </turbo-frame>
+
+        <turbo-frame id="main-form-content" data-turbo-action="advance">
+            {% block main_form_content %}
+
+                {% if formContext.showLocalesTab and formContext.entityInstance.id %}
+                    <ul class="tabs">
+                        {% for locale in formContext.locales %}
+                            <li class="tab">
+                                <a class="{% if locale == formContext.currentLocale %}tab-active{% endif %}"
+                                   href="{{ formContext.links.updateLink(locale) }}">{{ locale }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <turbo-frame id="{{ app.request.headers.get('Turbo-Frame', 'main-form') }}">
+                    {% block main_form %}
+                        {{ parent() }}
+                    {% endblock %}
+                </turbo-frame>
+            {% endblock %}
+        </turbo-frame>
+    </div>
+{% endblock %}

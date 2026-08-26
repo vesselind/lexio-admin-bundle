@@ -1,0 +1,9 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\ColorField #}
+
+<div class="d-flex gap-2 align-items-center">
+    <span class="d-block rounded bg-{{ field.value.value }}" style="width: 18px; height: 18px;"></span>
+<span class="text-primary">
+    {{ field.value.name|trans({}, 'text') }}
+</span>
+</div>

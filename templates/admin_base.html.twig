@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
+        {% block title %}{% endblock %} | {{ 'site_title'|trans({}, 'text') }}
+    </title>
+
+    {% block favicon %}
+        <link rel="icon" type="image/svg+xml" sizes="any" href="{{ asset('build/images/logo.svg') }}">
+    {% endblock %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    {# CSRF Token #}
+    <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
+
+    {% block turbo_preview %}
+        <meta name="turbo-prefetch" content="false">
+        <meta name="turbo-cache-control" content="no-cache">
+    {% endblock %}
+
+    {% block seo %}{% endblock %}
+
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('admin') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('admin') }}
+    {% endblock %}
+
+    {% block responsive_elements %}
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+        <!--[if lt IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+        <![endif]-->
+    {% endblock %}
+
+    {% if app.request.attributes.get('_route') is not null %}
+        <link rel="canonical"
+              href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+    {% endif %}
+
+    {% block jsonld %}{% endblock %}
+
+</head>
+
+<body class="hidden-bar-wrapper">
+
+<div class="container-fluid mb-5">
+
+    {% block sidebar %}
+        <twig:Admin:SideMenu/>
+    {% endblock %}
+
+    <div class="main-wrapper">
+        {% block header %}
+            {% if is_granted('IS_AUTHENTICATED') %}
+                <div class="row">
+                    <header
+                        class="navbar sticky-top flex-md-nowrap py-2 px-3 px-md-4 d-flex align-items-center admin-navbar">
+                        <div class="d-flex align-items-center gap-2 d-md-none me-auto navbar-light">
+                            <button class="navbar-toggler collapsed p-1" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            {% block header_logo %}
+                                {{ dump(frontHomePageRoute) }}
+                                <a href="{{ path(frontHomePageRoute) }}"
+                                   class="d-flex align-items-center text-decoration-none">
+                                    <img width="100px" src="{{ asset('build/images/admin-logo.svg') }}"
+                                         alt="Admin Logo">
+                                </a>
+                            {% endblock %}
+                        </div>
+
+                        {% block header_search %}
+                            <div class="header-search me-auto d-none d-md-block" id="header-search">
+                                <select type="text" class="form-control"
+                                        placeholder="{{ 'header_search.placeholder'|trans({}, 'admin') }}"
+                                    {{ stimulus_controller('autocomplete-search', {
+                                        url: path('admin.header_search'),
+                                    }) }}
+                                        aria-label="{{ 'header_search.placeholder'|trans({}, 'admin') }}"
+                                >
+                                </select>
+                                <i class="fa fa-search" id="header-search-icon"></i>
+                            </div>
+                        {% endblock %}
+
+                        {% block header_notifications %}
+                            {# Notification Bell Component #}
+                            <twig:Admin:NotificationBell class="dropdown me-4"/>
+                        {% endblock %}
+
+                        <div class="dropdown">
+                            <a class="dropdown-toggle d-flex gap-2 align-items-center text-decoration-none admin-user-menu"
+                               type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% block user_avatar %}
+                                    <div
+                                        class="d-inline-block rounded-circle bg-{{ app.user.avatarColor.value }} text-light d-flex align-items-center justify-content-center"
+                                        style="width: 36px; height: 36px;">
+                                        {{ app.user.initials }}
+                                    </div>
+                                    <span class="d-none d-md-inline text-foreground">
+                                        {% if app.user.firstName and app.user.lastName %}
+                                            {{ app.user.firstName }} {{ app.user.lastName }}
+                                        {% else %}
+                                            {{ app.user.email }}
+                                        {% endif %}
+                                    </span>
+                                {% endblock %}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% block user_menu_items %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('admin.user.profile') }}">
+                                            <i class="fa-solid fa-id-card"></i>
+                                            {{ 'user_menu.profile'|trans({}, 'admin') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    {% if is_granted('ROLE_IMPERSONATOR') %}
+                                        <li>
+                                            <a class="dropdown-item"
+                                               href="{{ path('home_page', {'_switch_user': '_exit'}) }}">
+                                                <i class="fa-solid fa-user-secret"></i>
+                                                {{ 'user_menu.exit_impersonation'|trans({}, 'admin') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('security.logout') }}">
+                                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                            {{ 'user_menu.logout'|trans({}, 'admin') }}
+                                        </a>
+                                    </li>
+                                {% endblock %}
+                            </ul>
+                        </div>
+                    </header>
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        <div class="container-fluid">
+            {% block main %}
+                <div class="row">
+                    <div class="{{ formContext.containerClass|default('col-12') }}">
+                        <div class="breadcrumbs">
+                            {% block breadcrumbs %}
+                                {{ wo_render_breadcrumbs() }}
+                            {% endblock %}
+                        </div>
+                        <div class="d-flex align-items-center mb-4 gap-2 flex-wrap">
+
+                            {% block heading_parent %}
+                                <h1>{% block heading %}{% endblock %}</h1>
+                            {% endblock %}
+
+                            <div class="ms-auto d-flex gap-2 align-items-center">
+                                {% block page_actions %}
+                                    {# Buttons go here #}
+                                {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% block content %}{% endblock %}
+
+                {% block below_content %}{% endblock %}
+            {% endblock %}
+        </div>
+
+        <div id="flash-messages" class="flash-messages"></div>
+        {% include '@LexioAdmin/flash.stream.html.twig' %}
+    </div>
+</div>
+
+{% if app.request.headers.get('Turbo-Frame') != 'base-modal-body' %}
+    <twig:Admin:BaseModal></twig:Admin:BaseModal>
+{% endif %}
+</body>
+</html>
+

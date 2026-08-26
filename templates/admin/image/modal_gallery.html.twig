@@ -1,0 +1,77 @@
+<twig:Admin:BaseModalBody>
+
+    <div class="modal-gallery" {{ stimulus_controller('image-gallery', {
+        uploadUrl: path('admin.image.modal_upload'),
+        currentUrl: path('admin.image.modal_gallery'),
+        currentFrame: 'base-modal-body',
+    }) }}>
+        <div class="row">
+            <form method="GET" class="input-group" action="{{ path('admin.image.modal_gallery') }}"
+                    {{ stimulus_controller('autosubmit') }}
+                  data-turbo-frame="images-container"
+            >
+                <label for=""></label>
+                <input type="search" id="search" value="{{ app.request.query.get('q') }}"
+                       class="form-control" name="name" aria-describedby="search"
+                        {{ stimulus_action('autosubmit', 'debouncedSubmit') }}
+                       placeholder="{{ 'placeholder.search_by_title'|trans({}, 'admin') }}">
+            </form>
+
+            <div class="loading-indicator" aria-hidden="true">
+                {% for i in 1..4 %}
+                    <div class="loading-card">
+                        <div class="loading-card__image"></div>
+                        <div class="loading-card__title"></div>
+                    </div>
+                {% endfor %}
+            </div>
+            <turbo-frame id="images-container">
+                <section class="row">
+                    {% for image in images %}
+                        {# @var image \Lexio\AdminBundle\Contract\File\ImageEntityInterface #}
+                        <div class="col-auto">
+                            <div class="card mb-3 border-0">
+                                <img class="image-gallery-item rounded m-2" data-id="{{ image.id }}"
+                                     data-filename="{{ image.name }}"
+                                     width="300" height="200"
+                                    {{ stimulus_action('image-gallery', 'selectImage', 'click', {imageId: image.id, imagePath: image.filePath}) }}
+                                     style="cursor: pointer;"
+                                     src="{{ image.mime == 'image/svg+xml' ? image.filePath : image.filePath|image('cover', 300, 200) }}">
+
+                                <div class="card-body" style="height: 20px">
+                                <span class="small bg-white position-absolute bottom-0 text-wrap"
+                                      style="z-index: 100;">{{ image.name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </section>
+
+                <div class="row">
+                    <ul class="pagination mt-4 d-flex justify-content-end">
+                        {{ knp_pagination_render(images) }}
+                    </ul>
+                </div>
+            </turbo-frame>
+        </div>
+
+        {# Image form #}
+        <div class="card mb-2 p-3">
+            <h5>Качване на файл</h5>
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" name="" id="file" placeholder=""
+                        {{ stimulus_action('image-gallery', 'uploadImageSubmit', 'change') }}
+                       aria-describedby="file" formenctype="multipart/form-data">
+            </div>
+        </div>
+        <div class="alert alert-danger errors d-none"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fa-solid fa-xmark"></i>
+            {{ 'button.close'|trans({}, 'admin') }}
+        </button>
+    </div>
+
+</twig:Admin:BaseModalBody>

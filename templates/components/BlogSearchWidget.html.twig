@@ -1,0 +1,12 @@
+<div {{ attributes }}>
+
+    <form method="GET" action="{{ path('search.index') }}">
+        <div class="input-group">
+            <input type="search" name="q" value="" class="form-control form-control-lg"
+                   placeholder="{{ 'placeholder.blog_sidebar_search'|trans({}, 'form') }}"
+                   aria-label="Blogs search" aria-describedby="search-button"
+            >
+            <button type="submit" class="btn btn-success" id="search-button"><i class="fa fa-search"></i></button>
+        </div>
+    </form>
+</div>

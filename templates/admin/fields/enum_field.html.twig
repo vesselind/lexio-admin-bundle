@@ -1,0 +1,4 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\EnumField #}
+
+<span class="badge bg-{{ field.color }}">{{ field.value ? field.translationKey|trans({}, field.translationDomain) : 'n/a'}}</span>

@@ -1,0 +1,45 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+{% block title %}
+    Footer меню - редактиране
+{% endblock %}
+
+{% block heading %}
+    Footer меню - редактиране
+{% endblock %}
+
+{% block breadcrumbs %}
+    {{ wo_render_breadcrumbs() }}
+{% endblock %}
+{# The main page content block #}
+{% block content %}
+    <div class="row my-2">
+        <nav>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for form in forms %}
+
+                    <button class="nav-link {{ loop.index == 1 ? 'active' : '' }}"
+                            id="tab-{{ form.vars.name }}"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-panel-{{ form.vars.name }}"
+                            type="button" role="tab"
+                            aria-controls="tab-panel-{{ form.vars.name }}"
+                            aria-selected="true">
+                        {{ form.vars.name }}</button>
+
+                {% endfor %}
+            </ul>
+        </nav>
+        <div class="tab-content" id="myTabContent">
+            {% for form in forms %}
+                <div class="tab-pane fade {{ loop.index == 1 ? 'show active' : '' }}"
+                     id="tab-panel-{{ form.vars.name }}" role="tabpanel"
+                     aria-labelledby="tab-{{ form.vars.name }}" tabindex="0">
+                    {{ form_start(form) }}
+                    {{ form_end(form) }}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}

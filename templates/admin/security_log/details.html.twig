@@ -1,0 +1,60 @@
+{% extends '@LexioAdmin/admin/base_crud/details.html.twig' %}
+
+{% block content %}
+    {# @var entity \Lexio\AdminBundle\Entity\SecurityLog #}
+    <div class="card">
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    # ID
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.id }}
+                </div>
+
+                <div class="col-lg-4">
+                    {{ 'column.type'|trans({}, 'admin') }}
+                </div>
+                <div class="col-lg-8">
+                    <span class="badge bg-primary">
+                     {{ entity.type.translationKey|trans({}, 'admin') }}
+                    </span>
+                </div>
+
+                <div class="col-lg-4">
+                    {{ 'column.created_at'|trans({}, 'admin') }}:
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.createdAt|formatted_datetime }}
+                </div>
+
+                <div class="col-lg-4">
+                    {{ 'column.acting_user'|trans({}, 'admin') }}
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.actingUser|default('n/a') }}
+                </div>
+                <div class="col-lg-4">
+                    {{ 'column.affected_user'|trans({}, 'admin') }}
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.affectedUser|default('n/a') }}
+                </div>
+                <div class="col-lg-4">
+                    {{ 'column.user_agent'|trans({}, 'admin') }}:
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.userAgent|default('n/a') }}
+                </div>
+
+                <div class="col-lg-4">
+                    {{ 'column.ip_address'|trans({}, 'admin') }}
+                </div>
+                <div class="col-lg-8">
+                    {{ entity.ipAddress|default('n/a') }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

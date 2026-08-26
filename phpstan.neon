@@ -1,0 +1,15 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    excludePaths:
+        - src/Command/MakeAdminSectionCommand.php  # requires symfony/maker-bundle at analyse time
+    ignoreErrors:
+        - '#Call to an undefined method object::getId\(\)#'
+        - '#Call to an undefined method object::getEmail\(\)#'
+        - '#Call to an undefined method object::setTranslatableLocale\(\)#'
+        # Doctrine entity IDs are assigned by the database, not by PHP code
+        - { message: '#Property .+::\$id \(int\|null\) is never assigned int#', path: src/Entity/ }
+        # Runtime type-guard in SendSystemNotification constructor — intentional
+        - { message: '#Call to function is_string\(\) with string will always evaluate to true#', path: src/Message/SendSystemNotification.php }
+

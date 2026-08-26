@@ -1,0 +1,11 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\CollectionField #}
+
+{% set data = field.value|default([]) %}
+{% set data = field.value|slice(0, 8) %}
+
+{% for item in data %}
+    <span class="badge bg-indigo me-1">{{ item }}</span>
+{% else %}
+    <span class="badge bg-secondary text-dark-emphasis">n/a</span>
+{% endfor %}

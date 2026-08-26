@@ -1,0 +1,47 @@
+<div {{ attributes }}>
+
+
+    {% if editing %}
+        <div class="d-flex align-items-start gap-2">
+            <label>
+                <textarea data-model="norender|content" class="form-control" rows="3"
+                          cols="45">{{ this.getContent }}</textarea>
+            </label>
+            <button type="button"
+                    name="editing"
+                    value="0"
+                    data-action="live#action"
+                    data-live-action-param="save"
+                    class="btn btn-success btn-sm">
+                <i class="fa fa-save"></i>
+            </button>
+
+            <button type="button"
+                    name="editing"
+                    value="1"
+                    data-action="live#action"
+                    data-live-action-param="toggleEditing"
+                    class="btn btn-danger btn-sm">
+                <i class="fa fa-close"></i>
+            </button>
+        </div>
+    {% else %}
+        <div class="d-flex align-items-center gap-2">
+            <div data-model="content" class="d-flex align-items-center gap-2">
+                {{ this.getContent|raw }}
+            </div>
+            <button type="button"
+                    name="editing"
+                    value="1"
+                    data-action="live#action"
+                    data-live-action-param="toggleEditing"
+                    class="btn btn-light btn-sm">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+    {% endif %}
+
+
+
+    {% include '@LexioAdmin/flash.stream.html.twig' %}
+</div>

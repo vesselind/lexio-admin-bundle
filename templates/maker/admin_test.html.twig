@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Tests\Web\Admin;
+
+use App\Enum\Roles;
+use App\Factory\{{ shortClassName }}Factory;
+use App\Factory\UserFactory;
+use App\Tests\BaseWebTestCaseTest;
+use Zenstruck\Browser\Test\HasBrowser;
+
+class {{ shortClassName }}Test extends BaseWebTestCaseTest
+{
+    use HasBrowser {
+        browser as baseKernelBrowser;
+    }
+
+    public function test_{{ snakeCaseClassName }}_list(): void
+    {
+        $this->browser()
+            ->visit('/admin/{{ kebabCaseClassName }}')
+            ->assertNotAuthenticated();
+
+        $this->browser()
+            ->actingAs($this->adminUser())
+            ->visit('/admin/{{ kebabCaseClassName }}')
+            ->assertSuccessful();
+    }
+{% if firstField %}
+
+    public function test_filter_{{ snakeCaseClassName }}_by_{{ firstField.name }}(): void
+    {
+        {{ shortClassName }}Factory::createOne(['{{ firstField.name }}' => 'Alpha Value']);
+        {{ shortClassName }}Factory::createOne(['{{ firstField.name }}' => 'Beta Value']);
+
+        $this->browser()
+            ->actingAs($this->adminUser())
+            ->visit('/admin/{{ kebabCaseClassName }}')
+            ->assertSuccessful()
+            ->fillField('f[{{ firstField.name }}]', 'Alpha')
+            ->click('[type="submit"]')
+            ->assertSee('Alpha Value')
+            ->assertNotSee('Beta Value')
+            ->assertSuccessful();
+    }
+{% endif %}
+
+    public function test_create_{{ snakeCaseClassName }}(): void
+    {
+        $this->browser()
+            ->actingAs($this->adminUser())
+            ->visit('/admin/{{ kebabCaseClassName }}/create')
+{% for field in filterFields %}
+            ->fillField('{{ snakeCaseClassName }}[{{ field.name }}]', 'test {{ field.name }}')
+{% endfor %}
+            ->click('[type="submit"]')
+            ->assertSuccessful();
+{% if filterFields is not empty %}
+
+        $entity = {{ shortClassName }}Factory::last();
+{% for field in filterFields %}
+        $this->assertSame('test {{ field.name }}', $entity->{{ field.getter }}());
+{% endfor %}
+{% endif %}
+    }
+
+    public function test_update_{{ snakeCaseClassName }}(): void
+    {
+        $entity = {{ shortClassName }}Factory::createOne();
+
+        $this->browser()
+            ->actingAs($this->adminUser())
+            ->visit(sprintf('/admin/{{ kebabCaseClassName }}/%s/update', $entity->getId()))
+{% if firstField %}
+            ->fillField('{{ snakeCaseClassName }}[{{ firstField.name }}]', 'Updated Value')
+{% endif %}
+            ->click('[type="submit"]')
+            ->assertSuccessful();
+{% if firstField %}
+
+        $entity = {{ shortClassName }}Factory::last();
+        $this->assertSame('Updated Value', $entity->{{ firstField.getter }}());
+{% endif %}
+    }
+
+    public function test_role_access(): void
+    {
+        $wrongUser = UserFactory::createOne(['roles' => [Roles::ROLE_USER]]);
+
+        $this->browser()
+            ->actingAs($wrongUser)
+            ->visit('/admin/{{ kebabCaseClassName }}')
+            ->assertStatus(403);
+    }
+}

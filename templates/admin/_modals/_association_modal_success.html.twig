@@ -1,0 +1,7 @@
+<turbo-frame id="base-modal-body">
+    <div {{ stimulus_controller('add-autocomplete-item', {
+        itemId: entityId,
+        itemName: value,
+        class: class,
+    }) }}></div>
+</turbo-frame>

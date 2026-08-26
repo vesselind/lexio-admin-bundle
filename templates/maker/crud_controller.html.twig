@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\{{ shortClassName }};
+use App\Filter\{{ shortClassName }}Filter;
+use Lexio\AdminBundle\AdminCore\Action\DeleteAction;
+use Lexio\AdminBundle\AdminCore\Action\UpdateAction;
+use Lexio\AdminBundle\AdminCore\Bulk\BulkAction;
+use Lexio\AdminBundle\AdminCore\Bulk\BulkContext;
+use Lexio\AdminBundle\AdminCore\Fields\DateTimeField;
+use Lexio\AdminBundle\AdminCore\Fields\DropdownActionsField;
+use Lexio\AdminBundle\AdminCore\Fields\IdField;
+use Lexio\AdminBundle\AdminCore\Fields\TitleField;
+use Lexio\AdminBundle\AdminCore\FormContext;
+use Lexio\AdminBundle\AdminCore\Listing\ListingContext;
+use Lexio\AdminBundle\Controller\BaseCrudController;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/admin/{{ kebabCaseClassName }}')]
+class {{ shortClassName }}Controller extends BaseCrudController
+{
+    public function getEntityFqcn(): string
+    {
+        return {{ shortClassName }}::class;
+    }
+
+    #[Route('', name: 'admin.{{ snakeCaseClassName }}.index')]
+    public function index(ListingContext $listingContext, #[MapQueryString] {{ shortClassName }}Filter $filter): Response
+    {
+        $listingContext
+            ->setFilter($filter)
+            ->addColumn('id', new IdField())
+        {% if columnName %}
+            ->addColumn('{{ columnName }}', new TitleField())
+        {% endif %}
+            ->addColumn('createdAt', new DateTimeField())
+            ->addColumn('Actions', new DropdownActionsField()
+                ->addAction(UpdateAction::new('admin.{{ snakeCaseClassName }}.update'))
+                ->addAction(DeleteAction::new('admin.{{ snakeCaseClassName }}.delete'))
+            )
+            ->addBulkAction(new BulkAction('admin.{{ snakeCaseClassName }}.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+
+        return $this->renderListing($listingContext);
+    }
+
+    #[Route('/create', name: 'admin.{{ snakeCaseClassName }}.create')]
+    public function create(Request $request, FormContext $formContext): Response
+    {
+        return $this->renderCreate(new {{ shortClassName }}(), $formContext);
+    }
+
+    #[Route('/{id}/update', name: 'admin.{{ snakeCaseClassName }}.update')]
+    public function update({{ shortClassName }} ${{ shortClassNameLowercase }}, FormContext $formContext): Response
+    {
+        return $this->renderUpdate(${{ shortClassNameLowercase }}, $formContext);
+    }
+
+    #[Route('/{id}/delete', name: 'admin.{{ snakeCaseClassName }}.delete', methods: ['POST', 'GET'])]
+    public function delete({{ shortClassName }} ${{ shortClassNameLowercase }}, Request $request): Response
+    {
+        return $this->renderDelete(${{ shortClassNameLowercase }}, $request);
+    }
+
+    #[Route('/bulk-delete', name: 'admin.{{ snakeCaseClassName }}.bulk_delete')]
+    public function bulkDelete(BulkContext $bulkContext, Request $request): Response
+    {
+        foreach ($bulkContext->getEntities() as $entity) {
+            $this->manager()->remove($entity);
+        }
+
+        $this->manager()->flush();
+
+        return $this->redirect($request->headers->get('referer'));
+    }
+}

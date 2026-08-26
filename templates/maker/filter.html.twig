@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Filter;
+
+use Lexio\AdminBundle\Filter\BaseFilter;
+
+class {{ shortClassName }}Filter extends BaseFilter
+{
+{% for field in fields %}
+    {{ field }}
+{% endfor %}
+}

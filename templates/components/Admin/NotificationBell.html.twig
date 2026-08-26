@@ -1,0 +1,64 @@
+<div {{ attributes.defaults({class: 'dropdown'}) }}>
+    <a class="notification-bell__toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="notification-bell__icon-wrapper">
+            {{ ux_icon('fa6-regular:bell', {height: '20px', width: '20px', 'aria-hidden': true}) }}
+            {% if this.unreadCount > 0 %}
+                <span class="notification-bell__badge">
+                    {{ this.unreadCount }}
+                    <span class="visually-hidden">{{ 'notification_bell.unread_label'|trans({}, 'admin') }}</span>
+                </span>
+            {% endif %}
+        </div>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end notification-bell__menu">
+        <li class="notification-bell__header">
+            <strong>{{ 'notification_bell.title'|trans({}, 'admin') }}</strong>
+            {% if this.unreadCount > 0 %}
+                <span class="notification-bell__count-badge badge bg-primary rounded-pill">
+                    {{ this.unreadCount }} {{ 'notification_bell.new_suffix'|trans({}, 'admin') }}
+                </span>
+            {% endif %}
+        </li>
+
+        {% if this.latestNotifications is empty %}
+            <li class="notification-bell__empty">
+                {{ ux_icon('fa6-regular:bell-slash', {height: '28px', width: '28px', class: 'notification-bell__empty-icon', 'aria-hidden': true}) }}
+                {{ 'notification_bell.empty'|trans({}, 'admin') }}
+            </li>
+        {% else %}
+            {% for notification in this.latestNotifications %}
+                <li>
+                    <a class="dropdown-item notification-bell__item {% if notification.viewedAt is null %}notification-bell__item--unread{% endif %}" href="{{ path('admin.system_notification.index') }}">
+                        <div class="notification-bell__item-content">
+                            <div class="notification-bell__item-icon">
+                                {% if notification.level.value == 'important' %}
+                                    {{ ux_icon('fa6-solid:circle-exclamation', {height: '16px', width: '16px', class: 'text-danger'}) }}
+                                {% elseif notification.level.value == 'info' %}
+                                    {{ ux_icon('fa6-solid:circle-info', {height: '16px', width: '16px', class: 'text-info'}) }}
+                                {% else %}
+                                    {{ ux_icon('fa6-regular:bell', {height: '16px', width: '16px'}) }}
+                                {% endif %}
+                            </div>
+                            <div class="notification-bell__item-details">
+                                <div class="notification-bell__item-title">{{ notification.title }}</div>
+                                <div class="notification-bell__item-text">
+                                    {{ notification.content|strip_words(5) }}
+                                </div>
+                                <div class="notification-bell__item-time">
+                                    {{ notification.createdAt|formatted_datetime }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        {% endif %}
+
+        <li class="notification-bell__footer">
+            <a href="{{ path('admin.system_notification.index') }}">
+                {{ 'notification_bell.view_all'|trans({}, 'admin') }}
+                {{ ux_icon('fa6-solid:arrow-right', {height: '12px', width: '12px', class: 'ms-1'}) }}
+            </a>
+        </li>
+    </ul>
+</div>

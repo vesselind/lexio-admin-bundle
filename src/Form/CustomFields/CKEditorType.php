@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Lexio\AdminBundle\Form\CustomFields;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
+
+/**
+ * Textarea that activates the CKEditor Stimulus controller.
+ *
+ * Requires a Stimulus controller named `ckeditor` to be registered in the app.
+ * Optionally enables a link-search sidebar via the `links_search` option.
+ */
+class CKEditorType extends AbstractType
+{
+    public function __construct(private readonly RouterInterface $router)
+    {
+    }
+
+    public function getParent(): string
+    {
+        return TextareaType::class;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'links_search' => true,
+            'required'     => false,
+            'attr'         => function (Options $options): array {
+                return [
+                    'data-controller'  => 'ckeditor',
+                    'data-upload-url'  => $this->router->generate('admin.ckeditor.upload'),
+                ];
+            },
+        ]);
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['linksSearch'] = $options['links_search'];
+    }
+}
+

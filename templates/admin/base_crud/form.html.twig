@@ -1,0 +1,99 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+
+{# @var formContext \App\AdminCore\FormContext #}
+{# @var form Symfony\Component\Form\Extension\Core\Type\FormType #}
+{# @var adminUrlGenerator \App\AdminCore\AdminUrlGenerator #}
+
+{% block title %}{{ formContext.pageTitle }}{% endblock %}
+
+{% block heading %}
+    {{ formContext.pageTitle }}
+{% endblock %}
+
+{% block page_actions %}
+    {% if not formContext.dropdownActionsField.actions.empty %}
+        {% include '@LexioAdmin/admin/fields/dropdown_actions_field.html.twig' with {field: formContext.dropdownActionsField} %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="{{ formContext.containerClass|default('col-xl-10 col-lg-12') }}">
+        <turbo-frame id="main-tabs">
+            {% if formContext.tabs is not empty %}
+                <ul class="nav nav-tabs tabs" {{ stimulus_controller('toggle-class', {class: 'active'}) }}>
+                    {% for tab in formContext.tabs %}
+                        {# @var tab \App\AdminCore\Tab\TabInterface #}
+                        <li class="nav-item">
+                            <a class="nav-link {{ tab.route == app.request.attributes.get('_route') ? 'active' }}"
+                               data-turbo-frame="main-form-content" {{ stimulus_action('toggle-class', 'toggle') }}
+                               href="{{ path(tab.route, tab.routeParams) }}">{{ tab.title|trans({}, 'admin') }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </turbo-frame>
+
+        <turbo-frame id="main-form-content">
+            {% block main_form_content %}
+
+                {% if formContext.showLocalesTab and formContext.entityInstance.id %}
+                    <ul class="tabs">
+                        {% for locale in formContext.locales %}
+                            <li class="tab">
+                                <a class="{% if locale == formContext.currentLocale %}tab-active{% endif %}"
+                                   href="{{ formContext.links.updateLink(locale) }}">{{ locale }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <turbo-frame id="{{ app.request.headers.get('Turbo-Frame', 'main-form') }}">
+                    {% block main_form %}
+
+                        {{ form_start(form) }}
+
+                        {% for formElement in form %}
+                            {% if formElement.children is empty %}
+                                {{ form_row(formElement) }}
+                            {% else %}
+                                {# Display form collections if any #}
+                                <div class="card ms-2 my-2">
+                                    <div class="card-header">
+                                        <h5>{{ formElement.vars.label }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        {% for child in formElement %}
+                                            <div class="card-body bg-secondary my-2">
+                                                {{ form_widget(child) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Submit buttons #}
+                        <div class="divider my-4"></div>
+                        <div class="d-flex justify-content-end align-items-center gap-2 my-3">
+                            {% if formContext.modalRequest %}
+                                <button data-bs-toggle="modal" data-bs-dismiss="modal" class="btn btn-secondary">
+                                    <i class="fa-solid fa-xmark"></i> {{ 'button.cancel'|trans({}, 'admin') }}
+                                </button>
+                            {% else %}
+                                <a href="{{ adminUrlGenerator.indexLink }}" data-turbo-frame="_top" class="btn btn-secondary">
+                                    <i class="fa-solid fa-xmark"></i> {{ 'button.cancel'|trans({}, 'admin') }}
+                                </a>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-1"></i>
+                                {{ 'button.save'|trans({}, 'admin') }}
+                            </button>
+                        </div>
+                        {{ form_end(form) }}
+                    {% endblock %}
+                </turbo-frame>
+            {% endblock %}
+        </turbo-frame>
+    </div>
+{% endblock %}

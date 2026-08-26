@@ -1,0 +1,41 @@
+<div {{ attributes.defaults(stimulus_controller('image-selector')) }}
+        data-action="image-gallery:image-selected@window->image-selector#selectImage"
+>
+
+    <div class="{{ buttonsClass|default('d-flex justify-content-center gap-2') }}">
+
+        <twig:Admin:OpenBaseModalBtn
+            visitUrl="{{ path('admin.image.modal_gallery') }}"
+            modalSize="modal-xl"
+            closeOnSuccess="false"
+            modalTitle="{{ 'title.choose_from_gallery'|trans({}, 'admin') }}"
+        >
+            <i class="fa fa-image"></i> {{ 'button.choose_from_gallery'|trans({}, 'admin') }}
+        </twig:Admin:OpenBaseModalBtn>
+
+        {% if this.imagePath is not null %}
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                    data-bs-target="#confirmationModal_image_{{ this.entityId }}">
+                <i class="fa fa-remove"></i>
+                {{ 'button.detach_image'|trans({}, 'admin') }}
+            </button>
+
+            <twig:ConfirmationModal subjectId="image_{{ this.entityId }}">
+                {{ 'confirmation.detach_image'|trans({}, 'admin') }}
+            </twig:ConfirmationModal>
+        {% endif %}
+
+    </div>
+
+
+    <div class="d-flex justify-content-center mt-2">
+        {% if this.imagePath is null %}
+            <span class="text-gray">
+                                {{ ux_icon('mdi-light:image', {height: '124px', width: '124px'}) }}
+                            </span>
+        {% else %}
+            <twig:Img :src="this.imagePath" width="300" height="200" class="rounded" alt="Cover Image" />
+
+        {% endif %}
+    </div>
+</div>

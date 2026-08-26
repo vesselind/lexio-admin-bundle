@@ -1,0 +1,404 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+
+{% block title %}{{ 'Home'|trans({}, 'admin') }}{% endblock %}
+
+{% block heading %}
+     {{ 'admin.dashboard'|trans({}, 'admin') }}
+{% endblock %}
+{% block content %}
+    {# ── Welcome Hero Banner ─────────────────────────────────────── #}
+    <div class="dashboard-hero mb-4">
+        <div class="dashboard-hero__body">
+            <h1 class="dashboard-hero__greeting">
+                {{ 'dashboard.hero.greeting'|trans({'%name%': app.user.firstName ?: app.user.email|split('@')|first}, 'admin') }}
+            </h1>
+            <p class="dashboard-hero__subtitle">{{ 'dashboard.hero.subtitle'|trans({}, 'admin') }}</p>
+            <div class="dashboard-hero__actions">
+                <a href="{{ path('admin.blog.index') }}" class="btn btn-primary btn-sm">
+                    {{ ux_icon('dashicons:welcome-write-blog', {height: '14px', width: '14px', class: 'me-1', 'aria-hidden': true}) }}
+                    {{ 'admin.blog.index'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.user.index') }}" class="btn btn-secondary btn-sm">
+                    {{ ux_icon('solar:user-bold-duotone', {height: '14px', width: '14px', class: 'me-1', 'aria-hidden': true}) }}
+                    {{ 'admin.user.index'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.file.upload') }}" class="btn btn-secondary btn-sm">
+                    {{ ux_icon('fa6-solid:upload', {height: '12px', width: '12px', class: 'me-1', 'aria-hidden': true}) }}
+                    {{ 'admin.file.upload'|trans({}, 'admin') }}
+                </a>
+            </div>
+        </div>
+        <div class="dashboard-hero__date d-none d-sm-block">
+            <div class="dashboard-hero__date-day">{{ "now"|date('d') }}</div>
+            <div class="dashboard-hero__date-label">{{ "now"|date('F Y') }}</div>
+        </div>
+    </div>
+
+    {# ── Stat cards ──────────────────────────────────────────────── #}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        {% for item in items %}
+            {# @var item \App\AdminCore\Dashboard\DashboardItem #}
+            <div class="col d-flex">
+                <div class="card dashboard-card d-flex flex-grow-1">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div>
+                                <p class="text-muted-foreground mb-1" style="font-size: 0.8125rem; font-weight: 500;">{{ item.title }}</p>
+                                <div class="d-flex align-items-baseline gap-2">
+                                    <span style="font-size: 1.875rem; font-weight: 700; line-height: 1.2; color: var(--bs-heading-color);">{{ item.count }}</span>
+                                    {% if item.subCount %}
+                                        <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.6875rem; font-weight: 500;">
+                                            {{ item.subCount }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if item.icon %}
+                                <div class="dashboard-card__icon dashboard-card__icon--{{ item.iconColor|default('primary') }}">
+                                    {{ ux_icon(item.icon, {height: '22px', width: '22px', 'aria-hidden': true}) }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if item.listUrl %}
+                            <div class="mt-3 pt-3" style="border-top: 1px solid var(--bs-border-color);">
+                                <a href="{{ item.listUrl }}" class="dashboard-card__link d-inline-flex align-items-center gap-1">
+                                    {{ 'button.view_all'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:arrow-right', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# ── Detail widgets row ──────────────────────────────────────── #}
+    <div class="row g-4">
+
+        {# New Users widget #}
+        <div class="col-12 col-lg-5">
+            <div class="dashboard-widget h-100">
+                <div class="dashboard-widget__header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="dashboard-widget__title">
+                            {{ ux_icon('solar:users-group-rounded-bold-duotone', {height: '17px', width: '17px', class: 'me-1 text-info', 'aria-hidden': true}) }}
+                            {{ 'dashboard.new_users'|trans({}, 'admin') }}
+                        </h2>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.new_users.subtitle'|trans({}, 'admin') }}</p>
+                    </div>
+                    <a href="{{ path('admin.user.index') }}" class="dashboard-widget__footer-link">
+                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                    </a>
+                </div>
+
+                {% if recentUsers is empty %}
+                    <p class="dashboard-widget__empty">
+                        {{ ux_icon('fa6-solid:users', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
+                        {{ 'dashboard.no_recent_users'|trans({}, 'admin') }}
+                    </p>
+                {% else %}
+                    <ul class="dashboard-widget__list">
+                        {% for user in recentUsers %}
+                            {# @var user \App\Entity\User #}
+                            <li class="dashboard-widget__item">
+                                {# Avatar circle with initials #}
+                                <div class="dash-avatar dash-avatar--{{ user.avatarColor.value }}" aria-hidden="true">
+                                    {{ user.initials }}
+                                </div>
+
+                                {# Name + email #}
+                                <div class="dash-user">
+                                    <p class="dash-user__name">
+                                        {% if user.fullName|trim %}
+                                            {{ user.fullName }}
+                                        {% else %}
+                                            {{ user.email }}
+                                        {% endif %}
+                                    </p>
+                                    {% if user.fullName|trim %}
+                                        <p class="dash-user__email">{{ user.email }}</p>
+                                    {% endif %}
+                                </div>
+
+                                {# Registration date #}
+                                <span class="dash-user__date" title="{{ user.createdAt|date('d.m.Y H:i') }}">
+                                    {{ user.createdAt|date('d.m.Y') }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="dashboard-widget__footer">
+                    <a href="{{ path('admin.user.create') }}" class="dashboard-widget__footer-link">
+                        {{ ux_icon('fa6-solid:plus', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                        {{ 'admin.user.create'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Most Read Blog Posts widget #}
+        <div class="col-12 col-lg-7">
+            <div class="dashboard-widget h-100">
+                <div class="dashboard-widget__header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="dashboard-widget__title">
+                            {{ ux_icon('fa6-solid:fire-flame-curved', {height: '15px', width: '15px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
+                            {{ 'dashboard.most_read'|trans({}, 'admin') }}
+                        </h2>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.most_read.subtitle'|trans({}, 'admin') }}</p>
+                    </div>
+                    <a href="{{ path('admin.blog.index') }}" class="dashboard-widget__footer-link">
+                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                    </a>
+                </div>
+
+                {% if topPosts is empty %}
+                    <p class="dashboard-widget__empty">
+                        {{ ux_icon('fa6-solid:newspaper', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
+                        {{ 'dashboard.no_posts'|trans({}, 'admin') }}
+                    </p>
+                {% else %}
+                    <ul class="dashboard-widget__list">
+                        {% for post in topPosts %}
+                            {# @var post \App\Entity\Blog #}
+                            <li class="dashboard-widget__item">
+                                {# Rank badge #}
+                                <div class="dash-post__rank {{ loop.index <= 3 ? 'dash-post__rank--top' }}" aria-hidden="true">
+                                    {{ loop.index }}
+                                </div>
+
+                                {# Title + category #}
+                                <div class="dash-post">
+                                    <a href="{{ path('admin.blog.update', {id: post.id}) }}" class="dash-post__title">
+                                        {{ post.title }}
+                                    </a>
+                                    {% if post.primaryCategory %}
+                                        <p class="dash-post__meta">
+                                            {{ ux_icon('fa6-solid:folder', {height: '11px', width: '11px', class: 'me-1', 'aria-hidden': true}) }}
+                                            {{ post.primaryCategory.title }}
+                                            &nbsp;·&nbsp;
+                                            {{ post.createdAt|date('d.m.Y') }}
+                                        </p>
+                                    {% else %}
+                                        <p class="dash-post__meta">{{ post.createdAt|date('d.m.Y') }}</p>
+                                    {% endif %}
+                                </div>
+
+                                {# View count pill #}
+                                <div class="dash-post__views">
+                                    {{ ux_icon('fa6-solid:eye', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                                    {{ post.views|default(0)|number_format(0, '.', ',') }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="dashboard-widget__footer">
+                    <a href="{{ path('admin.blog.index') }}" class="dashboard-widget__footer-link">
+                        {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                        {{ 'admin.blog.index'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>{# /row widgets row 1 #}
+
+    {# ── Third widgets row: Files | Contacts | Leaderboard ──────── #}
+    <div class="row g-4 mt-0">
+
+        {# Recent Files widget #}
+        <div class="col-12 col-lg-4">
+            <div class="dashboard-widget h-100">
+                <div class="dashboard-widget__header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="dashboard-widget__title">
+                            {{ ux_icon('fa6-solid:folder-open', {height: '15px', width: '15px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
+                            {{ 'dashboard.recent_files'|trans({}, 'admin') }}
+                        </h2>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_files.subtitle'|trans({}, 'admin') }}</p>
+                    </div>
+                    <a href="{{ path('admin.file.index') }}" class="dashboard-widget__footer-link">
+                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                    </a>
+                </div>
+
+                {% if recentFiles is empty %}
+                    <p class="dashboard-widget__empty">
+                        {{ ux_icon('fa6-solid:folder-open', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
+                        {{ 'dashboard.no_files'|trans({}, 'admin') }}
+                    </p>
+                {% else %}
+                    <ul class="dashboard-widget__list">
+                        {% for file in recentFiles %}
+                            {# @var file \Lexio\AdminBundle\Contract\File\FileEntityInterface #}
+                            {% set fileIcon = file.iconColors() %}
+                            <li class="dashboard-widget__item">
+                                <div class="dash-file-icon dash-file-icon--{{ fileIcon.color }}" aria-hidden="true">
+                                    {{ ux_icon(fileIcon.icon, {height: '16px', width: '16px'}) }}
+                                </div>
+                                <div class="dash-file">
+                                    <p class="dash-file__name">{{ file.originalName ?? file.name }}</p>
+                                    <p class="dash-file__meta">{{ file.mime ?? '—' }}&nbsp;·&nbsp;{{ file.createdAt|date('d.m.Y') }}</p>
+                                </div>
+                                <span class="dash-file__size">{{ file.size|format_bytes }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="dashboard-widget__footer">
+                    <a href="{{ path('admin.file.upload') }}" class="dashboard-widget__footer-link">
+                        {{ ux_icon('fa6-solid:upload', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                        {{ 'admin.file.upload'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Recent Contact Submissions widget #}
+        <div class="col-12 col-lg-4">
+            <div class="dashboard-widget h-100">
+                <div class="dashboard-widget__header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="dashboard-widget__title">
+                            {{ ux_icon('fa6-solid:envelope', {height: '14px', width: '14px', class: 'me-1 text-info', 'aria-hidden': true}) }}
+                            {{ 'dashboard.recent_contacts'|trans({}, 'admin') }}
+                        </h2>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_contacts.subtitle'|trans({}, 'admin') }}</p>
+                    </div>
+                    <a href="{{ path('admin.contact.index') }}" class="dashboard-widget__footer-link">
+                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                    </a>
+                </div>
+
+                {% if recentContacts is empty %}
+                    <p class="dashboard-widget__empty">
+                        {{ ux_icon('fa6-solid:envelope', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
+                        {{ 'dashboard.no_contacts'|trans({}, 'admin') }}
+                    </p>
+                {% else %}
+                    <ul class="dashboard-widget__list">
+                        {% for contact in recentContacts %}
+                            <li class="dashboard-widget__item">
+                                {# Sender initial avatar #}
+                                <div class="dash-contact-avatar" aria-hidden="true">
+                                    {{ contact.senderName|first|upper }}
+                                </div>
+
+                                {# Name + subject/message #}
+                                <div class="dash-contact">
+                                    <a href="{{ path('admin.contact.details', {id: contact.id}) }}" class="dash-contact__name">
+                                        {{ contact.senderName }}
+                                        {% if contact.senderEmail %}
+                                            <span class="fw-normal text-muted">&lt;{{ contact.senderEmail }}&gt;</span>
+                                        {% endif %}
+                                    </a>
+                                    <p class="dash-contact__subject">
+                                        {% if contact.subject %}
+                                            {{ contact.subject|slice(0, 55) }}{% if contact.subject|length > 55 %}…{% endif %}
+                                        {% elseif contact.message %}
+                                            {{ contact.message|striptags|slice(0, 55) }}…
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                                {# Submission date #}
+                                <span class="dash-contact__date" title="{{ contact.createdAt|date('d.m.Y H:i') }}">
+                                    {{ contact.createdAt|date('d.m.Y') }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="dashboard-widget__footer">
+                    <a href="{{ path('admin.contact.index') }}" class="dashboard-widget__footer-link">
+                        {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                        {{ 'admin.contact.index'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Activity Leaderboard widget #}
+        <div class="col-12 col-lg-4">
+            <div class="dashboard-widget h-100">
+                <div class="dashboard-widget__header d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="dashboard-widget__title">
+                            {{ ux_icon('fa6-solid:trophy', {height: '14px', width: '14px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
+                            {{ 'dashboard.leaderboard'|trans({}, 'admin') }}
+                        </h2>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.leaderboard.subtitle'|trans({}, 'admin') }}</p>
+                    </div>
+                    <a href="{{ path('admin.security_log.index') }}" class="dashboard-widget__footer-link">
+                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                    </a>
+                </div>
+
+                {% if leaderboard is empty %}
+                    <p class="dashboard-widget__empty">
+                        {{ ux_icon('fa6-solid:trophy', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
+                        {{ 'dashboard.no_activity'|trans({}, 'admin') }}
+                    </p>
+                {% else %}
+                    <ul class="dashboard-widget__list">
+                        {% for entry in leaderboard %}
+                            <li class="dashboard-widget__item">
+                                <span class="dash-lb-rank {% if loop.index == 1 %}dash-lb-rank--gold{% elseif loop.index == 2 %}dash-lb-rank--silver{% elseif loop.index == 3 %}dash-lb-rank--bronze{% endif %}">
+                                    {{ loop.index }}.
+                                </span>
+                                {% if entry.user %}
+                                    <div class="dash-avatar dash-avatar--{{ entry.user.avatarColor.value }}" aria-hidden="true">
+                                        {{ entry.user.initials }}
+                                    </div>
+                                {% else %}
+                                    <div class="dash-contact-avatar" aria-hidden="true">
+                                        {{ entry.email|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div class="dash-user">
+                                    <p class="dash-user__name">
+                                        {% if entry.user and entry.user.fullName|trim %}
+                                            {{ entry.user.fullName }}
+                                        {% else %}
+                                            {{ entry.email }}
+                                        {% endif %}
+                                    </p>
+                                    {% if entry.user and entry.user.fullName|trim %}
+                                        <p class="dash-user__email">{{ entry.email }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="dash-lb-score">
+                                    {{ ux_icon('fa6-solid:arrow-right-to-bracket', {height: '10px', width: '10px', 'aria-hidden': true}) }}
+                                    {{ entry.loginCount }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="dashboard-widget__footer">
+                    <a href="{{ path('admin.security_log.index') }}" class="dashboard-widget__footer-link">
+                        {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
+                        {{ 'admin.security_log.index'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>{# /row widgets row 3 #}
+{% endblock %}

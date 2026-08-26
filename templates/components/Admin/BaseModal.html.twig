@@ -1,0 +1,39 @@
+{#
+        This module is for render in admin base template and handle most of the modals in admin panel.
+        It is designed to work with stimulus controller BaseModalController and handle open and close modal events and Hotwire Turbo specifcs.
+        Use along with OpenBaseModule component for opening this modal and BaseModalBody component for render content in modal body.
+#}
+
+<div {{ attributes.defaults({
+    id:'base-modal',
+    class: 'modal fade'
+}) }}
+    tabindex="-1" aria-labelledby="baseModalLabel" aria-hidden="true"
+    {{ stimulus_controller('base-modal') }}
+    data-action="base-modal:open@window->base-modal#openModal base-modal:close@window->base-modal#closeModal"
+>
+
+    <div class="modal-dialog {{ modalSize|default('') }}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="baseModalLabel" {{ stimulus_target('base-modal', 'title') }}></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {% block modal_main %}
+                <div class="modal-body">
+                    {% block modal_body %}
+                        <turbo-frame id="base-modal-body" {{ stimulus_target('base-modal', 'turboFrame') }}></turbo-frame>
+                    {% endblock %}
+
+                    <template>
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>

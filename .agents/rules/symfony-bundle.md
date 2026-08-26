@@ -1,0 +1,109 @@
+# Symfony Bundle Conventions
+
+> **Always apply** — AbstractBundle, Contract pattern, final readonly, config-driven services, semver public API.
+
+## Architecture
+
+- `final readonly class` for all services, handlers, processors, voters, listeners, DTOs
+- Exceptions: Doctrine entities (not `readonly`), bundle class (not `final`), classes documented for inheritance
+- Extension points: interfaces, events, compiler passes, decorators — never inheritance
+
+## AbstractBundle (Symfony 7+/8+)
+
+- Always extend `AbstractBundle`, never `Bundle` with separate Extension/Configuration classes
+- `configure()` for config tree, `loadExtension()` for container loading, `prependExtension()` for prepending other bundles
+- `DependencyInjection/` folder is unnecessary with AbstractBundle — all DI logic lives in the bundle class
+- `$this->getPath()` for bundle root path (replaces `\dirname(__DIR__, 2)`)
+- Translations auto-discovered from `<BundlePath>/translations/` (XLIFF format)
+
+## SOLID
+
+- **S**: One class, one responsibility. No "god service".
+- **O**: Extensible via events/interfaces/decorators. `final readonly` forces composition.
+- **L**: Interfaces are substitutable. No `instanceof` on concrete implementations.
+- **I**: Segregated interfaces. One interface = one precise contract.
+- **D**: Inject interfaces, never concrete implementations.
+
+## Contract Pattern
+
+- `src/Contract/`: public interfaces of the bundle (BC-safe API)
+- Services implement Contract interfaces. Host app type-hints on interfaces.
+- Only `Contract/`, events, and DTOs are part of the public semver API.
+
+## Naming
+
+- Bundle class: `{Vendor}{Name}Bundle`, namespace `{Vendor}\{Name}Bundle`
+- Config alias (auto-derived, snake_case): service prefix `alias.`, route prefix `alias_`
+- Translation domain: `{Vendor}{Name}Bundle` in XLIFF
+
+## Structure
+
+- `src/Contract/`, `src/Event/` always present when applicable
+- XML for service definitions when needed (no Yaml dependency). Defaults: `autowire=true autoconfigure=true public=false`
+- `translations/` at bundle root for XLIFF files (auto-discovered by Symfony)
+- Never extend `AbstractController` — inject specific services
+
+## README
+
+The `README.md` must always include the following badges at the top (replace `{vendor}/{repo}` with the actual repository name):
+
+```markdown
+[![CI](https://github.com/{vendor}/{repo}/actions/workflows/ci.yml/badge.svg)](https://github.com/{vendor}/{repo}/actions)
+[![Latest Version](https://img.shields.io/packagist/v/{vendor}/{repo}.svg)](https://packagist.org/packages/{vendor}/{repo})
+[![PHPStan Level 9](https://img.shields.io/badge/PHPStan-level%209-brightgreen.svg)](https://phpstan.org/)
+```
+
+## Services (bundle context)
+
+- In a bundle, **do not use PHP attributes** to register services (tags, listeners, Twig components, etc.).
+- Register services, tags, and options in **configuration**: `loadExtension()` or XML service definitions.
+- Avoid in bundle code: `#[AsEventListener]`, `#[AsTwigComponent]`, etc. Use `$container->register()`, `->addTag()`, explicit XML.
+
+## Dependencies
+
+- Symfony packages: always `^7.0 || ^8.0` (semver, never `7.*|8.*`)
+- Only declare actual dependencies. Optional deps in `suggest`.
+- Never embed vendor code in `src/`
+- Composer `allow-plugins`: configure `infection/extension-installer` and `phpro/grumphp` in `composer.json`
+
+## Configurability
+
+Every feature must be **activatable, deactivatable, and configurable** via `configure()`. The host app must be able to:
+
+- Enable/disable features (Doctrine, controllers, Twig components, listeners, etc.) via boolean config keys
+- Override Doctrine **entity** and **repository** classes in config — never hardcode entity classes in services; resolve from configuration
+- Customize defaults (table prefix, translation domain, route prefix, etc.)
+
+## Translations
+
+Every user-facing string must be translated — no hardcoded text in templates, forms, validators, or flash messages.
+
+- XLIFF in `translations/` at bundle root, domain `{Vendor}{Name}Bundle`
+- At least `en` and `fr`; use translation keys for validators and forms
+
+## Anti-Patterns
+
+- Using `Bundle` + separate Extension instead of `AbstractBundle`
+- **Attributes for service/tag registration in bundle code** — use config/loadExtension()
+- Public services by default, missing service ID prefix, YAML services in bundle
+- Hardcoded entity/repository classes — always configurable
+- Features that cannot be disabled via config
+
+## Commits
+
+Never reference the agent or co-author (no Co-authored-by from AI). Commit messages describe only the change. Never use `git commit --trailer` for AI attribution.
+
+## Cleanup — Legacy commit-msg hook
+
+Remove if present: `scripts/git-hooks/commit-msg`, `install-hooks` Makefile target, README mentions of `make install-hooks`.
+
+## After Every Change — Makefile First
+
+Always use Makefile targets. Never call `vendor/bin/` directly.
+
+- `make cs-fix`, `make phpstan`, `make lint`, `make test`, `make quality`, `make ci`
+
+## Available Skills (opt-in via composer.json)
+
+- `feature`, `bug-fix`, `refactor`, `onboard`, `learn`, `quality-install`, `create-branch`, `commit`
+

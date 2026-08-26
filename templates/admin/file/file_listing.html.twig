@@ -1,0 +1,144 @@
+{% extends '@LexioAdmin/admin/base_crud/listing.html.twig' %}
+{# @var title string #}
+{# @var listingContext \App\AdminCore\Listing\ListingContext #}
+{# @var items object[] #}
+{# @var entityFqcn string #}
+{# @var adminUrlGenerator \App\AdminCore\AdminUrlGenerator #}
+{# @var filtersForm null|App\Form\Filter\BaseFilterType #}
+
+{% block page_actions %}
+    <div class="d-inline">
+        <form action="{{ path('admin.file.upload') }}" method="post" enctype="multipart/form-data"
+                {{ stimulus_controller('file-upload-form') }}>
+            <input type="file" name="file" hidden
+                    {{ stimulus_target('file-upload-form', 'input') }}
+                    {{ stimulus_action('file-upload-form', 'submitForm', 'change') }}
+            >
+            <button
+                    type="button"
+                    class="btn btn-success"
+                    {{ stimulus_action('file-upload-form', 'selectFile', 'click') }}
+            >
+                <i class="fa fa-upload" {{ stimulus_target('file-upload-form', 'icon') }}></i>
+                <span class="spinner-border spinner-border-sm d-none"
+                      aria-hidden="true" {{ stimulus_target('file-upload-form', 'spinner') }}></span>
+                {{ 'button.upload_file'|trans({}, 'admin') }}
+            </button>
+        </form>
+    </div>
+
+    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions, entityFqcn: entityFqcn}) }}
+{% endblock %}
+
+{% block table %}
+
+    <section {{ stimulus_controller('check-selection') }}>
+        <div class="d-flex mt-1 mb-3 align-items-center">
+            <div class="form-check ms-1">
+                <label for="selectAll">
+                    {{ 'label.select_all'|trans({}, 'admin') }}
+                </label>
+                <input id="selectAll" class="form-check-input"
+                       type="checkbox" {{ stimulus_action('check-selection', 'selectAll', 'change') }}>
+            </div>
+
+            <div class="btn-group ms-auto">
+                {% set sort = app.request.query.get('sort') %}
+                {% set order = app.request.query.get('order') %}
+
+                <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'desc'}) }}"
+                   class="btn btn-primary {{ sort == 'id' and order == 'desc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'asc'}) }}"
+                   class="btn btn-primary {{ sort == 'id' and order == 'asc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.file.index', {'sort': 'name', 'order': 'asc'}) }}"
+                   class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
+                    {{ ux_icon('lsicon:sort-a-to-z-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
+                </a>
+                <a href="{{ path('admin.file.index', {'sort': 'name', 'order': 'desc'}) }}"
+                   class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
+                    {{ ux_icon('lsicon:sort-z-to-a-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
+                </a>
+
+                <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'asc'}) }}"
+                   class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
+                    {{ 'filter.size'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'desc'}) }}"
+                   class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
+                    {{ 'filter.size'|trans({}, 'admin') }}
+                </a>
+            </div>
+        </div>
+
+        {# boostrap div list group #}
+        <div class="list-group">
+            {% for item in items %}
+                {# @var item \Lexio\AdminBundle\Contract\File\FileEntityInterface #}
+                <div class="list-group-item list-group-item-action align-items-center d-flex gap-3">
+
+                    {% if listingContext.bulkActions is not empty %}
+                        <div>
+                            <input class="form-check-input m-0 align-middle" type="checkbox"
+                                   data-item-id="{{ item.id }}"
+                                    {{ stimulus_target('check-selection', 'checkboxItem') }}
+                                    {{ stimulus_action('check-selection', 'selectItem', null, {'itemId': item.id}) }}
+                            />
+                        </div>
+                    {% endif %}
+
+                    <div class="bg-{{ item.iconColors['color'] }}-subtle rounded border d-flex align-items-center justify-content-center text-{{ item.iconColors['color'] }}" style="height: 52px; width: 52px">
+                        {{ ux_icon(item.iconColors['icon'], {height: '34px', width: '34px'}) }}
+                    </div>
+
+                    <div>
+                        <div class="mb-1 d-flex gap-3 align-items-center">
+                            <span class="h6">{{ item.name }}</span>
+
+                            <div class="btn-group ms-auto">
+                                <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-expanded="true">
+                                    <i class="fa fa-cog"></i>
+                                    {{ 'button.select'|trans({}, 'admin') }}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end" {{ stimulus_controller('clipboard') }}>
+                                    <button class="dropdown-item" {{ stimulus_action('clipboard', 'copy') }}>
+                                        <i class="fa fa-copy me-1"></i> {{ 'button.copy_url'|trans({}, 'admin') }}
+                                        <input type="hidden"
+                                               value="{{ item.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
+                                    </button>
+                                    <a data-turbo="false" class="dropdown-item" href="{{ path('admin.file.download', {'id': item.id}) }}">
+                                        <i class="fa fa-download"></i> {{ 'button.download'|trans({}, 'admin') }}
+                                    </a>
+
+                                    <button class="dropdown-item text-danger" data-bs-toggle="modal"
+                                            data-bs-target="#confirmationModal_{{ item.id }}">
+                                        <i class="fa fa-remove me-1"></i> {{ 'button.delete'|trans({}, 'admin') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="badge bg-secondary text-info"><i class="fa fa-calendar-alt"></i> {{ item.createdAt|formatted_datetime }}</div>
+                    </div>
+                    <div class="badge bg-secondary text-primary ms-auto">
+                        {{ (item.size / 1000)|number_format }} KB
+                    </div>
+                    {% component 'ConfirmationModal' with {
+                        subjectId: item.id,
+                        navigateToUrl: path('admin.file.delete', {'id': item.id})
+                    } %}
+                        {% block modal_body %}
+                            {{ 'delete_file.confirmation_text'|trans({}, 'admin') }}
+                        {% endblock %}
+                    {% endcomponent %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}

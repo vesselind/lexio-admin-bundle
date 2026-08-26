@@ -1,0 +1,72 @@
+{# @var entityInstance object #}
+{# @var field \App\AdminCore\Listing\Fields\DropdownActionsField #}
+<div class="btn-group">
+    {% if field.actions.count > 1 %}
+        <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill"
+                 viewBox="0 0 16 16">
+                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"></path>
+            </svg>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end">
+            {% for action in field.actions %}
+                {# @var action \App\AdminCore\Listing\Action\Action #}
+
+                {% if action.isOpenInModal %}
+                    <button type="button"
+                            class="dropdown-item {{ action.textClass }}" {{ stimulus_controller('open-base-modal', {
+                        visitUrl: path(action.getRoute, action.getRouteParams),
+                        redirectOnSuccessToUrl: app.request.uri,
+                        redirectOnSuccessToFrame: 'listing-results',
+                        modalSize: action.modalSize,
+                    }) }}>
+                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
+                    </button>
+                {% elseif action.hasConfirmationModal %}
+                    <button class="dropdown-item {{ action.textClass }}" data-bs-toggle="modal"
+                            data-bs-target="#confirmationModal_{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}">
+                        <i class="fa fa-remove me-1"></i> {{ action.label|trans({}, 'admin') }}
+                    </button>
+                {% else %}
+                    <a class="dropdown-item {{ action.textClass }}"
+                       href="{{ path(action.route, action.getRouteParams(field.entityInstance)) }}">
+                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        {% set action = field.actions.first %}
+        {% if action.isOpenInModal %}
+            <button type="button"
+                    class="btn btn-gray btn-sm {{ action.textClass }}" {{ stimulus_controller('open-base-modal', {
+                visitUrl: path(action.getRoute, action.getRouteParams),
+                redirectOnSuccessToUrl: app.request.uri,
+                redirectOnSuccessToFrame: 'listing-results',
+                modalSize: action.modalSize,
+            }) }}>
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
+            </button>
+        {% elseif action.hasConfirmationModal %}
+            <button class="btn btn-gray btn-sm {{ action.textClass }}" data-bs-toggle="modal"
+                    data-bs-target="#confirmationModal_{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}">
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
+            </button>
+        {% else %}
+            <a class="btn btn-gray btn-sm {{ action.textClass }}"
+               href="{{ path(action.route, action.getRouteParams(field.entityInstance)) }}">
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
+            </a>
+        {% endif %}
+    {% endif %}
+
+    {% for action in field.actionsWithConfirmationModal %}
+        <twig:ConfirmationModal
+                subjectId="{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}"
+                navigateToUrl="{{ path(action.getConfirmationRoute, action.getConfirmationRouteParams) }}"
+        >
+            {{ 'delete_record.confirmation_text'|trans({}, 'admin') }}
+        </twig:ConfirmationModal>
+    {% endfor %}
+</div>

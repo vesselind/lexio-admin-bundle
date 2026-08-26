@@ -1,0 +1,49 @@
+<div {{ attributes.defaults(stimulus_controller('bulk-action', {
+    entityFqcn: entityFqcn,
+    csrfToken: csrf_token('bulk_action')
+})) }}>
+    {% for bulkAction in bulkActions %}
+        {# @var bulkAction \Lexio\AdminBundle\AdminCore\Bulk\BulkAction #}
+        <button
+                {{ stimulus_target('bulk-action', 'button') }}
+                {{ stimulus_action('bulk-action', 'openConfirmationModal', 'click', {url: path(bulkAction.route)}) }}
+                data-url="{{ path(bulkAction.route) }}"
+                class="btn btn-{{ bulkAction.buttonColor|default('success') }} {{ bulkAction.textColor ? 'text-' ~ bulkAction.textColor }} d-none"
+                data-bs-toggle="modal"
+                data-bs-target="#bulkActionModal"
+                aria-controls="bulkActionModal"
+        >
+            {% if bulkAction.icon %}
+                <i class="{{ bulkAction.icon }}"></i>
+            {% endif %}
+
+            {{ bulkAction.label|trans({}, 'admin') }}
+        </button>
+    {% endfor %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="bulkActionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" {{ stimulus_controller('modal') }}>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ 'bulk_action.modal_confirmation_title'|trans({}, 'admin') }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" {{ stimulus_target('bulk-action', 'modalBody') }}>
+                    {{ 'bulk_action.modal_confirmation_text'|trans({
+                        '%action%': '<strong>%action%</strong>',
+                        '%count%': '<strong>%count%</strong>',
+                    }, 'admin')|raw }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        {{ 'button.cancel'|trans({}, 'admin') }}
+                    </button>
+                    <button class="btn btn-danger" data-bs-dismiss="modal" {{ stimulus_action('bulk-action', 'confirm') }}>
+                        {{ 'button.confirm'|trans({}, 'admin') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

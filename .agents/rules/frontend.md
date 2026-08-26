@@ -1,0 +1,365 @@
+# Frontend (Symfony UX)
+
+**Bundle context** — Register Stimulus/Twig Component **via config** (not PHP attributes on bundle classes). See `symfony-bundle.mdc`.
+
+For XSS prevention and `LiveProp` security considerations, see `security.mdc`. For Twig template syntax and filters, see `twig.mdc`.
+
+## Core Principles
+
+1. **AssetMapper only** — No Node.js, no npm/yarn/webpack/Vite. All JS dependencies via `importmap:require`.
+2. **Stimulus for behavior** — Controllers add behavior to server-rendered HTML. No client-side rendering.
+3. **Turbo for navigation** — Turbo Drive for page transitions, Frames for partial updates, Streams for real-time.
+4. **Twig helpers for wiring** — Use `stimulus_controller()`, `stimulus_target()`, `stimulus_action()`. Never write `data-controller` attributes manually.
+5. **No business logic in JS** — JS handles UI interactions only. All business rules stay on the server.
+6. **Always `disconnect()` cleanup** — Remove event listeners, observers, intervals in `disconnect()`.
+7. **Template cloning, never innerHTML** — Use HTML5 `<template>` + `cloneNode()` to build DOM. `innerHTML` with user data is XSS.
+8. **LiveProp writable only on scalars** — Never `#[LiveProp(writable: true)]` on entity objects. ID manipulation attack.
+9. **Assets in `assets/`, never in `public/`** — AssetMapper compiles and versions from `assets/`. Direct `public/` files bypass versioning.
+10. **No `DOMContentLoaded`** — Stimulus `connect()` replaces it. `DOMContentLoaded` breaks with Turbo navigation.
+
+---
+
+## Conventions
+
+### Stimulus Controllers — File Naming and Lazy Loading
+
+**Do:**
+
+```javascript
+// assets/controllers/user_search_controller.js (snake_case)
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+    static targets = ['input', 'results'];
+    static values = { url: String, debounce: { type: Number, default: 300 } };
+
+    connect() {
+        this._onInput = this.search.bind(this);
+        this.inputTarget.addEventListener('input', this._onInput);
+    }
+
+    disconnect() {
+        this.inputTarget.removeEventListener('input', this._onInput);
+    }
+
+    async search() {
+        const response = await fetch(`${this.urlValue}?q=${this.inputTarget.value}`);
+        this.resultsTarget.innerHTML = await response.text();
+    }
+}
+```
+
+For heavy controllers, use `/* stimulusFetch: 'lazy' */` comment above the class — loaded only on first DOM appearance.
+
+**Don't:**
+
+```javascript
+// camelCase or PascalCase filename — Stimulus cannot resolve the controller name
+// assets/controllers/UserSearchController.js  // BAD
+
+// Missing disconnect — memory leak with Turbo navigation
+export default class extends Controller {
+    connect() {
+        setInterval(() => this.poll(), 5000); // Never cleaned up
+    }
+}
+```
+
+### Twig Helpers — Never Manual data- Attributes
+
+**Do:**
+
+```twig
+<div {{ stimulus_controller('user-search', { url: path('api_users_search'), debounce: 300 }) }}>
+    <input type="text" {{ stimulus_target('user-search', 'input') }}
+           {{ stimulus_action('user-search', 'search', 'input') }}>
+    <div {{ stimulus_target('user-search', 'results') }}></div>
+</div>
+```
+
+**Don't:**
+
+```twig
+{# Manual data attributes — typo-prone, no escaping, no IDE support #}
+<div data-controller="user-search"
+     data-user-search-url-value="{{ path('api_users_search') }}"
+     data-user-search-debounce-value="300">
+    <input type="text" data-user-search-target="input"
+           data-action="input->user-search#search">
+</div>
+```
+
+### Controller Communication — Events or Outlets
+
+**Do:**
+
+```javascript
+// Emitting a custom event (preferred — decoupled)
+this.dispatch('selected', { detail: { id: userId } });
+
+// Parent listening in Twig
+// {{ stimulus_action('user-list', 'onSelected', 'user-card:selected') }}
+```
+
+```javascript
+// Outlets for direct parent-child only
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+    static outlets = ['result-item'];
+
+    clearAll() {
+        this.resultItemOutlets.forEach(outlet => outlet.reset());
+    }
+}
+```
+
+**Don't:**
+
+```javascript
+// Direct DOM manipulation to communicate between controllers
+document.querySelector('[data-controller="other"]').dataset.value = 'new';
+
+// Global event bus or window-level state
+window.appState.selectedUser = userId;
+```
+
+### Template Cloning — Never innerHTML with User Data
+
+**Do:**
+
+```twig
+<template id="notification-template">
+    <div class="notification">
+        <span data-field="message"></span>
+        <button data-action="click->notification#dismiss">×</button>
+    </div>
+</template>
+```
+
+```javascript
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+    static targets = ['list'];
+
+    add({ detail: { message } }) {
+        const tpl = document.getElementById('notification-template');
+        const clone = tpl.content.cloneNode(true);
+        clone.querySelector('[data-field="message"]').textContent = message;
+        this.listTarget.appendChild(clone);
+    }
+}
+```
+
+**Don't:**
+
+```javascript
+// innerHTML with user data — XSS vulnerability
+this.listTarget.innerHTML += `<div class="notification">${message}</div>`;
+
+// insertAdjacentHTML with unescaped user input
+this.element.insertAdjacentHTML('beforeend', `<span>${userInput}</span>`);
+```
+
+### Turbo Drive — Automatic Navigation
+
+Turbo Drive intercepts all `<a>` clicks and `<form>` submissions automatically. No setup needed.
+
+**Do:**
+
+```twig
+{# Standard link — Turbo Drive handles it automatically #}
+<a href="{{ path('order_show', { id: order.id }) }}">View order</a>
+
+{# Opt out for specific links (file downloads, external) #}
+<a href="{{ asset('files/report.pdf') }}" data-turbo="false">Download PDF</a>
+```
+
+**Don't:**
+
+```javascript
+// Manual AJAX navigation — Turbo Drive already does this
+fetch('/orders/123').then(r => r.text()).then(html => {
+    document.body.innerHTML = html; // Replaces page, loses Stimulus controllers
+});
+```
+
+### Turbo Frames — Partial Page Updates
+
+**Do:**
+
+```twig
+{# Lazy-loaded frame — response must contain matching frame ID #}
+<turbo-frame id="order-details" src="{{ path('order_details', { id: order.id }) }}" loading="lazy">
+    <p>Loading...</p>
+</turbo-frame>
+```
+
+**Don't:**
+
+```twig
+{# Mismatched frame IDs — silent failure, no content replacement #}
+<turbo-frame id="order-details">Loading...</turbo-frame>
+{# Response: <turbo-frame id="order_details"> — underscore vs hyphen = broken #}
+```
+
+### Turbo Streams — Real-Time Updates
+
+**Do:**
+
+```twig
+<turbo-stream action="append" target="notifications">
+    <template>
+        <div id="notification-{{ notification.id }}">{{ notification.message }}</div>
+    </template>
+</turbo-stream>
+```
+
+Use `<turbo-stream-source>` with Mercure for server-push real-time updates.
+
+**Don't:** Use `action="replace"` when you mean `"update"` — `replace` removes the target element itself, breaking future updates.
+
+### Twig Components — Reusable UI Blocks
+
+**Do:**
+
+```php
+// src/Twig/Components/Alert.php
+namespace App\Twig\Components;
+
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+
+#[AsTwigComponent]
+final class Alert
+{
+    public string $type = 'info';
+    public string $message;
+}
+```
+
+```twig
+{# templates/components/Alert.html.twig #}
+<div class="alert alert--{{ type }}" role="alert">
+    {{ message }}
+</div>
+
+{# Usage #}
+<twig:Alert type="success" message="Order placed." />
+```
+
+**Don't:**
+
+```php
+// Business logic in a Twig component — keep it presentation-only
+#[AsTwigComponent]
+final class OrderSummary
+{
+    public function calculateDiscount(): float { /* BAD */ }
+    public function sendConfirmation(): void { /* BAD */ }
+}
+```
+
+### Live Components — LiveProp Safety
+
+**Do:**
+
+```php
+use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
+
+#[AsLiveComponent]
+final class InvoiceSearch
+{
+    use DefaultActionTrait;
+
+    #[LiveProp(writable: true)]
+    public string $query = '';
+
+    #[LiveProp(writable: true)]
+    public int $page = 1;
+
+    #[LiveProp]
+    public string $status = 'all';
+}
+```
+
+**Don't:**
+
+```php
+#[AsLiveComponent]
+final class OrderEditor
+{
+    use DefaultActionTrait;
+
+    #[LiveProp(writable: true)]
+    public Order $order; // CRITICAL: User can manipulate entity ID via form data
+}
+```
+
+### AssetMapper — No Node.js Toolchain
+
+**Do:**
+
+```bash
+php bin/console importmap:require lodash-es   # Add JS dependency
+```
+
+```twig
+{# base.html.twig — importmap handles all JS #}
+{% block javascripts %}{{ importmap('app') }}{% endblock %}
+```
+
+**Don't:**
+
+```json
+{ "dependencies": { "webpack": "^5.0" } }
+```
+
+```twig
+<script src="/bundles/mypackage/dist/app.js"></script> {# Bypasses importmap #}
+```
+
+### No DOMContentLoaded — Use Stimulus connect()
+
+**Do:** Use `connect()` / `disconnect()` lifecycle. Fires every time the element enters/leaves the DOM (Turbo-safe).
+
+**Don't:**
+
+```javascript
+// Fires once on initial load — breaks after every Turbo navigation
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.widget').forEach(el => initWidget(el));
+});
+```
+
+### No Business Logic in JavaScript
+
+**Do:** JS sends requests and displays results. Server computes prices, discounts, permissions.
+
+**Don't:**
+
+```javascript
+// Client-side price calculation — user can tamper via DevTools
+applyDiscount() {
+    const price = parseFloat(this.priceTarget.textContent);
+    const discount = this.codeTarget.value === 'VIP20' ? 0.2 : 0;
+    this.totalTarget.textContent = (price * (1 - discount)).toFixed(2);
+}
+```
+
+---
+
+## Pitfalls
+
+| Pitfall | Fix |
+|---------|-----|
+| Manual `data-` attributes in Twig | Use `stimulus_controller()`, `stimulus_target()`, `stimulus_action()` |
+| `innerHTML` with user data (XSS) | `<template>` + `cloneNode()` + `textContent` for user data |
+| `LiveProp(writable: true)` on entities | `writable: true` on scalars only. Load entities server-side by ID |
+| Business logic in JavaScript | JS = UI only. All computations server-side |
+| Missing `disconnect()` cleanup | Always clean up listeners, intervals, observers in `disconnect()` |
+| `DOMContentLoaded` with Turbo | Use Stimulus `connect()`. Fires on every DOM appearance |
+| Assets in `public/` directory | Place in `assets/`. AssetMapper compiles and versions |
+| Node.js toolchain with AssetMapper | `importmap:require` for JS deps. No npm/webpack/vite |

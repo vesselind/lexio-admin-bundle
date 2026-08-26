@@ -1,0 +1,8 @@
+
+{# @var entityInstance \App\Entity\AiTask #}
+{# @var data string #}
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\TitleField #}
+
+<span>{{ field.value|strip_words(25) }}</span>
+<span class="ms-2 badge {{ field.entityInstance.status.color }}">{{ field.entityInstance.status.name|trans({}, 'admin') }}</span>

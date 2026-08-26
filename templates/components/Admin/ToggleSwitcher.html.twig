@@ -1,0 +1,10 @@
+<div {{ attributes }}>
+    <div class="form-check form-switch">
+        <input class="form-check-input" data-model="fieldValue" type="checkbox" id="toggle-switcher" data-action="live#action"
+               data-live-action-param="setPropertyValue"
+        >
+        <label class="form-check sr-only" for="toggle-switcher">Toggle</label>
+    </div>
+
+    {% include '@LexioAdmin/flash.stream.html.twig' %}
+</div>

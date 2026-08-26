@@ -1,0 +1,31 @@
+<div {{ attributes }}>
+    {% if not blog.published %}
+        <button class="btn btn-success"
+                data-action="live#action"
+                data-live-action-param="togglePublish"
+        >
+            {{ ux_icon('carbon:ibm-elo-publishing', {height: 21, width: 21}) }}
+            {{ 'button.publish'|trans({}, 'admin') }}
+        </button>
+    {% else %}
+        <button class="btn btn-warning"
+                data-action="live#action"
+                data-live-action-param="togglePublish"
+        >
+            {{ ux_icon('carbon:rule-draft', {height: 21, width: 21}) }}
+            {{ 'button.make_draft'|trans({}, 'admin') }}
+        </button>
+    {% endif %}
+
+    <turbo-stream action="replace" target="published-status">
+        <template>
+            {% if blog.published %}
+                <span class="badge bg-success mb-3" id="published-status">{{ 'badge.published'|trans({}, 'text') }}</span>
+            {% else %}
+                <span class="badge bg-warning mb-3" id="published-status">{{ 'badge.draft'|trans({}, 'text') }}</span>
+            {% endif %}
+        </template>
+    </turbo-stream>
+
+    {% include '@LexioAdmin/flash.stream.html.twig' %}
+</div>

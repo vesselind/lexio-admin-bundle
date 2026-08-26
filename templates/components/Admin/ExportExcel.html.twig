@@ -1,0 +1,24 @@
+<div {{ attributes }}>
+    <div class="dropdown">
+        <a class="btn btn-success dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false" data-bs-auto-close="outside">
+            <i class="fa fa-file-excel-o"></i> {{ 'button.export'|trans({}, 'admin') }}
+        </a>
+
+        <form class="dropdown-menu p-4" action="" data-action="live#action:prevent"
+              data-live-action-param="export">
+            {% for column in this.columns %}
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" name="columns[]" class="form-check-input" id="checkbox-{{ loop.index }}" checked>
+                        <label class="form-check-label" for="checkbox-{{ loop.index }}">
+                            {{ ('column.' ~ column)|trans({}, 'admin') }}
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">{{ 'button.export_action'|trans({}, 'admin') }}</button>
+        </form>
+    </div>
+</div>

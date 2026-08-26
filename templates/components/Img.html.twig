@@ -1,0 +1,20 @@
+{% props src, width, height, filter = 'cover', alt = null, class = 'img-fluid', quality = null, style = null %}
+
+{% if src is not empty %}
+    <img src="{{ src|image(filter, width, height, quality) }}" alt="{{ alt|default('') }}" width="{{ width }}"
+            {% if height %}
+                height="{{ height }}"
+            {% endif %}
+         class="img-fluid {{ class|default('') }}"
+        {% if style != null %}
+            style="{{ style }}"
+        {% endif %}
+    >
+{% else %}
+    <img src="https://placehold.co/{{ width }}x{{ height }}" alt="No image available"
+            width="{{ width }}"
+            {% if height %}
+                height="{{ height }}"
+            {% endif %}
+         class="img-fluid {{ class|default('') }}">
+{% endif %}

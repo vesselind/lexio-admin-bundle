@@ -1,0 +1,24 @@
+{% props
+    visitUrl,
+    modalTitle,
+    modalSize = 'modal-xl',
+    closeOnSuccess = false,
+    redirectOnSuccessToUrl = null,
+    redirectOnSuccessToFrame = null,
+    class = 'btn btn-success'
+%}
+
+<button type="button" class="{{ class }}"
+    {{ stimulus_controller('open-base-modal', {
+        visitUrl: visitUrl,
+        modalTitle: modalTitle,
+        modalSize: modalSize,
+        redirectOnSuccessToUrl: redirectOnSuccessToUrl,
+        redirectOnSuccessToFrame: redirectOnSuccessToFrame,
+        closeOnSuccess: closeOnSuccess,
+    }) }}
+>
+{% block content %}
+   Open Modal
+{% endblock %}
+</button>

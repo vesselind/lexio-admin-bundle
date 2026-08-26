@@ -1,0 +1,45 @@
+<div {{ attributes }}>
+    <div class="modal fade" id="confirmationModal_{{ subjectId }}"
+            {{ stimulus_controller('modal') }}
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                {% if block('header') %}
+                    <div class="modal-header pb-0">
+                        {% block header %}
+                            <h5>{{ 'confirmation_modal.title'|trans({}, 'text') }}</h5>
+                        {% endblock %}
+                    </div>
+                {% endif %}
+
+                <div class="modal-body">
+                    {% block content %}
+                        {{ 'confirmation_modal.text'|trans({}, 'text') }}
+                    {% endblock %}
+                </div>
+
+                <div class="modal-footer border-0">
+                    {% block footer %}
+                        <button type="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                data-loading="addAttribute(disabled)">
+                            {{ 'button.cancel'|trans({}, 'admin') }}
+                        </button>
+
+                        {% block confirm_button %}
+                            <button type="button" class="btn btn-danger"
+                                    data-action="live#action"
+                                    data-live-action-param="confirm"
+                                    data-loading="addAttribute(disabled)">
+                        <span class=""
+                              data-loading="addClass(spinner-border spinner-border-sm)"
+                              aria-hidden="true"></span>
+                                {{ 'button.confirm'|trans({}, 'admin') }}
+                            </button>
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

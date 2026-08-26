@@ -1,0 +1,7 @@
+{# @var entityInstance \App\Entity\AiTask #}
+{# @var field \App\AdminCore\Listing\Fields\TitleField #}
+{% if field.value == true %}
+    <i class="fa fa-check text-success"></i>
+{% else %}
+    <i class="fa fa-times text-danger"></i>
+{% endif %}

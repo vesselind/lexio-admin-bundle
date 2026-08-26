@@ -1,0 +1,35 @@
+<turbo-frame id="{{ app.request.headers.get('Turbo-Frame') }}">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="{{ path('admin._modals.links_search') }}" {{ stimulus_controller('autosubmit') }}
+                  data-turbo-frame="search-results">
+                <input placeholder="{{ 'placeholder.search_by_title'|trans({}, 'admin') }}" id="search" type="search"
+                       class="form-control" name="query" {{ stimulus_action('autosubmit', 'debouncedSubmit') }}>
+            </form>
+        </div>
+    </div>
+    {# results #}
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <turbo-frame id="search-results" target="_self">
+                <div class="list-group">
+                    {% for item in items %}
+
+                        {# @var item \Lexio\AdminBundle\Contract\SearchableEntityInterface #}
+                        <a href="#" class="list-group-item list-group-item-action small p-2"
+                                {% set link = path(item.searchableParameters.routeName, item.searchableParameters.routeParams) %}
+                                {{ stimulus_action('links-search-field', 'selectLink', null, {'href': link, 'title': item.searchableParameters.title}) }}>
+                            {{ item.searchableParameters.title }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-end mt-2 small">
+                    {{ knp_pagination_render(items) }}
+                </div>
+            </turbo-frame>
+        </div>
+    </div>
+
+    </div>
+</turbo-frame>

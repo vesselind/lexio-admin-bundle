@@ -1,0 +1,140 @@
+{# @var title string #}
+{# @var listingContext \App\AdminCore\Listing\ListingContext #}
+{# @var items object[] #}
+{# @var entityFqcn string #}
+{# @var adminUrlGenerator \App\AdminCore\AdminUrlGenerator #}
+{# @var filtersForm null|App\Form\Filter\BaseFilterType #}
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block heading %}
+    {{ title }}
+{% endblock %}
+
+{% block page_actions %}
+    {% if listingContext.showCreateButton %}
+        <a href="{{ adminUrlGenerator.createLink(entityFqcn) }}" class="btn btn-success">
+            <i class="fa fa-plus"></i>
+            {{ 'button.add'|trans({}, 'admin') }}
+        </a>
+    {% endif %}
+
+    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions, entityFqcn: entityFqcn}) }}
+{% endblock %}
+
+{% block content %}
+
+    {# Form filters #}
+    {% block filters %}
+        {% if filtersForm is not null %}
+            <div class="card mb-4">
+                {{ form_start(filtersForm) }}
+                <div class="card-body pb-1 pt-4">
+                    <div class="row g-2 align-items-center justify-content-between mb-3">
+                        {% set count = (12 / filtersForm|length)|number_format %}
+                        {% set col = count > 4 ? count : 3 %}
+                        {% for formField in filtersForm %}
+                            <div class="col-md-{{ col }} flex-grow-1">
+                                {{ form_row(formField) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer py-2 d-flex justify-content-end gap-2">
+                    <a href="{{ adminUrlGenerator.indexLink }}" class="btn btn-secondary btn-sm">
+                        <i class="fa fa-remove"></i> {{ 'button.clear_filter'|trans({}, 'admin') }}
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-sm"><i
+                                class="fa fa-filter"></i> {{ 'button.filter'|trans({}, 'admin') }}</button>
+                </div>
+
+                {{ form_end(filtersForm) }}
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    <turbo-frame id="listing-results" target="_top">
+        {% block table %}
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" {{ stimulus_controller('check-selection') }}>
+                    <thead>
+                    <tr class="align-middle">
+                        {% if listingContext.bulkActions is not empty %}
+                            <th>
+                                <input class="form-check-input m-0 align-middle"
+                                       type="checkbox" {{ stimulus_action('check-selection', 'selectAll') }}>
+                            </th>
+                        {% endif %}
+
+                        {% for column in listingContext.columns %}
+                            {# @var column \App\AdminCore\Listing\Column #}
+                            {% if column.sortable %}
+                                <th style="max-width: 150px; min-width: 70px"><a href="{{ column.sortLink }}">
+                                        {{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}
+                                        {% if not column.sorted %}
+                                            <i class="fa fa-fw fa-sort text-muted"></i>
+                                        {% else %}
+                                            {% if column.sortedAsc %}
+                                                <i class="fa fa-fw fa-arrow-up"></i>
+                                            {% else %}
+                                                <i class="fa fa-fw fa-arrow-down"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                    </a>
+                                </th>
+                            {% else %}
+                                <th>{{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {# An item represents an instance of entity object. Each entity has at least id. #}
+                    {% for item in items %}
+                        <tr>
+                            {% if listingContext.bulkActions is not empty %}
+                                <td>
+                                    <label>
+                                        <input class="form-check-input m-0 align-middle" type="checkbox"
+                                               data-item-id="{{ item.id }}"
+                                                {{ stimulus_target('check-selection', 'checkboxItem') }}
+                                                {{ stimulus_action('check-selection', 'selectItem', null, {'itemId': item.id}) }}
+                                        />
+                                    </label>
+                                </td>
+                            {% endif %}
+
+                            {% for column in listingContext.columns %}
+                                <td>{{ render_field(item, column) }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="text-center" colspan="{{ listingContext.columns|length + 1 }}">
+                                <i class="fa fa-info-circle text-gray"></i> {{ 'no_records_found'|trans({}, 'admin') }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <twig:Admin:ItemsPerPage class="small px-3 py-2"
+                                         :url="app.request.uri"
+                                         :routeName="app.request.attributes.get('_route')"
+                                         :itemsPerPage="listingContext.itemsPerPage" />
+                </div>
+            </div>
+        {% endblock %}
+    </turbo-frame>
+
+    {% block pagination %}
+        <div class="d-flex mb-4 mt-3 align-items-center">
+            <span class="small"><strong>{{ items.totalItemCount }}</strong> {{ 'listing_results'|trans({}, 'admin') }}</span>
+            <div class="ms-auto">
+                {{ knp_pagination_render(items) }}
+            </div>
+        </div>
+    {% endblock %}
+
+{% endblock %}

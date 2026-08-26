@@ -1,0 +1,14 @@
+<div {{ attributes.defaults(stimulus_controller('rating', { rating: blog.ratingValue })) }}>
+    {% for i in 1..5 %}
+        <i class="fa fa-star-o" style="font-size: 24px"></i>
+    {% endfor %}
+    <div class="small">
+        {{ 'rating_widget.rate'|trans({}, 'text') }}: <span {{ stimulus_target('rating', 'rating') }}>{{ blog.ratingValue|number_format(1) }}</span>
+        <span>/5</span>
+        <span class="ms-3">
+                        (<span {{ stimulus_target('rating', 'votersCount') }}>{{ blog.ratingsList|length }}</span> {{ 'rating_widget.votes'|trans({}, 'text') }})
+                    </span>
+    </div>
+
+    {% include '@LexioAdmin/flash.stream.html.twig' %}
+</div>

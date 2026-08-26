@@ -1,0 +1,9 @@
+{# @var entityInstance \App\Entity\WaitingList #}
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\HasRegisteredField #}
+
+{% if field.registered(entityInstance.email) %}
+    <span class="badge bg-success text-white"><i class="fa fa-check"></i></span>
+{% else %}
+    <span class="badge bg-danger text-white"><i class="fa fa-times"></i></span>
+{% endif %}

@@ -1,0 +1,12 @@
+
+{# @var entityInstance \App\Entity\Act #}
+{# @var data string #}
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\RepealedField #}
+
+
+{% if field.value is not null %}
+<i class="fa fa-x text-danger"></i>
+{% else %}
+<i class="fa fa-check text-success"></i>
+{% endif %}

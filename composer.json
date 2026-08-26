@@ -1,0 +1,91 @@
+{
+    "name": "lexio/admin-bundle",
+    "description": "Admin CRUD bundle for Symfony — provides listing, form context, fields, actions, menu, tabs, breadcrumbs, settings and a code generator.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lexio",
+            "homepage": "https://github.com/lexio"
+        }
+    ],
+    "require": {
+        "php": ">=8.4",
+        "deeplcom/deepl-php": "^1.8",
+        "doctrine/doctrine-bundle": "^3.0",
+        "doctrine/orm": "^3.0",
+        "gedmo/doctrine-extensions": "^3.14",
+        "huluti/breadcrumbs-bundle": "^1.7",
+        "intervention/image": "^3.0",
+        "knplabs/knp-paginator-bundle": "^6.0",
+        "nesbot/carbon": "3.11",
+        "nyholm/psr7": "^1.8",
+        "phpoffice/phpspreadsheet": "^3.0 || ^4.0 || ^5.0",
+        "symfony/clock": "^7.2 || ^8.0",
+        "symfony/console": "^7.2 || ^8.0",
+        "symfony/filesystem": "^7.2 || ^8.0",
+        "symfony/asset": "^7.2 || ^8.0",
+        "symfony/cache": "^7.2 || ^8.0",
+        "symfony/form": "^7.2 || ^8.0",
+        "symfony/framework-bundle": "^7.2 || ^8.0",
+        "symfony/http-client": "^8.0",
+        "symfony/http-kernel": "^7.2 || ^8.0",
+        "symfony/messenger": "^7.2 || ^8.0",
+        "symfony/property-access": "^7.2 || ^8.0",
+        "symfony/routing": "^7.2 || ^8.0",
+        "symfony/security-bundle": "^7.2 || ^8.0",
+        "symfony/serializer": "^7.2 || ^8.0",
+        "symfony/string": "^7.2 || ^8.0",
+        "symfony/translation": "^7.2 || ^8.0",
+        "symfony/twig-bundle": "^7.2 || ^8.0",
+        "symfony/ux-autocomplete": "^3.1",
+        "symfony/ux-icons": "^3.1",
+        "symfony/ux-live-component": "^3.1",
+        "symfony/ux-twig-component": "^3.1",
+        "symfony/validator": "^7.2 || ^8.0",
+        "symfony/yaml": "^7.2 || ^8.0",
+        "twig/twig": "^3.0",
+        "webmozart/assert": "^2.1",
+        "ext-zip": "*"
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.0",
+        "phpunit/phpunit": "^11.0 || ^12.0",
+        "phpstan/phpstan": "^2.0",
+        "symfony/phpunit-bridge": "^7.2 || ^8.0"
+    },
+    "suggest": {
+        "huluti/breadcrumbs-bundle": "Required if you use AdminBreadcrumbs or FrontBreadcrumbs services.",
+        "symfony/maker-bundle": "Required for the make:admin code generator command.",
+        "symfony/ux-turbo": "Required for TurboRedirectResponse / turbo-frame support in FormContext.",
+        "bootstrap": "Required for admin UI styling (CSS framework).",
+        "ckeditor5": "Required for the CKEditor rich-text field.",
+        "sortablejs": "Required for the sortable drag-and-drop controller.",
+        "tom-select": "Required for the autocomplete/select controllers.",
+        "vanillajs-datepicker": "Required for the datepicker form field."
+    },
+    "autoload": {
+        "psr-4": {
+            "Lexio\\AdminBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lexio\\AdminBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "symfony": {
+            "require": "^7.2 || ^8.0"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

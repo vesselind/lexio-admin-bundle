@@ -1,0 +1,25 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\TitleField #}
+{% if field.value %}
+    {% if field.linkToUrl %}
+        {% set url = field.linkToUrl %}
+    {% elseif field.linkToRoute %}
+        {% set url = path(field.linkToRoute, field.routeParams(field.entityInstance)) %}
+    {% endif %}
+{% endif %}
+
+<div class="d-flex align-items-center gap-3">
+    {% if field.imageProperty and field.image %}
+        <twig:Img src="{{ field.image }}" width="90" height="90" style="max-height: 80px; max-width: 80px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); border: 1px solid #e9ecef; flex-shrink: 0;" />
+    {% endif %}
+
+    <div style="flex: 1; min-width: 0;">
+        {% if url is defined %}
+            <a href="{{ url }}" target="{{ field.target }}"
+               style="display: block; line-height: 1.4;">{{ field.value|strip_words(25) }}</a>
+        {% else %}
+            <span class="{{ field.class }}"
+                  style="display: block; line-height: 1.4;">{{ field.value|strip_words(25) }}</span>
+        {% endif %}
+    </div>
+</div>

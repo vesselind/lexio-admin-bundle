@@ -1,0 +1,42 @@
+<turbo-frame id="main-form-content">
+    <div class="card">
+        <div class="card-body">
+
+            {{ form_start(form) }}
+
+            {% for formElement in form %}
+
+                {% if formElement.children is empty %}
+                    {{ form_row(formElement) }}
+                {% else %}
+                    {# Display form collections if any #}
+                    <div class="card ms-2 my-2">
+                        <div class="card-header">
+                            <h5>{{ formElement.vars.label }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for child in formElement %}
+                                <div class="card-body bg-secondary my-2">
+                                    {{ form_widget(child) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="divider my-4"></div>
+            <div class="d-flex justify-content-end align-items-center gap-2">
+                <a data-turbo-frame="_top" href="{{ adminUrlGenerator.indexLink }}"
+                   class="btn btn-secondary">{{ 'button.cancel'|trans({}, 'admin') }}</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save me-1"></i>
+                    {{ 'button.save'|trans({}, 'admin') }}
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+    {% include '@LexioAdmin/flash.stream.html.twig' %}
+</turbo-frame>

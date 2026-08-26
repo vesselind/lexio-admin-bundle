@@ -1,0 +1,9 @@
+{# @var entityInstance #}
+{# @var data string|float #}
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\NumberField #}
+
+
+<div>
+    <span class="badge bg-primary-subtle text-primary">{{ field.value|number_format(2, ',', ' ') }}</span>
+</div>

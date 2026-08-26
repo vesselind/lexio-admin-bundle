@@ -1,0 +1,95 @@
+<div {{ attributes }}>
+    <nav id="sidebarMenu"
+         class="d-md-block sidebar collapse scrollbar scroll-element-light"
+        {{ stimulus_controller('collapsable_sidebar') }}
+    >
+
+        <div class="brand d-flex align-items-center">
+            <a href="{{ path(this.homeRoute) }}">
+                <img width="150px" src="{{ asset('build/images/admin-logo.svg') }}" alt="admin logo sidebar">
+            </a>
+        </div>
+
+        <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+                {% set menuItems = this.menuItems %}
+                {% for menuItem in menuItems %}
+                    {# @var menuItem \Lexio\AdminBundle\AdminCore\Menu\MenuItemInterface #}
+
+                    {% if menuItem.type == 'Separator' %}
+                        <h6 class="subtle-header text-uppercase">
+                            {{ menuItem.title }}
+                        </h6>
+                    {% endif %}
+
+                    {% if menuItem.type == 'Link' %}
+                        {% set badge = menuItem.badge %}
+                        {% set badgeCaption = badge ? badge.caption : null %}
+                        <li class="nav-item mb-1">
+                            <a class="nav-link {{ menuItem.isActive ? 'active' }}" aria-current="page"
+                               href="{{ menuItem.url }}">
+                                {% if menuItem.icon %}
+                                    {{ ux_icon(menuItem.icon, {height: '21px', width: '21px', 'aria-hidden': true}) }}
+                                {% endif %}
+                                {{ menuItem.title }}
+                                {% if badgeCaption is not null %}
+                                    <span class="badge bg-{{ badge.color ?? 'secondary' }} ms-auto">
+                                        {% if badge.icon %}
+                                            {{ ux_icon(badge.icon, {height: '14px', width: '14px', 'aria-hidden': true}) }}
+                                        {% endif %}
+                                        {{ badgeCaption }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if menuItem.type == 'SubMenu' %}
+                        {% set badge = menuItem.badge %}
+                        {% set badgeCaption = badge ? badge.caption : null %}
+                        <li class="dropdown-panel mb-1">
+                            <a href="#" class="nav-link btn-toggle" data-bs-toggle="collapse"
+                               data-bs-target="#{{ menuItem.id }}" aria-expanded="false">
+                                {% if menuItem.icon %}
+                                    {{ ux_icon(menuItem.icon, {height: '21px', width: '21px', 'aria-hidden': true}) }}
+                                {% endif %}
+                                {{ menuItem.title }}
+                                {% if badgeCaption is not null %}
+                                    <span class="badge bg-{{ badge.color ?? 'secondary' }} ms-auto">
+                                        {% if badge.icon %}
+                                            {{ ux_icon(badge.icon, {height: '14px', width: '14px', 'aria-hidden': true}) }}
+                                        {% endif %}
+                                        {{ badgeCaption }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            <div class="collapse {{ menuItem.isActive ? 'show' }}" id="{{ menuItem.id }}">
+                                <ul class="small-menu">
+                                    {% for link in menuItem.links %}
+                                        {# @var link \Lexio\AdminBundle\AdminCore\Menu\Link #}
+                                        {% set linkBadge = link.badge %}
+                                        {% set linkBadgeCaption = linkBadge ? linkBadge.caption : null %}
+                                        <li class="{{ link.isActive ? 'active' }}"><a href="{{ link.url }}"
+                                                                                      class="link-dark rounded">
+                                                {{ link.title }}
+                                                {% if linkBadgeCaption is not null %}
+                                                    <span class="badge bg-{{ linkBadge.color ?? 'secondary' }} ms-auto">
+                                                        {% if linkBadge.icon %}
+                                                            {{ ux_icon(linkBadge.icon, {height: '14px', width: '14px', 'aria-hidden': true}) }}
+                                                        {% endif %}
+                                                        {{ linkBadgeCaption }}
+                                                    </span>
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+</div>

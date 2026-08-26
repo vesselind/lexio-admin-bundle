@@ -1,0 +1,16 @@
+<div {{ attributes }}>
+
+        <label for="perPageSelect" class="form-label mb-0 me-2">{{ 'table.items_per_page'|trans({}, 'admin') }}</label>
+
+        {% set current = itemsPerPage %}
+        {% set options = options|default([10,20,50,100,300]) %}
+
+        <select id="perPageSelect" data-model="itemsPerPage" class="form-select form-select-sm w-auto"
+                data-action="change->live#action"
+                data-live-action-param="reloadPage"
+        >
+            {% for opt in options %}
+                <option value="{{ opt }}" {% if current is not empty %}{% if opt == current %}selected{% endif %}{% else %}{% if opt == 25 %}selected{% endif %}{% endif %}>{{ opt }}</option>
+            {% endfor %}
+        </select>
+</div>

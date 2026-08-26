@@ -1,0 +1,12 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\ActTitleField #}
+
+<div>
+    <a href="{{ path('acts.detail', {'id': field.entityInstance.id }) }}" target="_blank">{{ field.value }}</a>
+    {% if field.entityInstance.annotation %}
+        <span class="ms-2 badge bg-success"><i class="fa fa-check"></i> Анотация</span>
+    {% endif %}
+</div>
+{% if field.entityInstance.subtitle %}
+    <div>{{ field.entityInstance.subtitle }}</div>
+{% endif %}

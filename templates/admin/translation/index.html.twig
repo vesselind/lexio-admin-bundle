@@ -1,0 +1,157 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+
+{% block title %}{{ 'translation.title'|trans({}, 'admin') }}{% endblock %}
+
+{% block heading %}{{ 'translation.title'|trans({}, 'admin') }}{% endblock %}
+
+{% block page_actions %}
+    {% set currentFile = selectedFile ? selectedFile.filename : '' %}
+    {% set currentPage = app.request.query.getInt('page', 1) %}
+    {% if canSynchronizeTranslations %}
+        <form method="post" action="{{ path('admin.translation.send') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('translation.sync.upload') }}">
+            <input type="hidden" name="file" value="{{ currentFile }}">
+            <input type="hidden" name="search_key" value="{{ searchKey }}">
+            <input type="hidden" name="search_value" value="{{ searchValue }}">
+            <input type="hidden" name="page" value="{{ currentPage }}">
+            <button type="submit" class="btn btn-warning">
+                <i class="fa fa-cloud-upload me-1" aria-hidden="true"></i>
+                {{ 'translation.sync.send'|trans({}, 'admin') }}
+            </button>
+        </form>
+        <form method="post" action="{{ path('admin.translation.receive') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('translation.sync.download') }}">
+            <input type="hidden" name="file" value="{{ currentFile }}">
+            <input type="hidden" name="search_key" value="{{ searchKey }}">
+            <input type="hidden" name="search_value" value="{{ searchValue }}">
+            <input type="hidden" name="page" value="{{ currentPage }}">
+            <button type="submit" class="btn btn-info">
+                <i class="fa fa-cloud-download me-1" aria-hidden="true"></i>
+                {{ 'translation.sync.receive'|trans({}, 'admin') }}
+            </button>
+        </form>
+    {% endif %}
+    <form method="post" action="{{ path('admin.translation.clear_cache') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('translation.cache.clear') }}">
+        <input type="hidden" name="file" value="{{ currentFile }}">
+        <input type="hidden" name="search_key" value="{{ searchKey }}">
+        <input type="hidden" name="search_value" value="{{ searchValue }}">
+        <input type="hidden" name="page" value="{{ currentPage }}">
+        <button type="submit" class="btn btn-secondary">
+            <i class="fa fa-refresh me-1" aria-hidden="true"></i>
+            {{ 'translation.cache.clear'|trans({}, 'admin') }}
+        </button>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ path('admin.translation.index') }}" class="row g-3 align-items-end">
+                <div class="col-md-10">
+                    <label class="form-label" for="translation-file">
+                        {{ 'translation.file'|trans({}, 'admin') }}
+                    </label>
+                    <select id="translation-file" name="file" class="form-select">
+                        {% for file in files %}
+                            <option value="{{ file.filename }}"{% if selectedFile and selectedFile.filename == file.filename %} selected{% endif %}>
+                                {{ file.filename }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        {{ 'translation.select_file'|trans({}, 'admin') }}
+                    </button>
+                </div>
+            </form>
+
+            {% if selectedFile %}
+                <form method="get" action="{{ path('admin.translation.index') }}" class="row g-3 align-items-end mt-1">
+                    <input type="hidden" name="file" value="{{ selectedFile.filename }}">
+                    <div class="col-md-5">
+                        <label class="form-label" for="translation-search-key">
+                            {{ 'translation.search_key'|trans({}, 'admin') }}
+                        </label>
+                        <input type="search" id="translation-search-key" name="search_key"
+                               value="{{ searchKey }}" class="form-control">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label" for="translation-search-value">
+                            {{ 'translation.search_value'|trans({}, 'admin') }}
+                        </label>
+                        <input type="search" id="translation-search-value" name="search_value"
+                               value="{{ searchValue }}" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fa fa-search me-1" aria-hidden="true"></i>
+                            {{ 'translation.search'|trans({}, 'admin') }}
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if selectedFile %}
+        <div class="card">
+            <div class="card-header">
+                <strong>{{ selectedFile.filename }}</strong>
+                <span class="text-muted ms-2">({{ selectedFile.domain }} / {{ selectedFile.locale }})</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>{{ 'translation.key'|trans({}, 'admin') }}</th>
+                        <th>{{ 'translation.value'|trans({}, 'admin') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for entry in entries %}
+                        <tr>
+                            <td><code>{{ entry.key }}</code></td>
+                            <td>
+                                <form method="post" action="{{ path('admin.translation.update') }}" class="d-flex gap-2 align-items-start">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('translation.update') }}">
+                                    <input type="hidden" name="domain" value="{{ selectedFile.domain }}">
+                                    <input type="hidden" name="locale" value="{{ selectedFile.locale }}">
+                                    <input type="hidden" name="key" value="{{ entry.key }}">
+                                    <input type="hidden" name="search_key" value="{{ searchKey }}">
+                                    <input type="hidden" name="search_value" value="{{ searchValue }}">
+                                    <input type="hidden" name="page" value="{{ app.request.query.getInt('page', 1) }}">
+                                    <textarea name="value" class="form-control" rows="2">{{ entry.value }}</textarea>
+                                    <button type="submit" class="btn btn-success text-nowrap">
+                                        {{ 'translation.save'|trans({}, 'admin') }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                {{ 'translation.no_entries'|trans({}, 'admin') }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if entries.totalItemCount > 0 %}
+            <div class="d-flex mb-4 mt-3 align-items-center">
+                <span class="small"><strong>{{ entries.totalItemCount }}</strong> {{ 'listing_results'|trans({}, 'admin') }}</span>
+                <div class="ms-auto">
+                    {{ knp_pagination_render(entries) }}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            {{ 'translation.no_files'|trans({}, 'admin') }}
+        </div>
+    {% endif %}
+{% endblock %}

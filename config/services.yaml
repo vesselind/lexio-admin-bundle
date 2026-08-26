@@ -1,0 +1,159 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Lexio\AdminBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/LexioAdminBundle.php'
+            - '../src/Entity/'
+            - '../src/Enum/'
+            - '../src/Contract/Translation/TranslationCatalogException.php'
+            - '../src/Contract/Translation/TranslationCatalogInterface.php'
+            - '../src/Contract/Translation/TranslationEntry.php'
+            - '../src/Contract/Translation/TranslationFile.php'
+            - '../src/Contract/Translation/TranslationPackageMergeResult.php'
+            - '../src/Contract/Translation/TranslationPackageSynchronizerInterface.php'
+            - '../src/Contract/Translation/TranslationSynchronizationException.php'
+            - '../src/Service/Translation/InvalidTranslationDocumentException.php'
+            - '../src/Service/Translation/TranslationCacheException.php'
+            - '../src/Service/Translation/TranslationStorageException.php'
+            - '../src/Filter/'
+            - '../src/DependencyInjection/'
+            - '../src/Event/'
+            - '../src/Controller/'
+            - '../src/Message/'
+            - '../src/Command/MakeAdminSectionCommand.php'
+            - '../src/Command/UploadTranslationsCommand.php'
+            - '../src/Command/DownloadTranslationsCommand.php'
+            # Abstract component base classes — excluded so autoconfigure tags are not applied
+            - '../src/Component/Admin/AbstractExportExcel.php'
+            - '../src/Component/AbstractImageSelector.php'
+
+    # Controllers are public
+    Lexio\AdminBundle\Controller\:
+        resource: '../src/Controller/'
+        exclude:
+            - '../src/Controller/Admin/UpdateTranslationInput.php'
+        tags: ['controller.service_arguments']
+        public: true
+
+    # Core services bound to bundle parameters
+    Lexio\AdminBundle\AdminCore\AdminUrlGenerator:
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+        shared: false
+
+    Lexio\AdminBundle\AdminCore\FormContext:
+        arguments:
+            $locales: '%lexio_admin.locales%'
+            $defaultLocale: '%lexio_admin.default_locale%'
+        shared: false
+
+    Lexio\AdminBundle\AdminCore\Fields\HasRegisteredField:
+        arguments:
+            $userEntityClass: '%lexio_admin.user_entity_class%'
+
+    Lexio\AdminBundle\Form\CustomFields\CaptchaType:
+        arguments:
+            $turnstileKey: '%env(TURNSTILE_KEY)%'
+        tags: ['form.type']
+
+    Lexio\AdminBundle\Form\CustomFields\VanillaDatepickerType:
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+        tags: ['form.type']
+
+    Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    Lexio\AdminBundle\AdminCore\RouteLoader:
+        public: true
+
+    Lexio\AdminBundle\Service\EntityFilterer:
+        public: true
+
+    Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog:
+        arguments:
+            $translationDirectory: '%lexio_admin.translation_directory%'
+            $enabled: '%lexio_admin.translation_management_enabled%'
+
+    Lexio\AdminBundle\Service\Translation\TranslationSynchronizationOptions:
+        arguments:
+            $enabled: '%lexio_admin.translation_synchronization_enabled%'
+            $environment: '%kernel.environment%'
+            $appSecret: '%kernel.secret%'
+            $deployedAppUrl: '%lexio_admin.translation_synchronization_deployed_app_url%'
+            $apiPath: '%lexio_admin.translation_synchronization_api_path%'
+            $authSalt: '%lexio_admin.translation_synchronization_auth_salt%'
+            $signatureTtl: '%lexio_admin.translation_synchronization_signature_ttl%'
+            $timeout: '%lexio_admin.translation_synchronization_timeout%'
+            $maxPackageBytes: '%lexio_admin.translation_synchronization_max_package_bytes%'
+            $maxFiles: '%lexio_admin.translation_synchronization_max_files%'
+            $basicAuthUsername: '%lexio_admin.translation_synchronization_basic_auth_username%'
+            $basicAuthPassword: '%lexio_admin.translation_synchronization_basic_auth_password%'
+
+    Lexio\AdminBundle\Service\Translation\TranslationPackageManager:
+        arguments:
+            $translationDirectory: '%lexio_admin.translation_directory%'
+
+    Lexio\AdminBundle\Service\Translation\TranslationCacheClearer:
+        arguments:
+            $cacheDirectory: '%kernel.cache_dir%'
+
+    Lexio\AdminBundle\Contract\Translation\TranslationCatalogInterface:
+        alias: Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog
+
+    Lexio\AdminBundle\Contract\Translation\TranslationPackageSynchronizerInterface:
+        alias: Lexio\AdminBundle\Service\Translation\TranslationPackageSynchronizer
+
+    Lexio\AdminBundle\Command\UploadTranslationsCommand:
+        autoconfigure: false
+        tags:
+            - { name: console.command, command: lexio:translations:upload }
+
+    Lexio\AdminBundle\Command\DownloadTranslationsCommand:
+        autoconfigure: false
+        tags:
+            - { name: console.command, command: lexio:translations:download }
+
+    # Twig extensions
+    Lexio\AdminBundle\Twig\AdminExtension:
+        arguments:
+            $frontHomePageRoute: '%lexio_admin.front_home_page_route%'
+        tags: ['twig.extension']
+
+    Lexio\AdminBundle\Twig\AppExtension:
+        arguments:
+            $siteBaseUrl: '%env(SITE_BASE_URL)%'
+            $locales: '%lexio_admin.locales%'
+
+    # AutoTranslator
+    Lexio\AdminBundle\Service\AutoTranslator\EntityAutoTranslator:
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+            $locales: '%lexio_admin.locales%'
+
+    Lexio\AdminBundle\Page\Service\PageManager:
+      $manager: '@doctrine.orm.entity_manager'
+      $autoTranslator: '@Lexio\AdminBundle\Service\AutoTranslator\EntityAutoTranslator'
+      $defaultLocale: '%lexio_admin.default_locale%'
+
+    # ImageCacheResolver — needs %kernel.project_dir%
+    Lexio\AdminBundle\File\ImageCacheResolver:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    # FileManager — needs %kernel.project_dir% and SITE_BASE_URL; Filesystem is autowired
+    Lexio\AdminBundle\File\FileManager:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+            $siteBaseUrl: '%env(SITE_BASE_URL)%'
+
+    Lexio\AdminBundle\EventListener\FileEventListener:
+        tags:
+            - { name: doctrine.event_listener, event: postRemove, priority: 500, connection: default }
+

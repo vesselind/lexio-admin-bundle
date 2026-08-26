@@ -1,0 +1,10 @@
+{# @var column \App\AdminCore\Listing\Column #}
+{# @var field \App\AdminCore\Listing\Fields\StripeInvoiceUrlField #}
+
+{% if field.value %}
+<div class="badge bg-info-subtle border border-info text-success">
+    <a href="{{ field.value }}" target="_blank">Stripe <i class="fa fa-link"></i></a>
+</div>
+{% else %}
+    <span class="text-muted">n/a</span>
+{% endif %}
