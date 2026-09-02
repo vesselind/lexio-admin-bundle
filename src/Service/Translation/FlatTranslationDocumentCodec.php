@@ -87,10 +87,6 @@ final readonly class FlatTranslationDocumentCodec
             return null;
         }
 
-        if (!isset($matches['domain'], $matches['locale']) || !is_string($matches['domain']) || !is_string($matches['locale'])) {
-            return null;
-        }
-
         return ['domain' => $matches['domain'], 'locale' => $matches['locale']];
     }
 

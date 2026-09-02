@@ -1,6 +1,6 @@
 # Serializer
 
-For API serialization groups in native Symfony APIs, see `api.mdc`. For API Platform serialization, see `api-platform.mdc`. For DTO conventions, see `dto.mdc`.
+For API serialization groups in native Symfony APIs, see `api.md`. For API Platform serialization, see `api-platform.md`. For DTO conventions, see `dto.md`.
 
 ## Core Principles
 
@@ -9,7 +9,7 @@ For API serialization groups in native Symfony APIs, see `api.mdc`. For API Plat
 3. **Context builders (Symfony 7.1+)** — Use `withContext()` and `SerializerContextBuilder` for reusable serialization contexts instead of ad-hoc arrays.
 4. **Circular reference handler** — Configure `circular_reference_handler` globally. Default: return entity ID. Never let circular refs throw unhandled exceptions.
 5. **Discriminator map for inheritance** — Use `#[DiscriminatorMap]` on abstract base classes. Every concrete subclass must be registered. Deserialization of unknown types must fail explicitly.
-6. **DTO as serialization boundary** — Serialize DTOs, not entities. Entities carry Doctrine proxies, lazy collections, and internal state unsuitable for API responses. See `dto.mdc`.
+6. **DTO as serialization boundary** — Serialize DTOs, not entities. Entities carry Doctrine proxies, lazy collections, and internal state unsuitable for API responses. See `dto.md`.
 7. **Name converters** — Use `CamelCaseToSnakeCaseNameConverter` or `MetadataAwareNameConverter` globally. Never mix naming conventions within the same API.
 8. **Max depth for relations** — Set `#[MaxDepth]` on nested relations to prevent infinite recursion and control response payload size.
 

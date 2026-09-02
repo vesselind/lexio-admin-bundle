@@ -1,0 +1,40 @@
+@import "backgrounds";
+@import "borders";
+@import "gradients";
+@import "toasts-colors";
+
+// ============================================================
+// Utility classes — shadcn/ui-inspired helpers
+// ============================================================
+
+.dot {
+  width: 12px;
+  height: 12px;
+}
+
+// shadcn-style text utilities
+.text-muted-foreground {
+  color: $gray-500;
+}
+
+.text-foreground {
+  color: $gray-900;
+}
+
+// Subtle card hover (for clickable cards)
+.card-hover {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: $gray-300;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  }
+}
+
+// Divider utility
+.divider {
+  height: 1px;
+  background-color: $border-color;
+  border: none;
+  margin: 1rem 0;
+}

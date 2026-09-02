@@ -13,6 +13,8 @@ final class AdminExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(
         private readonly string $frontHomePageRoute,
+        /** @var array<string, mixed> */
+        private readonly array $ui,
     ) {
     }
 
@@ -28,6 +30,7 @@ final class AdminExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             'frontHomePageRoute' => $this->frontHomePageRoute,
+            'lexio_admin_ui' => $this->ui,
         ];
     }
 }

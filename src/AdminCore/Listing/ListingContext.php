@@ -7,6 +7,7 @@ namespace Lexio\AdminBundle\AdminCore\Listing;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Lexio\AdminBundle\AdminCore\Breadcrumbs\AdminBreadcrumbs;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkAction;
 use Lexio\AdminBundle\AdminCore\Fields\BaseField;
 use Lexio\AdminBundle\Filter\BaseFilter;
@@ -23,11 +24,13 @@ class ListingContext
     public const int DEFAULT_ITEMS_PER_PAGE = 20;
 
     /** @var array<string, Column> */
-    private array           $columns             = [];
-    private ?string         $entityFqcn          = null;
-    private ?BaseFilter     $filter              = null;
-    private ?string         $filterTypeClass     = null;
-    private bool            $showCreateButton    = true;
+    private array $columns = [];
+
+    /** @var class-string|null */
+    private ?string $entityFqcn = null;
+    private ?BaseFilter $filter = null;
+    private ?string $filterTypeClass = null;
+    private bool $showCreateButton = true;
 
     /** @var ArrayCollection<int, BulkAction> */
     private ArrayCollection $bulkActions;
@@ -37,18 +40,30 @@ class ListingContext
         private readonly RouterInterface        $router,
         private readonly EntityManagerInterface $entityManager,
         public readonly PaginatorInterface      $paginator,
-    ) {
+        public readonly AdminBreadcrumbs        $breadcrumbs
+    )
+    {
         $this->bulkActions = new ArrayCollection();
     }
 
     public function addColumn(string $propertyName, BaseField $field): static
     {
-        $this->columns[$propertyName] = new Column(
+        $column = new Column(
             $propertyName,
             AdminUtils::toSnakeCase($propertyName),
             $field,
             $this
         );
+
+        if ($this->entityFqcn !== null) {
+            $column->setEntityFqcn($this->entityFqcn);
+        }
+
+        $this->columns[$propertyName] = $column;
+
+        if ($this->entityFqcn !== null) {
+            $this->refreshColumnsSortability();
+        }
 
         return $this;
     }
@@ -78,7 +93,7 @@ class ListingContext
 
     public function setFilter(?BaseFilter $filter, ?string $filterTypeClass = BaseFilterType::class): static
     {
-        $this->filter          = $filter;
+        $this->filter = $filter;
         $this->filterTypeClass = $filterTypeClass;
 
         return $this;
@@ -113,14 +128,21 @@ class ListingContext
         return $this->requestStack->getCurrentRequest()->query->all();
     }
 
+    /**
+     * @param class-string $entityFqcn
+     */
     public function setEntityFqcn(string $entityFqcn): static
     {
         $this->entityFqcn = $entityFqcn;
 
-        $this->checkEntityFqcn();
+        $this->getEntityFqcnOrFail();
 
         foreach ($this->getColumns() as $column) {
             $column->setEntityFqcn($entityFqcn);
+        }
+
+        if ($this->columns !== []) {
+            $this->refreshColumnsSortability();
         }
 
         return $this;
@@ -131,11 +153,8 @@ class ListingContext
      */
     public function refreshColumnsSortability(): static
     {
-        $this->checkEntityFqcn();
-
-        /** @phpstan-ignore-next-line */
-        $entityFields = $this->entityManager->getClassMetadata($this->entityFqcn)->fieldNames;
-        $properties   = array_values($entityFields);
+        $entityFields = $this->entityManager->getClassMetadata($this->getEntityFqcnOrFail())->fieldNames;
+        $properties = array_values($entityFields);
 
         foreach ($this->getColumns() as $column) {
             $column->setSortable(in_array($column->propertyName, $properties, true));
@@ -184,17 +203,29 @@ class ListingContext
         return $this->showCreateButton;
     }
 
-    private function checkEntityFqcn(): void
+    /**
+     * @return class-string
+     */
+    private function getEntityFqcnOrFail(): string
     {
-        if (!$this->entityFqcn) {
+        $entityFqcn = $this->entityFqcn;
+
+        if ($entityFqcn === null) {
             throw new RuntimeException('Entity FQCN not set. Call setEntityFqcn() first.');
         }
 
-        if (!class_exists($this->entityFqcn)) {
+        if (!class_exists($entityFqcn)) {
             throw new RuntimeException(
-                sprintf('Entity class "%s" does not exist. Check the FQCN passed to setEntityFqcn().', $this->entityFqcn)
+                sprintf('Entity class "%s" does not exist. Check the FQCN passed to setEntityFqcn().', $entityFqcn)
             );
         }
+
+        return $entityFqcn;
+    }
+
+    public function breadcrumbs(): AdminBreadcrumbs
+    {
+        return $this->breadcrumbs->setEntityFqcn($this->getEntityFqcnOrFail());
     }
 }
 

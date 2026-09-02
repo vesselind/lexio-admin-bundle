@@ -13,42 +13,42 @@
                 </div>
 
                 <div class="col-lg-4">
-                    {{ 'column.type'|trans({}, 'admin') }}
+                    {{ 'column.type'|trans({}, lexio_admin_ui.translation_domain) }}
                 </div>
                 <div class="col-lg-8">
                     <span class="badge bg-primary">
-                     {{ entity.type.translationKey|trans({}, 'admin') }}
+                     {{ entity.type.translationKey|trans({}, lexio_admin_ui.translation_domain) }}
                     </span>
                 </div>
 
                 <div class="col-lg-4">
-                    {{ 'column.created_at'|trans({}, 'admin') }}:
+                    {{ 'column.created_at'|trans({}, lexio_admin_ui.translation_domain) }}:
                 </div>
                 <div class="col-lg-8">
                     {{ entity.createdAt|formatted_datetime }}
                 </div>
 
                 <div class="col-lg-4">
-                    {{ 'column.acting_user'|trans({}, 'admin') }}
+                    {{ 'column.acting_user'|trans({}, lexio_admin_ui.translation_domain) }}
                 </div>
                 <div class="col-lg-8">
                     {{ entity.actingUser|default('n/a') }}
                 </div>
                 <div class="col-lg-4">
-                    {{ 'column.affected_user'|trans({}, 'admin') }}
+                    {{ 'column.affected_user'|trans({}, lexio_admin_ui.translation_domain) }}
                 </div>
                 <div class="col-lg-8">
                     {{ entity.affectedUser|default('n/a') }}
                 </div>
                 <div class="col-lg-4">
-                    {{ 'column.user_agent'|trans({}, 'admin') }}:
+                    {{ 'column.user_agent'|trans({}, lexio_admin_ui.translation_domain) }}:
                 </div>
                 <div class="col-lg-8">
                     {{ entity.userAgent|default('n/a') }}
                 </div>
 
                 <div class="col-lg-4">
-                    {{ 'column.ip_address'|trans({}, 'admin') }}
+                    {{ 'column.ip_address'|trans({}, lexio_admin_ui.translation_domain) }}
                 </div>
                 <div class="col-lg-8">
                     {{ entity.ipAddress|default('n/a') }}

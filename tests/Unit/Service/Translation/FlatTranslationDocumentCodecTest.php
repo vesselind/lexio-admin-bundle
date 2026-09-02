@@ -6,6 +6,7 @@ namespace Lexio\AdminBundle\Tests\Unit\Service\Translation;
 
 use Lexio\AdminBundle\Service\Translation\FlatTranslationDocumentCodec;
 use Lexio\AdminBundle\Service\Translation\InvalidTranslationDocumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class FlatTranslationDocumentCodecTest extends TestCase
@@ -24,7 +25,7 @@ final class FlatTranslationDocumentCodecTest extends TestCase
         self::assertCount(2, array_filter(explode("\n", $yaml)));
     }
 
-    /** @dataProvider invalidDocumentProvider */
+    #[DataProvider('invalidDocumentProvider')]
     public function test_it_rejects_non_flat_or_duplicate_documents(string $yaml): void
     {
         $this->expectException(InvalidTranslationDocumentException::class);

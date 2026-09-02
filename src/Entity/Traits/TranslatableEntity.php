@@ -7,7 +7,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 trait TranslatableEntity
 {
     #[Gedmo\Locale]
-    protected $locale;
+    protected ?string $locale = null;
 
     /* Unmapped field */
     private bool $autoUpdateTranslation = false;

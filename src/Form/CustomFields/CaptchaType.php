@@ -6,38 +6,53 @@ namespace Lexio\AdminBundle\Form\CustomFields;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Cloudflare Turnstile / CAPTCHA hidden field.
+ * Google reCAPTCHA Enterprise hidden field.
  *
- * Wires up the `captcha` Stimulus controller with the configured site key.
+ * The optional `site_key` form option overrides the configured fallback. Use
+ * `captcha_action` to bind the generated token to the server-side assessment.
  *
- * The validation constraint (`CheckedCaptcha` or equivalent) must be supplied
- * by the host application via the `constraints` form option, since the validator
- * logic is application-specific.
- *
- * Usage in your app:
- *   $builder->add('captcha', CaptchaType::class, [
- *       'constraints' => [new \App\Validator\CheckedCaptcha()],
- *   ]);
+ * The host application must provide its server-side token validation constraint
+ * through the standard `constraints` form option.
  */
-class CaptchaType extends AbstractType
+final class CaptchaType extends AbstractType
 {
-    public function __construct(private readonly string $turnstileKey)
+    public function __construct(private readonly ?string $defaultSiteKey = null)
     {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'mapped'      => false,
-            'constraints' => [],   // Provide app-specific constraint via this option.
-            'attr'        => [
-                'data-controller' => 'captcha',
-                'data-api-key'    => $this->turnstileKey,
-            ],
+            'mapped' => false,
+            'constraints' => [],
+            'site_key' => $this->defaultSiteKey ?? '',
+            'captcha_action' => 'submit',
         ]);
+        $resolver->setAllowedTypes('site_key', 'string');
+        $resolver->setAllowedTypes('captcha_action', 'string');
+        $resolver->setAllowedValues(
+            'captcha_action',
+            static fn (string $action): bool => trim($action) !== '',
+        );
+    }
+
+    /** @param array<string, mixed> $options */
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        $attributes = $view->vars['attr'];
+        $attributes['data-controller'] = self::appendController(
+            (string) ($attributes['data-controller'] ?? ''),
+            'captcha',
+        );
+        $attributes['data-captcha-site-key-value'] = $options['site_key'];
+        $attributes['data-captcha-action-value'] = $options['captcha_action'];
+
+        $view->vars['attr'] = $attributes;
     }
 
     public function getParent(): string
@@ -47,7 +62,17 @@ class CaptchaType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'recaptcha';
+        return 'captcha';
+    }
+
+    private static function appendController(string $controllers, string $controller): string
+    {
+        $controllerNames = preg_split('/\s+/', trim($controllers), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        if (!in_array($controller, $controllerNames, true)) {
+            $controllerNames[] = $controller;
+        }
+
+        return implode(' ', $controllerNames);
     }
 }
-

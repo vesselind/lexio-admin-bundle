@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,20 +27,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *  - automatically hydrate entity-typed properties from their ID query parameter, and
  *  - support the existing MapQueryString mapping pipeline.
  */
-class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestPayloadValueResolver
+final class MapQueryStringValueResolver
 {
     private const array CONTEXT_DENORMALIZE = [
         'collect_denormalization_errors' => true,
     ];
 
     public function __construct(
+        private readonly EntityManagerInterface                             $entityManager,
         private readonly SerializerInterface&DenormalizerInterface $serializer,
         private readonly ?ValidatorInterface                       $validator = null,
-        private EntityManagerInterface                             $entityManager,
         private readonly ?TranslatorInterface                      $translator = null,
         private readonly string                                    $translationDomain = 'validators',
     ) {
-        parent::__construct($serializer);
     }
 
     public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
@@ -95,7 +95,11 @@ class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controll
                 if (null !== $payload && !\count($violations)) {
                     $constraints = $argument->constraints ?? null;
                     $violations->addAll(
-                        $this->validator->validate($payload, $constraints, $argument->validationGroups ?? null)
+                        $this->validator->validate(
+                            $payload,
+                            $constraints,
+                            $this->resolveValidationGroups($argument->validationGroups, $event),
+                        )
                     );
                 }
 
@@ -132,6 +136,9 @@ class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controll
         $event->setArguments($arguments);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -145,14 +152,23 @@ class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controll
             return null;
         }
 
+        $type = $argument->getType();
+        if ($type === null || !class_exists($type)) {
+            throw new \LogicException('MapQueryString requires a concrete class type.');
+        }
+
         $denormalized = $this->serializer->denormalize(
             $data,
-            $argument->getType(),
+            $type,
             'csv',
             $attribute->serializationContext + self::CONTEXT_DENORMALIZE + ['filter_bool' => true]
         );
 
-        $reflector = new \ReflectionClass($argument->getType());
+        if (!is_object($denormalized)) {
+            throw new \LogicException('MapQueryString could not denormalize the query string into an object.');
+        }
+
+        $reflector = new \ReflectionClass($type);
 
         foreach ($reflector->getProperties() as $property) {
             if (!$property->hasType()) {
@@ -167,7 +183,7 @@ class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controll
 
             $fqcn = $type->getName();
 
-            if (!$this->isEntity($fqcn)) {
+            if (!class_exists($fqcn) || !$this->isEntity($fqcn)) {
                 continue;
             }
 
@@ -185,10 +201,48 @@ class MapQueryStringValueResolver extends \Symfony\Component\HttpKernel\Controll
         return $denormalized;
     }
 
+    /**
+     * @param mixed $validationGroups
+     * @return string|GroupSequence|array<int, string>|null
+     */
+    private function resolveValidationGroups(
+        mixed $validationGroups,
+        ControllerArgumentsEvent $event,
+    ): string|GroupSequence|array|null {
+        $resolvedGroups = $validationGroups;
+
+        if ($resolvedGroups instanceof \Closure) {
+            $resolvedGroups = $event->evaluate($resolvedGroups, null);
+        }
+
+        if ($resolvedGroups === null || is_string($resolvedGroups) || $resolvedGroups instanceof GroupSequence) {
+            return $resolvedGroups;
+        }
+
+        if (!is_array($resolvedGroups)) {
+            throw new \LogicException('Validation groups must be a string, an array of strings, or a GroupSequence.');
+        }
+
+        $groups = [];
+        foreach ($resolvedGroups as $group) {
+            if ($group instanceof \Closure || $group instanceof GroupSequence) {
+                throw new \LogicException('Nested validation group expressions are not supported.');
+            }
+
+            if (!is_string($group)) {
+                throw new \LogicException('Validation groups must be strings.');
+            }
+
+            $groups[] = $group;
+        }
+
+        return $groups;
+    }
+
     private function isEntity(string $class): bool
     {
         try {
-            return null !== $this->entityManager->getClassMetadata($class)->getIdentifier();
+            return $this->entityManager->getClassMetadata($class)->getIdentifier() !== [];
         } catch (\Doctrine\Persistence\Mapping\MappingException) {
             return false;
         }

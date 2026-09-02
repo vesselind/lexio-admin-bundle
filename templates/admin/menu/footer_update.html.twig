@@ -1,11 +1,7 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
-{% block title %}
-    Footer меню - редактиране
-{% endblock %}
+{% block title %}{{ 'admin.menu.footer_update'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
-{% block heading %}
-    Footer меню - редактиране
-{% endblock %}
+{% block heading %}{{ 'admin.menu.footer_update'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
 {% block breadcrumbs %}
     {{ wo_render_breadcrumbs() }}

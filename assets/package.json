@@ -1,0 +1,90 @@
+{
+    "name": "@lexio/admin-bundle",
+    "description": "Reusable Stimulus controllers and structural styles for the Lexio Symfony admin UI bundle.",
+    "license": "MIT",
+    "version": "0.1.0",
+    "keywords": [
+        "symfony",
+        "symfony-ux",
+        "stimulus",
+        "admin-ui"
+    ],
+    "homepage": "https://github.com/lexio/admin-bundle",
+    "type": "module",
+    "files": [
+        "dist",
+        "src",
+        "styles",
+        "package.json",
+        "README.md",
+        "build.mjs",
+        "build-styles.mjs"
+    ],
+    "scripts": {
+        "build": "node build.mjs && node build-styles.mjs",
+        "build:styles": "node build-styles.mjs",
+        "test": "vitest run"
+    },
+    "symfony": {
+        "controllers": {
+            "add-autocomplete-item": { "name": "add-autocomplete-item", "main": "dist/controllers/add_autocomplete_item_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "association-modal-type": { "name": "association-modal-type", "main": "dist/controllers/association_modal_type_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "autocomplete-search": { "name": "autocomplete-search", "main": "dist/controllers/autocomplete_search_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true, "autoimport": { "tom-select/dist/css/tom-select.bootstrap5.css": true } },
+            "autosubmit": { "name": "autosubmit", "main": "dist/controllers/autosubmit_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "base-modal": { "name": "base-modal", "main": "dist/controllers/base_modal_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "bulk-action": { "name": "bulk-action", "main": "dist/controllers/bulk_action_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "captcha": { "name": "captcha", "main": "dist/controllers/captcha_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "turnstile": { "name": "turnstile", "main": "dist/controllers/turnstile_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "check-selection": { "name": "check-selection", "main": "dist/controllers/check_selection_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "ckeditor": { "name": "ckeditor", "main": "dist/controllers/ckeditor_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true, "autoimport": { "ckeditor5/ckeditor5.css": true } },
+            "clipboard": { "name": "clipboard", "main": "dist/controllers/clipboard_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "collapsable-sidebar": { "name": "collapsable-sidebar", "main": "dist/controllers/collapsable_sidebar_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "file-upload-form": { "name": "file-upload-form", "main": "dist/controllers/file-upload-form_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "flash-message": { "name": "flash-message", "main": "dist/controllers/flash-message_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "image-gallery": { "name": "image-gallery", "main": "dist/controllers/image_gallery_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "image-selector": { "name": "image-selector", "main": "dist/controllers/image_selector_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "input-image-selector": { "name": "input-image-selector", "main": "dist/controllers/input_image_selector_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "links-search-field": { "name": "links-search-field", "main": "dist/controllers/links_search_field_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "modal": { "name": "modal", "main": "dist/controllers/modal_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "navigate-turbo": { "name": "navigate-turbo", "main": "dist/controllers/navigate_turbo_controller.js", "webpackMode": "eager", "fetch": "eager", "enabled": true },
+            "open-base-modal": { "name": "open-base-modal", "main": "dist/controllers/open_base_modal_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "sortable": { "name": "sortable", "main": "dist/controllers/sortable_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "textarea-placeholders": { "name": "textarea-placeholders", "main": "dist/controllers/textarea_placeholders_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "toggle-class": { "name": "toggle-class", "main": "dist/controllers/toggle-class_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "tooltip": { "name": "tooltip", "main": "dist/controllers/tooltip_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true },
+            "vanilla-datepicker": { "name": "vanilla-datepicker", "main": "dist/controllers/vanilla_datepicker_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true, "autoimport": { "@lexio/admin-bundle/styles/vanilla_datepicker.scss": true } },
+            "vanilla-datepicker-live": { "name": "vanilla-datepicker-live", "main": "dist/controllers/vanilla_datepicker_live_controller.js", "webpackMode": "lazy", "fetch": "lazy", "enabled": true, "autoimport": { "@lexio/admin-bundle/styles/vanilla_datepicker.scss": true } }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0",
+            "@hotwired/turbo": "^7.1.1",
+            "@symfony/ux-live-component": "^3.1",
+            "bootstrap": "^5.3.0",
+            "ckeditor5": "^43.0.0",
+            "debounce": "^2.2.0",
+            "sortablejs": "^1.15.0",
+            "tom-select": "^2.2.0",
+            "vanillajs-datepicker": "^1.3.0"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@hotwired/turbo": "^7.1.1 || ^8.0",
+        "@symfony/ux-live-component": "^3.1",
+        "bootstrap": "^5.3.0",
+        "ckeditor5": "^43.0.0",
+        "debounce": "^2.2.0",
+        "sortablejs": "^1.15.0",
+        "tom-select": "^2.2.0",
+        "vanillajs-datepicker": "^1.3.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.27.0",
+        "sass": "^1.74.1",
+        "vitest": "^4.0.0"
+    },
+    "packageManager": "yarn@1.22.22",
+    "engines": {
+        "node": ">=18"
+    }
+}

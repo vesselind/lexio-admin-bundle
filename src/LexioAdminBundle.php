@@ -17,6 +17,13 @@ final class LexioAdminBundle extends AbstractBundle
         // Register bundle templates under the @LexioAdmin namespace.
         // Must be in prependExtension() so the config is available when TwigBundle loads.
         if ($container->hasExtension('twig')) {
+            // Bundle form blocks are defaults; themes configured by the host load later and can override them.
+            $configurator->extension('twig', [
+                'form_themes' => [
+                    '@LexioAdmin/form/custom_fields_theme.html.twig',
+                ],
+            ], prepend: true);
+
             $configurator->extension('twig', [
                 'paths' => [
                     $this->getPath() . '/templates' => 'LexioAdmin',
@@ -80,6 +87,64 @@ final class LexioAdminBundle extends AbstractBundle
                 ->scalarNode('front_home_page_route')
                     ->defaultValue('static_pages.home_page')
                     ->info('Route name for the front home page. Used by the breadcrumbs and others.')
+                ->end()
+                ->arrayNode('ui')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('seo_template')
+                            ->defaultNull()
+                            ->info('Optional host template rendered by the admin layout SEO extension point.')
+                        ->end()
+                        ->scalarNode('favicon_asset')
+                            ->defaultNull()
+                            ->info('Optional public asset path for the admin favicon.')
+                        ->end()
+                        ->scalarNode('admin_logo_asset')
+                            ->defaultNull()
+                            ->info('Optional public asset path for the admin logo.')
+                        ->end()
+                        ->scalarNode('admin_logo_alt')
+                            ->defaultValue('admin.logo_alt')
+                            ->info('Translation key for the admin logo alt text.')
+                        ->end()
+                        ->scalarNode('title_translation_key')
+                            ->defaultNull()
+                            ->info('Optional translation key rendered after the admin page title.')
+                        ->end()
+                        ->scalarNode('title_translation_domain')
+                            ->defaultNull()
+                            ->info('Optional translation domain for the admin title suffix.')
+                        ->end()
+                        ->scalarNode('translation_domain')
+                            ->defaultValue('LexioAdminBundle')
+                            ->cannotBeEmpty()
+                            ->info('Translation domain for reusable admin UI messages.')
+                        ->end()
+                        ->arrayNode('routes')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('home')->defaultNull()->end()
+                                ->scalarNode('header_search')->defaultValue('admin.header_search')->end()
+                                ->scalarNode('notification_index')->defaultValue('admin.system_notification.index')->end()
+                                ->scalarNode('profile')->defaultValue('admin.user.profile')->end()
+                                ->scalarNode('logout')->defaultValue('security.logout')->end()
+                                ->scalarNode('exit_impersonation')->defaultValue('home_page')->end()
+                                ->scalarNode('flash')->defaultValue('flash.create')->end()
+                                ->scalarNode('ckeditor_upload')->defaultValue('admin.ckeditor.upload')->end()
+                                ->scalarNode('links_search')->defaultValue('admin._modals.links_search')->end()
+                                ->scalarNode('image_index')->defaultValue('admin.image.index')->end()
+                                ->scalarNode('image_upload')->defaultValue('admin.image.upload')->end()
+                                ->scalarNode('image_download')->defaultValue('admin.image.download')->end()
+                                ->scalarNode('image_delete')->defaultValue('admin.image.delete')->end()
+                                ->scalarNode('image_modal_gallery')->defaultValue('admin.image.modal_gallery')->end()
+                                ->scalarNode('image_modal_upload')->defaultValue('admin.image.modal_upload')->end()
+                                ->scalarNode('file_index')->defaultValue('admin.file.index')->end()
+                                ->scalarNode('file_upload')->defaultValue('admin.file.upload')->end()
+                                ->scalarNode('file_download')->defaultValue('admin.file.download')->end()
+                                ->scalarNode('file_delete')->defaultValue('admin.file.delete')->end()
+                            ->end()
+                        ->end()
+                    ->end()
                 ->end()
                 ->arrayNode('translation_management')
                     ->addDefaultsIfNotSet()
@@ -160,6 +225,30 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.google_translation_api_key', $config['google_translation_api_key']);
         $container->setParameter('lexio_admin.user_entity_class', $config['user_entity_class']);
         $container->setParameter('lexio_admin.front_home_page_route', $config['front_home_page_route']);
+
+        /** @var array{
+         *     seo_template: string|null,
+         *     favicon_asset: string|null,
+         *     admin_logo_asset: string|null,
+         *     admin_logo_alt: string,
+         *     title_translation_key: string|null,
+         *     title_translation_domain: string|null,
+         *     translation_domain: string,
+         *     routes: array<string, string|null>
+         * } $ui
+         */
+        $ui = $config['ui'];
+        $ui['routes']['home'] ??= $config['front_home_page_route'];
+        $ui['title_translation_domain'] ??= $ui['translation_domain'];
+        $container->setParameter('lexio_admin.ui', $ui);
+        $container->setParameter('lexio_admin.ui.translation_domain', $ui['translation_domain']);
+        foreach ($ui['routes'] as $routeName => $route) {
+            if (!is_string($route)) {
+                throw new \LogicException(sprintf('The configured admin UI route "%s" must be a string.', $routeName));
+            }
+
+            $container->setParameter('lexio_admin.ui.routes.' . $routeName, $route);
+        }
 
         /** @var array{
          *     enabled: bool,

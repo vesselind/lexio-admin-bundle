@@ -1,11 +1,9 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
-{% block title %}
-    Header меню - редактиране
-{% endblock %}
+{% block title %}{{ 'admin.menu.header_update'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
 {# The main page content block #}
 {% block content %}
-    <h2>Header меню - редактиране</h2>
+    <h2>{{ 'admin.menu.header_update'|trans({}, lexio_admin_ui.translation_domain) }}</h2>
 
 
     <div class="row mt-4">

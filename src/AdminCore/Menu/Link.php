@@ -35,7 +35,13 @@ class Link implements MenuItemInterface
 
     public function isActive(): bool
     {
-        return $this->url === $this->requestStack->getCurrentRequest()->getPathInfo();
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request === null) {
+            return false;
+        }
+
+        return $this->url === $request->getPathInfo();
     }
 }
 

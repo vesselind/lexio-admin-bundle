@@ -8,7 +8,7 @@ class EnumSelectOptionField extends BaseField
 {
     /**
      * @param string        $enumClass         FQCN of the backed enum.
-     * @param \BackedEnum[] $choices            Available choices.
+     * @param list<mixed>   $choices            Available choices.
      * @param string        $choiceLabel        Property name on the enum for the label (e.g. 'label').
      * @param string|null   $translationDomain  Optional Symfony translation domain.
      */
@@ -30,18 +30,21 @@ class EnumSelectOptionField extends BaseField
         return parent::getValue()->value;
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
     public function getChoices(): array
     {
         if (empty($this->choices)) {
             return [];
         }
 
-        if (!$this->choices[0] instanceof \BackedEnum) {
-            throw new \RuntimeException('The choices must be an array of BackedEnum instances.');
-        }
-
         $choices = [];
         foreach ($this->choices as $choice) {
+            if (!$choice instanceof \BackedEnum) {
+                throw new \RuntimeException('The choices must be an array of BackedEnum instances.');
+            }
+
             $choices[$choice->value] = $choice->{$this->choiceLabel};
         }
 

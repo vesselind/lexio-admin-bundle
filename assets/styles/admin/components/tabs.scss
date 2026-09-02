@@ -1,0 +1,77 @@
+// ============================================================
+// Tabs — shadcn/ui-inspired underline style
+// ============================================================
+
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  list-style: none;
+  border-bottom: 1px solid $border-color;
+
+  .tab {
+    padding: 0.75rem 1rem;
+    list-style-type: none;
+    display: inline-block;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      border-bottom: 2px solid $gray-300;
+    }
+
+    &:active, &.tab-active {
+      border-bottom: 2px solid $primary;
+    }
+
+    a {
+      text-decoration: none;
+      color: $gray-500;
+      font-weight: 500;
+      font-size: $font-size-base;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: $gray-900;
+      }
+
+      &.tab-active {
+        color: $gray-900;
+      }
+    }
+  }
+}
+
+// Active tab detection via child link
+.tab:has(.tab-active) {
+  border-bottom: 2px solid $primary;
+}
+
+// Bootstrap nav-tabs overrides for shadcn style
+.nav-tabs {
+  .nav-link {
+    color: $gray-500;
+    font-weight: 500;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      border-color: transparent;
+      border-bottom-color: $gray-300;
+      color: $gray-900;
+    }
+
+    &.active {
+      color: $gray-900;
+      border-color: transparent;
+      border-bottom-color: $primary;
+      background: transparent;
+    }
+  }
+}

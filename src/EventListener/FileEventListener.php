@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\EventListener;
 
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ObjectManager;
 use Lexio\AdminBundle\Contract\File\FileEntityInterface;
 use Lexio\AdminBundle\File\FileManager;
 
@@ -14,6 +15,9 @@ final readonly class FileEventListener
     {
     }
 
+    /**
+     * @param LifecycleEventArgs<ObjectManager> $args
+     */
     public function postRemove(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();

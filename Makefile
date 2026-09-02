@@ -1,4 +1,12 @@
-.PHONY: ci tests quality install
+.PHONY: ci tests quality install assets-install assets-build assets-styles-build assets-test
+
+ifeq ($(OS),Windows_NT)
+PHPSTAN := vendor\\bin\\phpstan.bat
+PHPUNIT := vendor\\bin\\phpunit.bat
+else
+PHPSTAN := vendor/bin/phpstan
+PHPUNIT := vendor/bin/phpunit
+endif
 
 # ─── Install ──────────────────────────────────────────────────────────────────
 install:
@@ -9,11 +17,24 @@ ci: quality tests
 
 # ─── Static analysis ─────────────────────────────────────────────────────────
 quality:
-	vendor/bin/phpstan analyse src --level=8 --memory-limit=512M
+	$(PHPSTAN) analyse src --level=8 --memory-limit=512M
 
 # ─── Tests ───────────────────────────────────────────────────────────────────
 tests:
-	vendor/bin/phpunit
+	$(PHPUNIT)
+
+# ─── Frontend package ───────────────────────────────────────────────────────
+assets-install:
+	yarn --cwd assets install --ignore-scripts
+
+assets-build: assets-styles-build
+	node assets/build.mjs
+
+assets-styles-build:
+	node assets/build-styles.mjs
+
+assets-test:
+	node --test assets/tests/controllers-contract.test.mjs assets/tests/styles-contract.test.mjs
 
 # ─── Quality tooling setup ───────────────────────────────────────────────────
 quality-install:

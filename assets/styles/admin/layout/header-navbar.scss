@@ -1,0 +1,77 @@
+// ============================================================
+// Header Navbar — shadcn/ui-inspired clean header
+// ============================================================
+
+header.navbar {
+  background: var(--lexio-admin-navbar-background, #{$navbar-background}) !important;
+  border-bottom: 1px solid var(--lexio-admin-border-color, #{$border-color});
+  position: relative;
+  z-index: 1030;
+  box-shadow: none;
+
+  // User menu
+  .admin-user-menu {
+    color: $gray-700;
+
+    &:hover {
+      color: $gray-900;
+    }
+  }
+
+  // Mobile-specific styles
+  @media screen and (max-width: 768px) {
+    background: var(--lexio-admin-navbar-mobile-background, #{$navbar-mobile-background}) !important;
+
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.7rem !important;
+    padding-left: 0.7rem !important;
+    padding-right: 0.7rem !important;
+
+    // Hide search on mobile
+    .header-search {
+      display: none !important;
+    }
+
+    // Hide user full name on mobile, keep only avatar
+    .dropdown {
+      .dropdown-toggle {
+        font-size: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        text-decoration: none;
+
+        // Show only the avatar circle
+        div {
+          font-size: 0.875rem !important;
+        }
+      }
+
+      .dropdown-menu {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(0) !important;
+      }
+    }
+
+    // Style the hamburger button container
+    .navbar-brand {
+      background: transparent !important;
+      border: none;
+      margin: 0;
+      padding: 0.5rem 0.75rem !important;
+
+      .navbar-toggler {
+        border: none !important;
+        padding: 0.25rem !important;
+
+        &:focus {
+          box-shadow: none !important;
+        }
+
+        .navbar-toggler-icon {
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.65)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+      }
+    }
+  }
+}

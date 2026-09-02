@@ -12,6 +12,9 @@ use Lexio\AdminBundle\Utils\AdminUtils;
  */
 class ActMetaTab extends Tab
 {
+    /**
+     * @param array<string, mixed> $routeParams
+     */
     public function __construct(
         private ?string $title      = 'tab.act_meta',
         private ?string $pageRoute  = '',
@@ -27,7 +30,8 @@ class ActMetaTab extends Tab
 
     public function getRoute(): string
     {
-        if ($this->getEntityInstance() === null) {
+        $entityInstance = $this->getEntityInstance();
+        if ($entityInstance === null) {
             throw new \InvalidArgumentException(
                 '[ActMetaTab] Entity instance is not set. Either set the entity instance or provide explicit routeParams.'
             );
@@ -37,22 +41,26 @@ class ActMetaTab extends Tab
             return $this->pageRoute;
         }
 
-        return sprintf('admin.%s.meta', AdminUtils::classNameToSnake(get_class($this->getEntityInstance())));
+        return sprintf('admin.%s.meta', AdminUtils::classNameToSnake(get_class($entityInstance)));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(): array
     {
-        if (empty($this->routeParams) && $this->getEntityInstance() === null) {
+        if (!empty($this->routeParams)) {
+            return $this->routeParams;
+        }
+
+        $entityInstance = $this->getEntityInstance();
+        if ($entityInstance === null) {
             throw new \InvalidArgumentException(
                 '[ActMetaTab] Entity instance is not set. Either set the entity instance or provide explicit routeParams.'
             );
         }
 
-        if (!empty($this->routeParams)) {
-            return $this->routeParams;
-        }
-
-        return ['id' => $this->getEntityInstance()->getId()];
+        return ['id' => $entityInstance->getId()];
     }
 }
 

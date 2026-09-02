@@ -11,7 +11,6 @@ use Lexio\AdminBundle\Controller\BaseCrudController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Webmozart\Assert\Assert;
 
 #[AsTwigComponent(name: 'Admin:SideMenu', template: '@LexioAdmin/components/Admin/SideMenu.html.twig')]
 class SideMenu extends BaseController
@@ -26,10 +25,15 @@ class SideMenu extends BaseController
     {
         $homeRoute = $parameterBag->get('lexio_admin.front_home_page_route');
 
-        Assert::notNull($homeRoute, 'The "lexio_admin.front_home_page_route" parameter must be set in your configuration.');
-        Assert::string($homeRoute, 'The "lexio_admin.front_home_page_route" parameter must be a string. Check your bundle configuration.');
+        if ($homeRoute === null) {
+            throw new \LogicException('The "lexio_admin.front_home_page_route" parameter must be set in your configuration.');
+        }
 
-        $this->homeRoute = $parameterBag->get('lexio_admin.front_home_page_route');
+        if (!is_string($homeRoute)) {
+            throw new \LogicException('The "lexio_admin.front_home_page_route" parameter must be a string. Check your bundle configuration.');
+        }
+
+        $this->homeRoute = $homeRoute;
     }
 
     /**

@@ -10,9 +10,9 @@ use Lexio\AdminBundle\Entity\SortableMenu;
  * @extends ServiceEntityRepository<SortableMenu>
  *
  * @method SortableMenu|null find($id, $lockMode = null, $lockVersion = null)
- * @method SortableMenu|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SortableMenu|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method SortableMenu[]    findAll()
- * @method SortableMenu[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SortableMenu[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class SortableMenuRepository extends ServiceEntityRepository
 {
@@ -37,6 +37,16 @@ class SortableMenuRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function refresh(SortableMenu $entity): void
+    {
+        $this->getEntityManager()->refresh($entity);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 
     /**

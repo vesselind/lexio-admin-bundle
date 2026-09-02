@@ -35,6 +35,9 @@ final class ItemsPerPage
     {
     }
 
+    /**
+     * @param list<int> $options
+     */
     public function mount(int $itemsPerPage = 25, array $options = []): void
     {
         $this->itemsPerPage = $itemsPerPage;
@@ -48,6 +51,11 @@ final class ItemsPerPage
     public function reloadPage(): RedirectResponse
     {
         $request = $this->requestStack->getCurrentRequest();
+
+        if ($request === null) {
+            throw new \LogicException('ItemsPerPage can only reload a page inside an HTTP request.');
+        }
+
         $params = $request->query->all();
         $params['limit'] = $this->itemsPerPage;
 

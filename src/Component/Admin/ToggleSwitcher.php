@@ -33,13 +33,21 @@ class ToggleSwitcher extends AbstractController
     use FieldComponentTrait;
 
 
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly string $translationDomain,
+    )
     {
     }
 
     #[LiveAction]
     public function setPropertyValue(): void
     {
+        if ($this->propertyName === null) {
+            return;
+        }
+
         $entityData = $this->getEntityData();
 
         if (!$entityData) {
@@ -51,7 +59,7 @@ class ToggleSwitcher extends AbstractController
         $this->manager()->flush();
 
 
-        $this->addFlash(Flash::SUCCESS->value, $this->translator->trans('message.item_updated', [], 'admin'));
+        $this->addFlash(Flash::SUCCESS->value, $this->translator->trans('message.item_updated', [], $this->translationDomain));
     }
 
     public function manager(): EntityManagerInterface

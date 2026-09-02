@@ -7,7 +7,7 @@ namespace Lexio\AdminBundle\Twig;
 use Lexio\AdminBundle\Utils\TextPurifier;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\String\UnicodeString;
 use Twig\Extension\AbstractExtension;
 use Twig\Markup;
@@ -21,7 +21,7 @@ final class AppExtension extends AbstractExtension
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly SerializerInterface   $serializer,
+        private readonly NormalizerInterface   $serializer,
         private readonly Packages              $packages,
         private readonly string                $siteBaseUrl,
         /** @var list<string> */
@@ -144,8 +144,17 @@ final class AppExtension extends AbstractExtension
     /** @return array<mixed> */
     public function castToArray(mixed $object): array
     {
-        /** @phpstan-ignore-next-line */
-        return $this->serializer->normalize($object, 'array');
+        $normalized = $this->serializer->normalize($object, 'array');
+
+        if ($normalized instanceof \ArrayObject) {
+            return $normalized->getArrayCopy();
+        }
+
+        if (!is_array($normalized)) {
+            throw new \UnexpectedValueException('The value could not be normalized to an array.');
+        }
+
+        return $normalized;
     }
 
     public function camelToTitle(string $label): string

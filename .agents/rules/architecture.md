@@ -6,14 +6,14 @@
 
 1. **Adapt, never prescribe** — Detect existing patterns in the codebase and follow them. No forced DDD or MVC.
 2. **Bounded contexts** — Group related code by domain area. Respect existing module boundaries.
-3. **Layer order (bundle)** — Extension/config (`configure()`, `loadExtension()`) → internal services → **public API** (`Contract/`, events, DTOs) → integration tests (minimal Kernel) → Flex recipe/docs. If the bundle ships Doctrine entities or API resources, then follow `ai-new/rules/doctrine.md` / `ai-new/rules/api-platform.md` for those optional layers.
-4. **Makefile: three targets only** — `make ci`, `make tests`, `make quality`. All tools run inside these. See `ai-new/rules/quality-pipeline.md`.
-5. **Constructor injection only** — See `ai-new/rules/coding-standards.md` for DI conventions. No service locator or setter injection.
-6. **Interface-driven infrastructure** — See `ai-new/rules/coding-standards.md` for interface-driven DI. Implementations in infrastructure layer.
+3. **Layer order (bundle)** — Extension/config (`configure()`, `loadExtension()`) → internal services → **public API** (`Contract/`, events, DTOs) → integration tests (minimal Kernel) → Flex recipe/docs. If the bundle ships Doctrine entities or API resources, then follow `doctrine.md` / `api-platform.md` for those optional layers.
+4. **Makefile: three targets only** — `make ci`, `make tests`, `make quality`. All tools run inside these. See `quality-pipeline.md`.
+5. **Constructor injection only** — See `coding-standards.md` for DI conventions. No service locator or setter injection.
+6. **Interface-driven infrastructure** — See `coding-standards.md` for interface-driven DI. Implementations in infrastructure layer.
 7. **Events are data, not behavior** — Domain events (Symfony EventDispatcher, synchronous) are final readonly DTOs. All logic lives in subscribers.
 8. **Configuration as typed objects** — Use Options Object DTOs for config. Never inject ParameterBag in domain.
 
-> For state machine workflows, see `ai-new/rules/workflow.md`. For async event reactions via Messenger, see `ai-new/rules/messenger.md`. For scheduled console tasks, see `ai-new/rules/console-commands.md`.
+> For state machine workflows, see `workflow.md`. For async event reactions via Messenger, see `messenger.md`. For scheduled console tasks, see `console-commands.md`.
 
 ---
 
@@ -51,12 +51,12 @@ Before adding code, audit the bundle: How is DI wired (XML vs PHP)? What is alre
 
 ```php
 // Don't leak internal classes in Contract/
-// Don't register bundle services via PHP attributes — use config (see ai-new/rules/symfony-bundle.md)
+// Don't register bundle services via PHP attributes — use config (see symfony-bundle.md)
 ```
 
 ### Makefile as Entry Point
 
-Only three targets are in the contract: `make quality`, `make tests`, `make ci`. All tools (PHPStan, Deptrac, PHPUnit, Infection, etc.) run inside these. After any implementation, run `make ci`. See `ai-new/rules/quality-pipeline.md`.
+Only three targets are in the contract: `make quality`, `make tests`, `make ci`. All tools (PHPStan, Deptrac, PHPUnit, Infection, etc.) run inside these. After any implementation, run `make ci`. See `quality-pipeline.md`.
 
 **Do:**
 
@@ -76,7 +76,7 @@ vendor/bin/phpstan  # Use make quality
 
 ### Constructor Injection & Interface-Driven DI
 
-See `ai-new/rules/coding-standards.md` for full Do/Don't patterns (constructor injection, `#[AsAlias]`, `#[TaggedIterator]`).
+See `coding-standards.md` for full Do/Don't patterns (constructor injection, `#[AsAlias]`, `#[TaggedIterator]`).
 
 **Key rules:** All dependencies via constructor. Type-hint interfaces (DIP). Domain interfaces use only domain types — no `EntityManagerInterface`, `ContainerInterface`, or `ParameterBagInterface`.
 
@@ -182,7 +182,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
 ### Domain Events — Heavy Reactions
 
-If the reaction involves network I/O (API, email), heavy CPU (PDF), or database writes, offload to async processing via Symfony Messenger — see `ai-new/rules/messenger.md`. Never execute heavy tasks synchronously in the subscriber.
+If the reaction involves network I/O (API, email), heavy CPU (PDF), or database writes, offload to async processing via Symfony Messenger — see `messenger.md`. Never execute heavy tasks synchronously in the subscriber.
 
 ### Domain Events — Cross-Context via Contract
 
@@ -272,7 +272,7 @@ parameters:
 
 ### Configuration — Secrets Vault
 
-> See `ai-new/rules/security.md` SBD-07 for secrets vault conventions (`secrets:set`, no credentials in `.env`).
+> See `security.md` SBD-07 for secrets vault conventions (`secrets:set`, no credentials in `.env`).
 
 ### Configuration — Cache Warmup in CI
 

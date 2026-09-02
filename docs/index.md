@@ -14,6 +14,7 @@
   - `user_entity_class`
   - `front_home_page_route`
 - **1.3** Overriding Templates & Styles
+- **1.4** Admin Asset Package (`assets/package.json`, Stimulus controller metadata, and build contract)
 
 ---
 
@@ -117,11 +118,12 @@
 - **8.6** `Admin:ExportExcel` — Excel export button
 - **8.7** `Admin:ItemsPerPage` — per-page selector
 - **8.8** `Admin:BaseModal` / `Admin:OpenBaseModalBtn` / `Admin:BaseModalBody` — modal system
-- **8.9** `Admin:PublishBlog` — blog publish toggle
+- **8.9** `Admin:Img` — admin image renderer
 - **8.10** `ConfirmationModal` — generic confirmation dialog
-- **8.11** `ImageSelector` — image picker
-- **8.12** `Img` — responsive image component
-- **8.13** `FieldComponentTrait` — shared trait for field-based live components
+- **8.11** `FieldComponentTrait` — shared trait for field-based live components
+
+Public-site components such as `BlogRatingWidget`, `BlogSearchWidget`, `FeaturedBlogs`,
+`ImageSelector`, `Img`, and `TopCategories` are owned by the host application.
 
 ---
 
@@ -131,9 +133,10 @@
 - **9.2** `InputImageSelectorType` — image selection field
 - **9.3** `AssociationModalType` — entity association picker via modal
 - **9.4** `VanillaDatepickerType` — date picker
-- **9.5** `CaptchaType` — Turnstile CAPTCHA
-- **9.6** `BaseFilterType` — auto-generated filter forms
-- **9.7** Standard admin forms (`SeoType`, `BlogShortType`, `PageObjectType`, `HeaderMenuType`, `FooterMenuType`)
+- **9.5** `TurnstileType` — Cloudflare Turnstile CAPTCHA
+- **9.6** `CaptchaType` — Google reCAPTCHA Enterprise
+- **9.7** `BaseFilterType` — auto-generated filter forms
+- **9.8** Standard admin forms (`SeoType`, `BlogShortType`, `PageObjectType`, `HeaderMenuType`, `FooterMenuType`)
 
 ---
 
@@ -235,7 +238,10 @@ their own domain model.
 
 ## 19. Frontend Assets
 
-- **19.1** Stimulus Controllers (28 controllers)
+- **Migration plan:** [Admin UI Ownership Migration Plan](admin-ui-ownership-migration-plan.md)
+- **Release and rollback:** [Admin UI Migration Release and Rollback](admin-ui-release-and-rollback.md)
+
+- **19.1** Stimulus Controllers (27 bundle controllers)
   - Modal handling (`base-modal`, `open-base-modal`, `modal`)
   - Form behavior (`autosubmit`, `autocomplete-search`, `bulk-action`, `check-selection`)
   - CKEditor 5 integration (`ckeditor`)
@@ -243,17 +249,21 @@ their own domain model.
   - File upload (`file-upload-form`)
   - Date picker (`vanilla-datepicker`, `vanilla-datepicker-live`)
   - Sorting (`sortable`)
-  - Utility (`clipboard`, `toggle-class`, `tooltip`, `collapsable-sidebar`, `navigate-turbo`, `onscroll`)
-  - Specialized (`rating`, `textarea-placeholders`, `links-search-field`, `add-autocomplete-item`, `association-modal-type`, `captcha`, `flash-message`)
+  - Utility (`clipboard`, `toggle-class`, `tooltip`, `collapsable-sidebar`, `navigate-turbo`)
+  - Specialized (`textarea-placeholders`, `links-search-field`, `add-autocomplete-item`, `association-modal-type`, `turnstile`, `captcha`, `flash-message`)
+  - Host-owned public-site controllers (`onscroll`, `rating`)
 - **19.2** CKEditor Plugins (`CustomUploadAdapter`, `InsertImage`, `InsertImageViaURL`)
 - **19.3** Flash messages (`flash.js` + Turbo Stream)
 - **19.4** SCSS Architecture
-  - `admin.scss` entry point
+  - `@lexio/admin-bundle/styles/admin` full entry point
+  - `@lexio/admin-bundle/styles/components` components-only entry point
+  - `assets/dist/admin.css` precompiled entry point
+  - `$lexio-admin-*` Sass configuration and `--lexio-admin-*` runtime properties
   - Components (sidebar, tables, tabs, cards, breadcrumbs, notifications, etc.)
   - Layout (`header-navbar.scss`)
   - Mixins, utilities, variables
   - Datepicker & flash-message styles
-  - Font Awesome integration
+  - Font Awesome compatibility remains pending UX Icon migration
 
 ---
 
@@ -312,7 +322,8 @@ their own domain model.
 - **25.1** `TurboRedirectResponse` — Turbo-Frame aware redirects
 - **25.2** `FormContext` modal detection via `Turbo-Frame` header
 - **25.3** `ModalContextSubscriber` — Turbo Stream responses for association modals
-- **25.4** Flash messages via Turbo Stream (`flash.stream.html.twig`)
+- **25.4** Admin flash messages via Turbo Stream (`admin/flash.stream.html.twig`); public-site
+  flash rendering remains host-owned
 
 ---
 

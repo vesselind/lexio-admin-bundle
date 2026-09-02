@@ -32,6 +32,7 @@ class {{ shortClassName }}Controller extends BaseCrudController
     public function index(ListingContext $listingContext, #[MapQueryString] {{ shortClassName }}Filter $filter): Response
     {
         $listingContext
+            ->setEntityFqcn({{ shortClassName }}::class)
             ->setFilter($filter)
             ->addColumn('id', new IdField())
         {% if columnName %}
@@ -50,12 +51,17 @@ class {{ shortClassName }}Controller extends BaseCrudController
     #[Route('/create', name: 'admin.{{ snakeCaseClassName }}.create')]
     public function create(Request $request, FormContext $formContext): Response
     {
-        return $this->renderCreate(new {{ shortClassName }}(), $formContext);
+        $entity = new {{ shortClassName }}();
+        $formContext->setEntityInstance($entity);
+
+        return $this->renderCreate($entity, $formContext);
     }
 
     #[Route('/{id}/update', name: 'admin.{{ snakeCaseClassName }}.update')]
     public function update({{ shortClassName }} ${{ shortClassNameLowercase }}, FormContext $formContext): Response
     {
+        $formContext->setEntityInstance(${{ shortClassNameLowercase }});
+
         return $this->renderUpdate(${{ shortClassNameLowercase }}, $formContext);
     }
 

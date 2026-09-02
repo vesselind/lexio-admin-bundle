@@ -40,6 +40,13 @@ services:
         tags: ['controller.service_arguments']
         public: true
 
+    Lexio\AdminBundle\Controller\Admin\MenuController:
+        arguments:
+            $locales: '%lexio_admin.locales%'
+
+    Lexio\AdminBundle\Contract\Page\PageAdministrationInterface:
+        alias: Lexio\AdminBundle\Page\PageManager
+
     # Core services bound to bundle parameters
     Lexio\AdminBundle\AdminCore\AdminUrlGenerator:
         arguments:
@@ -50,21 +57,46 @@ services:
         arguments:
             $locales: '%lexio_admin.locales%'
             $defaultLocale: '%lexio_admin.default_locale%'
+            $translationDomain: '%lexio_admin.ui.translation_domain%'
         shared: false
+
+    Lexio\AdminBundle\AdminCore\Breadcrumbs\AdminBreadcrumbs:
+        arguments:
+            $translationDomain: '%lexio_admin.ui.translation_domain%'
 
     Lexio\AdminBundle\AdminCore\Fields\HasRegisteredField:
         arguments:
             $userEntityClass: '%lexio_admin.user_entity_class%'
 
+    Lexio\AdminBundle\Form\CustomFields\TurnstileType:
+        arguments:
+            $turnstileKey: '%env(default::TURNSTILE_KEY)%'
+        tags: ['form.type']
+
     Lexio\AdminBundle\Form\CustomFields\CaptchaType:
         arguments:
-            $turnstileKey: '%env(TURNSTILE_KEY)%'
+            $defaultSiteKey: '%env(default::GOOGLE_RECAPTCHA_SITE_KEY)%'
+        tags: ['form.type']
+
+    Lexio\AdminBundle\Form\CustomFields\CKEditorType:
+        arguments:
+            $uploadRouteName: '%lexio_admin.ui.routes.ckeditor_upload%'
+        tags: ['form.type']
+
+    Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType:
+        arguments:
+            $imageGalleryRouteName: '%lexio_admin.ui.routes.image_modal_gallery%'
+            $translationDomain: '%lexio_admin.ui.translation_domain%'
         tags: ['form.type']
 
     Lexio\AdminBundle\Form\CustomFields\VanillaDatepickerType:
         arguments:
             $defaultLocale: '%lexio_admin.default_locale%'
         tags: ['form.type']
+
+    Lexio\AdminBundle\Component\Admin\ToggleSwitcher:
+        arguments:
+            $translationDomain: '%lexio_admin.ui.translation_domain%'
 
     Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver:
         tags:
@@ -124,6 +156,7 @@ services:
     Lexio\AdminBundle\Twig\AdminExtension:
         arguments:
             $frontHomePageRoute: '%lexio_admin.front_home_page_route%'
+            $ui: '%lexio_admin.ui%'
         tags: ['twig.extension']
 
     Lexio\AdminBundle\Twig\AppExtension:
@@ -137,7 +170,7 @@ services:
             $defaultLocale: '%lexio_admin.default_locale%'
             $locales: '%lexio_admin.locales%'
 
-    Lexio\AdminBundle\Page\Service\PageManager:
+    Lexio\AdminBundle\Page\PageManager:
       $manager: '@doctrine.orm.entity_manager'
       $autoTranslator: '@Lexio\AdminBundle\Service\AutoTranslator\EntityAutoTranslator'
       $defaultLocale: '%lexio_admin.default_locale%'

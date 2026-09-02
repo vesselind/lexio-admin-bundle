@@ -10,7 +10,7 @@ description: Set up quality tooling and Makefile quality targets for a Symfony b
 
 Setup the full quality pipeline in a **Symfony bundle** package (typically `src/` + `tests/`): PHPStan level 9, PHP-CS-Fixer or Pint, Deptrac, Infection, GrumPHP. Creates configuration files and the three Makefile targets (quality, tests, ci).
 
-**Use the files in this skill's `templates/` folder as the single reference** — copy and adapt to the project; do not duplicate their content in the skill or in rules. The rule `ai-new/rules/quality-pipeline.md` defines the contract (three targets, semantics); the templates provide the implementation.
+**Use the files in this skill's `templates/` folder as the single reference** — copy and adapt to the project; do not duplicate their content in the skill or in rules. The rule `../../rules/quality-pipeline.md` defines the contract (three targets, semantics); the templates provide the implementation.
 
 ## When to Use
 
@@ -38,7 +38,7 @@ For each tool not present, add via Composer. Use only `make` commands if the pro
 - **Infection** — mutation testing
 - **GrumPHP** — pre-commit hooks
 
-Reference `ai-new/rules/quality-pipeline.md` for version and config requirements.
+Reference `../../rules/quality-pipeline.md` for version and config requirements.
 
 ### Step 3: Create or Update Makefile Targets (3 targets only)
 
@@ -60,7 +60,7 @@ Create or update config files by **copying from this skill's `templates/` folder
 - `templates/infection.json5` → infection.json5
 - `templates/phpunit.xml.dist` → phpunit.xml.dist if needed
 
-Read `ai-new/rules/quality-pipeline.md` for the contract (PHPStan level 9, no baseline, Infection MSI, etc.); use templates for the actual file content.
+Read `../../rules/quality-pipeline.md` for the contract (PHPStan level 9, no baseline, Infection MSI, etc.); use templates for the actual file content.
 
 ### Step 5: Run make ci to Verify
 
@@ -71,7 +71,7 @@ Run `make ci` (or the equivalent target). If it fails:
 
 ### Step 6: Reference quality-pipeline.md
 
-Before concluding, ensure the agent has read `ai-new/rules/quality-pipeline.md` for:
+Before concluding, ensure the agent has read `../../rules/quality-pipeline.md` for:
 - PHPStan level 9, no baseline
 - CS-Fixer or Pint rules
 - Deptrac layer definitions

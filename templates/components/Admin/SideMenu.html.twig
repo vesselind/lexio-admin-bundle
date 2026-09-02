@@ -1,12 +1,15 @@
 <div {{ attributes }}>
     <nav id="sidebarMenu"
          class="d-md-block sidebar collapse scrollbar scroll-element-light"
-        {{ stimulus_controller('collapsable_sidebar') }}
+        {{ stimulus_controller('collapsable-sidebar') }}
     >
 
         <div class="brand d-flex align-items-center">
             <a href="{{ path(this.homeRoute) }}">
-                <img width="150px" src="{{ asset('build/images/admin-logo.svg') }}" alt="admin logo sidebar">
+                {% if lexio_admin_ui.admin_logo_asset %}
+                    <img class="admin-sidebar-logo" src="{{ asset(lexio_admin_ui.admin_logo_asset) }}"
+                         alt="{{ lexio_admin_ui.admin_logo_alt|trans({}, lexio_admin_ui.translation_domain) }}">
+                {% endif %}
             </a>
         </div>
 

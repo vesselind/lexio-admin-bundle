@@ -21,7 +21,10 @@ final class TranslationPackageHttpClientTest extends TestCase
         $client = new MockHttpClient(function (string $method, string $url, array $requestOptions): JsonMockResponse {
             self::assertSame('POST', $method);
             self::assertSame('https://example.test/api/translations/upload', $url);
-            self::assertSame(['user', 'password'], $requestOptions['auth_basic']);
+            self::assertSame(
+                'Authorization: Basic ' . base64_encode('user:password'),
+                $requestOptions['normalized_headers']['authorization'][0],
+            );
             self::assertSame('archive', $requestOptions['body']);
             self::assertArrayHasKey('x-lexio-timestamp', $requestOptions['normalized_headers']);
             self::assertArrayHasKey('x-lexio-signature', $requestOptions['normalized_headers']);

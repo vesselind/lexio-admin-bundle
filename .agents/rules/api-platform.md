@@ -3,13 +3,13 @@
 ## Core Principles
 
 1. **Resources separate from Entities** — Dedicated API Resource classes. Never expose Doctrine entities directly.
-2. **DTO mapping via Providers and Processors** — Use Providers (read) and Processors (write) for input/output DTOs. See `dto.mdc` for DTO conventions and naming.
-3. **Validation on input DTOs only** — See `dto.mdc` for validation principles. `#[Assert\...]` on input DTOs and API Resources, never on Doctrine entities.
-4. **Serialization groups convention** — `<resource>:<action>:<level>` (e.g. `order:read:item`, `order:read:collection`, `order:write`). Native Symfony APIs without API Platform use 2-segment groups — see `api.mdc`. See `serializer.mdc` for context builders and discriminator maps.
+2. **DTO mapping via Providers and Processors** — Use Providers (read) and Processors (write) for input/output DTOs. See `dto.md` for DTO conventions and naming.
+3. **Validation on input DTOs only** — See `dto.md` for validation principles. `#[Assert\...]` on input DTOs and API Resources, never on Doctrine entities.
+4. **Serialization groups convention** — `<resource>:<action>:<level>` (e.g. `order:read:item`, `order:read:collection`, `order:write`). Native Symfony APIs without API Platform use 2-segment groups — see `api.md`. See `serializer.md` for context builders and discriminator maps.
 5. **CacheableSupportsMethodInterface** — Every custom normalizer must implement it. Without caching, Serializer iterates all normalizers per sub-object.
 6. **Custom constraints with payload** — Use `payload` for RFC 7807 error codes. One global query per validator (no N+1).
-7. **Problem Details RFC 9457 for errors** — Consistent error format: type, title, status, detail, instance. See `error-handling.mdc` for the canonical ExceptionListener pattern.
-8. **Cache headers** — Set `Cache-Control`, `ETag`, `Last-Modified` on read operations. See `caching.mdc` for HTTP cache patterns.
+7. **Problem Details RFC 9457 for errors** — Consistent error format: type, title, status, detail, instance. See `error-handling.md` for the canonical ExceptionListener pattern.
+8. **Cache headers** — Set `Cache-Control`, `ETag`, `Last-Modified` on read operations. See `caching.md` for HTTP cache patterns.
 9. **Pagination defaults** — Enforce default and max items per page. Avoid unbounded collections.
 
 ---
@@ -97,15 +97,15 @@ $this->serializer->serialize($dto, 'json', ['groups' => ['read']]);
 
 ### Custom Normalizer
 
-> See `api.mdc` for the base normalizer pattern (`getSupportedTypes`). In API Platform context, also implement `CacheableSupportsMethodInterface` to avoid `supportsNormalization()` being called on every normalizer for every sub-object.
+> See `api.md` for the base normalizer pattern (`getSupportedTypes`). In API Platform context, also implement `CacheableSupportsMethodInterface` to avoid `supportsNormalization()` being called on every normalizer for every sub-object.
 
 ### Streaming for Large Exports
 
-> See `api.mdc` for the `StreamedJsonResponse` pattern. For CSV exports, use `StreamedResponse` with `fputcsv()`.
+> See `api.md` for the `StreamedJsonResponse` pattern. For CSV exports, use `StreamedResponse` with `fputcsv()`.
 
 ### Validation on Input DTOs Only
 
-> See `dto.mdc` for complete DTO validation patterns (immutability, cascade `#[Valid]`, one DTO per use case).
+> See `dto.md` for complete DTO validation patterns (immutability, cascade `#[Valid]`, one DTO per use case).
 
 Input DTOs in API Platform use the `CreateXxxInput` naming convention. Validation constraints go on the input DTO, never on entities.
 
@@ -250,8 +250,8 @@ pagination:
 | Pitfall | Fix |
 |---------|-----|
 | Entities as API resources | Dedicated Resource classes. Providers (read) + Processors (write) |
-| `#[Assert\...]` on entities | Validate input DTOs only. See `dto.mdc` |
-| N+1 in custom validators | One global query with all IDs, check in memory. See `doctrine.mdc` > N+1 Prevention |
+| `#[Assert\...]` on entities | Validate input DTOs only. See `dto.md` |
+| N+1 in custom validators | One global query with all IDs, check in memory. See `doctrine.md` > N+1 Prevention |
 | Missing `CacheableSupportsMethodInterface` | Every custom normalizer must implement it + `getSupportedTypes()` |
 | Generic serialization groups (`read`/`write`) | Convention: `<resource>:<action>:<level>` |
 | Inconsistent error format | Problem Details RFC 9457 + `payload` on constraints |

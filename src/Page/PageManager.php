@@ -5,17 +5,18 @@ namespace Lexio\AdminBundle\Page;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
 use Lexio\AdminBundle\Contract\AutoTranslator\EntityAutoTranslatorInterface;
+use Lexio\AdminBundle\Contract\Page\PageAdministrationInterface;
 use Lexio\AdminBundle\Contract\Page\PageManagerInterface;
 use Lexio\AdminBundle\Entity\ContentItem;
 use Lexio\AdminBundle\Entity\Page;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class PageManager implements PageManagerInterface
+readonly class PageManager implements PageManagerInterface, PageAdministrationInterface
 {
-    public function __construct(private readonly EntityManagerInterface        $manager,
-                                private readonly EntityAutoTranslatorInterface $autoTranslator,
-                                private string                                 $defaultLocale)
+    public function __construct(private EntityManagerInterface        $manager,
+                                private EntityAutoTranslatorInterface $autoTranslator,
+                                private string                        $defaultLocale)
     {
     }
 
@@ -111,7 +112,11 @@ class PageManager implements PageManagerInterface
 
         $contentItems = $pageEntity->getContentItems();
 
-        $pageClass = new $pageNameFqcn();
+        $pageInstance = new $pageNameFqcn();
+
+        if (!$pageInstance instanceof BasePage) {
+            throw new \LogicException(sprintf('Page class "%s" must extend %s.', $pageNameFqcn, BasePage::class));
+        }
 
         foreach ($contentItems as $contentItem) {
 
@@ -121,15 +126,19 @@ class PageManager implements PageManagerInterface
             $propertyName = $contentItem->getName();
             $value = $contentItem->getValue();
 
-            $this->accessor()->setValue($pageClass, $propertyName, $value);
+            if ($propertyName === null) {
+                throw new \LogicException('A content item must have a property name.');
+            }
+
+            $this->accessor()->setValue($pageInstance, $propertyName, $value);
         }
 
         //clone page entity into page class
 
-        $pageClass->setId($pageEntity->getId());
+        $pageInstance->setId($pageEntity->getId());
 
 
-        return $pageClass;
+        return $pageInstance;
     }
 
     public function accessor(): PropertyAccessor

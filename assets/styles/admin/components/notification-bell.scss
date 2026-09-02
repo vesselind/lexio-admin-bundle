@@ -1,0 +1,213 @@
+// ============================================================
+// Notification Bell — shadcn/ui-inspired clean dropdown
+// ============================================================
+
+.notification-bell,
+.dropdown:has(.notification-bell__toggle) {
+  position: relative;
+
+  // Notification bell toggle button
+  .notification-bell__toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      .notification-bell__icon-wrapper {
+        background-color: $gray-100;
+        color: $gray-900;
+      }
+    }
+  }
+
+  // Icon wrapper — subtle circular background
+  .notification-bell__icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: $border-radius;
+    color: $gray-500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  // Unread count badge — red dot/pill
+  .notification-bell__badge {
+    position: absolute;
+    top: -0.125rem;
+    right: -0.125rem;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 600;
+    line-height: 1;
+    color: $white;
+    background-color: $danger;
+    border-radius: 9999px;
+    padding: 0 0.3rem;
+    border: 2px solid $white;
+  }
+
+  // Dropdown menu
+  .notification-bell__menu {
+    min-width: 350px;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid $border-color;
+    box-shadow: $dropdown-box-shadow;
+
+    // Desktop - ensure proper right alignment
+    @media screen and (min-width: 769px) {
+      right: 0;
+      left: auto;
+    }
+
+    // Mobile responsive adjustments
+    @media screen and (max-width: 768px) {
+      position: absolute !important;
+      right: -0.5rem !important;
+      left: auto !important;
+
+      min-width: auto;
+      width: min(350px, calc(100vw - 2rem));
+      max-width: calc(100vw - 2rem);
+
+      margin-top: 0.5rem;
+    }
+
+    @media screen and (max-width: 400px) {
+      right: -0.75rem !important;
+      width: calc(100vw - 1.5rem);
+      max-width: calc(100vw - 1.5rem);
+    }
+  }
+
+  // Header section
+  .notification-bell__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: $gray-900;
+    border-bottom: 1px solid $border-color;
+
+    .notification-bell__count-badge {
+      font-size: $font-size-sm;
+    }
+  }
+
+  // Notification items
+  .notification-bell__item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid $gray-100;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: $gray-100;
+    }
+
+    &--unread {
+      background-color: rgba($primary, 0.03);
+    }
+  }
+
+  .notification-bell__item-content {
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+
+    @media screen and (max-width: 400px) {
+      gap: 0.5rem;
+    }
+  }
+
+  .notification-bell__item-icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    text-align: center;
+    color: $gray-400;
+  }
+
+  .notification-bell__item-details {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .notification-bell__item-title {
+    font-weight: 500;
+    font-size: $font-size-base;
+    margin-bottom: 0.25rem;
+    color: $gray-900;
+  }
+
+  .notification-bell__item-text {
+    font-size: $font-size-sm;
+    color: $gray-500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+
+    @media screen and (max-width: 768px) {
+      max-width: calc(90vw - 6rem);
+    }
+
+    @media screen and (max-width: 400px) {
+      max-width: calc(100vw - 6rem);
+    }
+  }
+
+  .notification-bell__item-time {
+    font-size: $font-size-sm * 0.85;
+    color: $gray-400;
+    margin-top: 0.25rem;
+  }
+
+  // Empty state
+  .notification-bell__empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: $gray-500;
+
+    .notification-bell__empty-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      opacity: 0.4;
+    }
+  }
+
+  // Footer link
+  .notification-bell__footer {
+    text-align: center;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid $border-color;
+
+    a {
+      display: block;
+      font-weight: 500;
+      color: $gray-900;
+      text-decoration: none;
+      font-size: $font-size-sm;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

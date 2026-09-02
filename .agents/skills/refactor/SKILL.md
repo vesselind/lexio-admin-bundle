@@ -29,7 +29,7 @@ Ask the user to clarify:
 
 ### Phase 1: PM Subagent (Assess & Risk)
 
-Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
+Launch the PM subagent (read `../../agents/pm.md` for persona) with the task:
 
 1. Identify the code smell or SOLID violation — name it (e.g. "God class", "Feature envy", "violates SRP")
 2. Map affected boundaries — which classes, modules, or layers are involved?
@@ -40,13 +40,13 @@ Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
 
 ### Phase 2: Architect Subagent (Safe Path)
 
-Launch the Architect subagent (read `ai-new/agents/architect.md` for persona) in **readonly** mode with the task:
+Launch the Architect subagent (read `../../agents/architect.md` for persona) in **readonly** mode with the task:
 
 1. Design a safe refactoring path — small, incremental steps, each verifiable
 2. Identify test coverage gaps — what must be covered BEFORE refactoring?
 3. Specify which tests to add first — unit, integration, or characterization tests
 4. Apply SOLID principles — which principle(s) will the refactor satisfy?
-5. List applicable rules from `ai-new/rules/` (e.g. `coding-standards.md`, `architecture.md`, `testing.md`)
+5. List applicable rules from `../../rules/` (e.g. `coding-standards.md`, `architecture.md`, `testing.md`)
 6. Define the sequence: [add test A] → [refactor step 1] → [run tests] → [refactor step 2] → …
 
 **Output:** Refactoring plan with coverage gaps to fill, step sequence, applicable rules.
@@ -55,7 +55,7 @@ Launch the Architect subagent (read `ai-new/agents/architect.md` for persona) in
 
 You (the main agent) implement. Coverage before refactor is mandatory.
 
-1. Read `ai-new/rules/coding-standards.md`, `ai-new/rules/testing.md`, and any rules the Architect listed
+1. Read `../../rules/coding-standards.md`, `../../rules/testing.md`, and any rules the Architect listed
 2. Add missing test coverage FIRST — fill gaps identified by the Architect
 3. Run `make tests` — all tests pass, new tests document current behavior
 4. Refactor in small steps — one change at a time
@@ -64,11 +64,11 @@ You (the main agent) implement. Coverage before refactor is mandatory.
 
 **Critical rule:** Never refactor without adequate tests. Never take a step that breaks tests without immediately addressing it.
 
-**Final Verification (QA):** Once all steps are complete, automatically launch the QA subagent (read `ai-new/agents/qa.md` for persona) with the task:
+**Final Verification (QA):** Once all steps are complete, automatically launch the QA subagent (read `../../agents/qa.md` for persona) with the task:
 1. Behavioral equivalence — do the same tests pass before and after? no new failures
 2. SOLID respect — verify the refactored code adheres to the targeted principle(s)
 3. No new dependencies — did the refactor introduce unnecessary coupling or new dependencies?
-4. Rule compliance — does the code follow `ai-new/rules/coding-standards.md` and other applicable rules?
+4. Rule compliance — does the code follow `../../rules/coding-standards.md` and other applicable rules?
 5. Run `make ci` — report pass/fail
 6. Produce verdict: APPROVED / NEEDS CHANGES / REJECTED
 

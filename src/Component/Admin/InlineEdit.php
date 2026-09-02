@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\Component\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Lexio\AdminBundle\AdminCore\Fields\BaseField;
 use Lexio\AdminBundle\Component\FieldComponentTrait;
 use Lexio\AdminBundle\Controller\BaseController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -46,6 +47,14 @@ final class InlineEdit extends BaseController
     {
     }
 
+    public function mount(BaseField $field): void
+    {
+        $this->entityFqcn = $field->getColumn()?->getEntityFqcn();
+        $this->entityId = $field->getEntityInstance()?->getId();
+        $this->propertyName = $field->getColumn()?->propertyName;
+        $this->fieldValue = $field->getValue();
+        $this->content = (string) ($this->fieldValue ?? '');
+    }
 
     public function getContent(): string
     {
@@ -55,10 +64,16 @@ final class InlineEdit extends BaseController
     #[LiveAction]
     public function save(): void
     {
-        $entity = $this->entityManager->find($this->entityClass, $this->entityId);
+        if ($this->entityFqcn === null || $this->entityId === null || $this->propertyName === null) {
+            $this->editing = false;
+
+            return;
+        }
+
+        $entity = $this->getEntityData();
 
         if ($entity !== null) {
-            $setter = 'set' . ucfirst($this->property);
+            $setter = 'set' . ucfirst($this->propertyName);
             if (method_exists($entity, $setter)) {
                 $entity->$setter($this->content);
                 $this->entityManager->flush();

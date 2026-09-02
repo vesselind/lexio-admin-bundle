@@ -1,8 +1,8 @@
 # Frontend (Symfony UX)
 
-**Bundle context** — Register Stimulus/Twig Component **via config** (not PHP attributes on bundle classes). See `symfony-bundle.mdc`.
+**Bundle context** — Register Stimulus/Twig Component **via config** (not PHP attributes on bundle classes). See `symfony-bundle.md`.
 
-For XSS prevention and `LiveProp` security considerations, see `security.mdc`. For Twig template syntax and filters, see `twig.mdc`.
+For XSS prevention and `LiveProp` security considerations, see `security.md`. For Twig template syntax and filters, see `twig.md`.
 
 ## Core Principles
 

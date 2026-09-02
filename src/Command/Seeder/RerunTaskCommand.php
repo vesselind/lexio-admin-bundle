@@ -87,7 +87,7 @@ class RerunTaskCommand extends Command
      * @param OutputInterface $output
      * @param SymfonyStyle $io
      * @param array<int, class-string> $registeredTasks
-     * @return string|null
+     * @return class-string|null
      */
     private function selectTaskInteractively(
         InputInterface $input,
@@ -136,7 +136,7 @@ class RerunTaskCommand extends Command
     }
 
     /**
-     * @param class-string $taskName
+     * @param string $taskName
      * @param array<int, class-string> $registeredTasks
      * @return class-string|null
      */

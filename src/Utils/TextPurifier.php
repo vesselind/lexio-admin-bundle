@@ -109,6 +109,7 @@ final class TextPurifier implements \Stringable
     }
 
     /** Wraps text into an array of lines no longer than $maxLineLength characters. */
+    /** @return list<string> */
     public function wrapText(int $maxLineLength = 60): array
     {
         $words       = explode(' ', $this->content);
@@ -133,6 +134,7 @@ final class TextPurifier implements \Stringable
         return $lines;
     }
 
+    /** @param list<string> $lines */
     public static function arrayToParagraphs(array $lines): static
     {
         $content = '';

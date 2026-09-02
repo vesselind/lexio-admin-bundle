@@ -3,14 +3,14 @@
 ## Core Principles
 
 1. **PSR-3 only** — Depend on `Psr\Log\LoggerInterface`. Never import Monolog classes in services (DIP, portability).
-2. **No LoggerInterface in domain** — Domain emits events; infrastructure `LogSubscriber` listens and logs. See `architecture.mdc` > Domain Events.
+2. **No LoggerInterface in domain** — Domain emits events; infrastructure `LogSubscriber` listens and logs. See `architecture.md` > Domain Events.
 3. **Structured logging only** — Fixed message string + context array. Never string interpolation or sprintf in log messages.
 4. **Uniform context keys** — Use a `LogKeys` constants class. No inconsistent `user_id` / `UserId` / `u_id` variants.
 5. **One Monolog channel per bounded context** — Route logs independently (alerts vs cold storage): `security`, `billing`, `api_inbound`.
 6. **FingersCrossedHandler in production** — Buffer DEBUG logs; flush everything only when ERROR occurs. I/O savings.
 7. **Stdout/stderr, never HTTP in request thread** — Write locally (stdout for Docker/K8s, file for bare metal). Agent (Filebeat, Fluentd, Vector) transfers async (Bulkhead).
 8. **PII never in plain text logs** — Mask emails, passwords, tokens, IPs via Monolog processor (GDPR, PCI-DSS).
-9. **Dedicated channel for sensitive flows** — `billing`, `security` channels for audit-critical streams. See `security.mdc` for security logging requirements.
+9. **Dedicated channel for sensitive flows** — `billing`, `security` channels for audit-critical streams. See `security.md` for security logging requirements.
 10. **Test logging behavior explicitly** — `NullLogger` in unit tests; `TestLogger` in integration tests when asserting log output.
 
 ---

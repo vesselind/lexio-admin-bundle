@@ -1,6 +1,6 @@
 # HTTP Client
 
-For structured logging conventions in decorators, see `observability.mdc`. For SSRF in a security context, see `security.mdc`.
+For structured logging conventions in decorators, see `observability.md`. For SSRF in a security context, see `security.md`.
 
 ## Core Principles
 

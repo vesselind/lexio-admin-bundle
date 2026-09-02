@@ -9,6 +9,8 @@ use Lexio\AdminBundle\AdminCore\Fields\BaseField;
 class Column
 {
     private bool    $isSortable = false;
+
+    /** @var class-string|null */
     private ?string $entityFqcn = null;
 
     public function __construct(
@@ -60,13 +62,23 @@ class Column
         return $this->isSorted() && $this->listingContext->getRequest()->query->get('order') === 'desc';
     }
 
+    /**
+     * @param class-string $entityFqcn
+     */
     public function setEntityFqcn(string $entityFqcn): void
     {
         $this->entityFqcn = $entityFqcn;
     }
 
+    /**
+     * @return class-string
+     */
     public function getEntityFqcn(): string
     {
+        if ($this->entityFqcn === null) {
+            throw new \LogicException('Entity FQCN must be set before reading the column entity.');
+        }
+
         return $this->entityFqcn;
     }
 

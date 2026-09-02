@@ -68,7 +68,7 @@ Examples:
 | Restructuring drawer components            | `refactor/simplify-drawer-components`|
 | Adding a CSV export endpoint               | `feat/add-csv-export-endpoint`       |
 
-If the upcoming work involves specific Symfony components, mention which `ai-new/rules/*.md` rules will be relevant — this helps plan scope.
+If the upcoming work involves specific Symfony components, mention which `../../rules/*.md` rules will be relevant — this helps plan scope.
 
 **Present the name to the user and wait for confirmation.** Adapt if they request changes.
 

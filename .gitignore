@@ -3,7 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+/.serena
 /vendor/
+/assets/node_modules/
+/assets/yarn.lock
 /composer.lock
 /.phpunit.cache
 /.phpunit.result.cache

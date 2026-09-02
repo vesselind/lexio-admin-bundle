@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
@@ -23,12 +24,16 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
  *       Are you sure you want to delete this item?
  *   </twig:ConfirmationModal>
  *
+ * A host live component can instead pass `dispatchEventName` to handle the
+ * confirmation locally without a redirect.
+ *
  * The confirm() LiveAction stores the subjectId in the session under CONFIRMED_SESSION_KEY
  * and redirects to confirmUrl. The delete controller must check this key before proceeding.
  */
 #[AsLiveComponent(name: 'ConfirmationModal', template: '@LexioAdmin/components/ConfirmationModal.html.twig')]
 final class ConfirmationModal
 {
+    use ComponentToolsTrait;
     use DefaultActionTrait;
 
     /**
@@ -38,31 +43,49 @@ final class ConfirmationModal
     public const string CONFIRMED_SESSION_KEY = '_confirmation_modal_id';
 
     /** Must match the `data-bs-target="#confirmationModal_{{ subjectId }}"` button. */
-    public string $subjectId = '';
+    public int|string $subjectId = '';
 
     /** URL to redirect to after the user confirms. */
     public string $confirmUrl = '';
+
+    /** Optional live event emitted to the parent component after confirmation. */
+    public ?string $dispatchEventName = null;
 
     public function __construct(private readonly RequestStack $requestStack)
     {
     }
 
-    public function mount(string $subjectId, string $confirmUrl = ''): void
+    public function mount(
+        int|string $subjectId,
+        string $confirmUrl = '',
+        ?string $dispatchEventName = null,
+    ): void
     {
         $this->subjectId = $subjectId;
         $this->confirmUrl = $confirmUrl;
+        $this->dispatchEventName = $dispatchEventName;
     }
 
     #[LiveAction]
-    public function confirm(): RedirectResponse
+    public function confirm(): ?RedirectResponse
     {
         $this->requestStack->getSession()->set(self::CONFIRMED_SESSION_KEY, $this->subjectId);
+
+        $dispatchEventName = $this->dispatchEventName;
+        if (null !== $dispatchEventName && '' !== $dispatchEventName) {
+            $this->dispatchBrowserEvent('modal:close');
+            $this->emitUp($dispatchEventName, ['subjectId' => $this->subjectId]);
+
+            if ('' === $this->confirmUrl) {
+                return null;
+            }
+        }
 
         if ($this->confirmUrl !== '') {
             return new RedirectResponse($this->confirmUrl);
         }
 
-        // Fallback: reload current page so the caller can react
+        // Fallback: reload current page so the caller can react.
         return new RedirectResponse(
             $this->requestStack->getCurrentRequest()?->getUri() ?? '/'
         );

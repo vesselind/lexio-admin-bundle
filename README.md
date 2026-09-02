@@ -86,9 +86,47 @@ ls -la vendor/lexio/admin-bundle
 
 ## Frontend Assets
 
-The bundle does not distribute frontend assets. Host applications own their Stimulus controllers,
-JavaScript, CKEditor plugins, and styles under their own `assets/` directory and declare the
-required npm dependencies in the application-level `package.json`.
+The bundle distributes reusable Stimulus controllers and admin styles from its
+`assets/` package. Hosts install `@lexio/admin-bundle`, provide the peer
+dependencies, and register the package through their chosen asset pipeline.
+The host continues to own the final build entry, product branding, and
+application-specific styles.
+
+### Build workflow
+
+The bundle and the host application use two build stages:
+
+1. The bundle builds its distributable controllers and styles into `assets/dist/`.
+2. The host application uses those files to create its final browser assets in `public/build/`.
+
+Run this during local development:
+
+```bash
+# From lexio-admin-bundle:
+yarn --cwd assets install --ignore-scripts
+yarn --cwd assets build
+
+# From the host application:
+yarn dev       # or: yarn build
+```
+
+The bundle uses esbuild for controllers and Sass for styles. Runtime libraries
+remain peer dependencies and are supplied by the host. Encore then combines
+the selected bundle controllers with the host assets; lazy controllers become
+separate chunks.
+
+For styles, choose exactly one of `@lexio/admin-bundle/styles/admin`,
+`@lexio/admin-bundle/styles/components`, or the precompiled
+`assets/dist/admin.css`. The Sass entry exposes curated `$lexio-admin-*`
+configuration variables and generates matching `--lexio-admin-*` CSS custom
+properties. See [Admin asset package](docs/admin-ui-assets.md).
+
+The bundle prepends `@LexioAdmin/form/custom_fields_theme.html.twig`, which provides only the
+`association_modal_widget` and `ck_editor_label` blocks. It does not select a global form layout;
+form themes configured by the host application load later and can override either block. The
+blocks retain their existing dependencies on the host's `association-modal-type`,
+`open-base-modal`, `links-search-field`, `navigate-turbo`, `tooltip`, and `modal` Stimulus
+controllers, as well as Bootstrap, Turbo, admin routes, and the `admin` translation catalogue.
 
 ## Configuration
 
@@ -108,12 +146,11 @@ lexio_admin:
 
 ```php
 $listing
+    ->setEntityFqcn(Blog::class)
     ->addColumn('id',    new IdField())
     ->addColumn('title', new TitleField(linkToRoute: 'admin.blog.update', routeParams: ['id' => 'id']))
     ->addColumn('status', new EnumField())
-    ->addBulkAction(new BulkAction('admin.blog.bulk_delete', 'Delete selected'))
-    ->setEntityFqcn(Blog::class)
-    ->refreshColumnsSortability();
+    ->addBulkAction(new BulkAction('admin.blog.bulk_delete', 'Delete selected'));
 ```
 
 ### Form Context

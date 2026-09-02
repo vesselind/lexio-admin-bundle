@@ -5,7 +5,6 @@ namespace Lexio\AdminBundle\Command\Seeder;
 use Lexio\AdminBundle\Entity\Seed as SeederEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexio\AdminBundle\Contract\Seeder\SeedersRegistryInterface;
-use Lexio\AdminBundle\Seeder\SeedLoader;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -22,7 +21,6 @@ class ListTasksCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SeedersRegistryInterface $seedersRegistry,
-        private readonly SeedLoader             $seedLoader,
     ) {
         parent::__construct();
     }

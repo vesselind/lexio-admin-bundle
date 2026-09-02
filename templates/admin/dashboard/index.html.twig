@@ -1,30 +1,30 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
 
-{% block title %}{{ 'Home'|trans({}, 'admin') }}{% endblock %}
+{% block title %}{{ 'Home'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
 {% block heading %}
-     {{ 'admin.dashboard'|trans({}, 'admin') }}
+     {{ 'admin.dashboard'|trans({}, lexio_admin_ui.translation_domain) }}
 {% endblock %}
 {% block content %}
     {# ── Welcome Hero Banner ─────────────────────────────────────── #}
     <div class="dashboard-hero mb-4">
         <div class="dashboard-hero__body">
             <h1 class="dashboard-hero__greeting">
-                {{ 'dashboard.hero.greeting'|trans({'%name%': app.user.firstName ?: app.user.email|split('@')|first}, 'admin') }}
+                {{ 'dashboard.hero.greeting'|trans({'%name%': app.user.firstName ?: app.user.email|split('@')|first}, lexio_admin_ui.translation_domain) }}
             </h1>
-            <p class="dashboard-hero__subtitle">{{ 'dashboard.hero.subtitle'|trans({}, 'admin') }}</p>
+            <p class="dashboard-hero__subtitle">{{ 'dashboard.hero.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
             <div class="dashboard-hero__actions">
                 <a href="{{ path('admin.blog.index') }}" class="btn btn-primary btn-sm">
                     {{ ux_icon('dashicons:welcome-write-blog', {height: '14px', width: '14px', class: 'me-1', 'aria-hidden': true}) }}
-                    {{ 'admin.blog.index'|trans({}, 'admin') }}
+                    {{ 'admin.blog.index'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
                 <a href="{{ path('admin.user.index') }}" class="btn btn-secondary btn-sm">
                     {{ ux_icon('solar:user-bold-duotone', {height: '14px', width: '14px', class: 'me-1', 'aria-hidden': true}) }}
-                    {{ 'admin.user.index'|trans({}, 'admin') }}
+                    {{ 'admin.user.index'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
                 <a href="{{ path('admin.file.upload') }}" class="btn btn-secondary btn-sm">
                     {{ ux_icon('fa6-solid:upload', {height: '12px', width: '12px', class: 'me-1', 'aria-hidden': true}) }}
-                    {{ 'admin.file.upload'|trans({}, 'admin') }}
+                    {{ 'admin.file.upload'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
             </div>
         </div>
@@ -63,7 +63,7 @@
                         {% if item.listUrl %}
                             <div class="mt-3 pt-3" style="border-top: 1px solid var(--bs-border-color);">
                                 <a href="{{ item.listUrl }}" class="dashboard-card__link d-inline-flex align-items-center gap-1">
-                                    {{ 'button.view_all'|trans({}, 'admin') }}
+                                    {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                                     {{ ux_icon('fa6-solid:arrow-right', {height: '11px', width: '11px', 'aria-hidden': true}) }}
                                 </a>
                             </div>
@@ -84,12 +84,12 @@
                     <div>
                         <h2 class="dashboard-widget__title">
                             {{ ux_icon('solar:users-group-rounded-bold-duotone', {height: '17px', width: '17px', class: 'me-1 text-info', 'aria-hidden': true}) }}
-                            {{ 'dashboard.new_users'|trans({}, 'admin') }}
+                            {{ 'dashboard.new_users'|trans({}, lexio_admin_ui.translation_domain) }}
                         </h2>
-                        <p class="dashboard-widget__subtitle">{{ 'dashboard.new_users.subtitle'|trans({}, 'admin') }}</p>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.new_users.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
                     </div>
                     <a href="{{ path('admin.user.index') }}" class="dashboard-widget__footer-link">
-                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                         {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
                     </a>
                 </div>
@@ -97,7 +97,7 @@
                 {% if recentUsers is empty %}
                     <p class="dashboard-widget__empty">
                         {{ ux_icon('fa6-solid:users', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
-                        {{ 'dashboard.no_recent_users'|trans({}, 'admin') }}
+                        {{ 'dashboard.no_recent_users'|trans({}, lexio_admin_ui.translation_domain) }}
                     </p>
                 {% else %}
                     <ul class="dashboard-widget__list">
@@ -135,7 +135,7 @@
                 <div class="dashboard-widget__footer">
                     <a href="{{ path('admin.user.create') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:plus', {height: '11px', width: '11px', 'aria-hidden': true}) }}
-                        {{ 'admin.user.create'|trans({}, 'admin') }}
+                        {{ 'admin.user.create'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                 </div>
             </div>
@@ -148,12 +148,12 @@
                     <div>
                         <h2 class="dashboard-widget__title">
                             {{ ux_icon('fa6-solid:fire-flame-curved', {height: '15px', width: '15px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
-                            {{ 'dashboard.most_read'|trans({}, 'admin') }}
+                            {{ 'dashboard.most_read'|trans({}, lexio_admin_ui.translation_domain) }}
                         </h2>
-                        <p class="dashboard-widget__subtitle">{{ 'dashboard.most_read.subtitle'|trans({}, 'admin') }}</p>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.most_read.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
                     </div>
                     <a href="{{ path('admin.blog.index') }}" class="dashboard-widget__footer-link">
-                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                         {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
                     </a>
                 </div>
@@ -161,7 +161,7 @@
                 {% if topPosts is empty %}
                     <p class="dashboard-widget__empty">
                         {{ ux_icon('fa6-solid:newspaper', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
-                        {{ 'dashboard.no_posts'|trans({}, 'admin') }}
+                        {{ 'dashboard.no_posts'|trans({}, lexio_admin_ui.translation_domain) }}
                     </p>
                 {% else %}
                     <ul class="dashboard-widget__list">
@@ -203,7 +203,7 @@
                 <div class="dashboard-widget__footer">
                     <a href="{{ path('admin.blog.index') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
-                        {{ 'admin.blog.index'|trans({}, 'admin') }}
+                        {{ 'admin.blog.index'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                 </div>
             </div>
@@ -221,12 +221,12 @@
                     <div>
                         <h2 class="dashboard-widget__title">
                             {{ ux_icon('fa6-solid:folder-open', {height: '15px', width: '15px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
-                            {{ 'dashboard.recent_files'|trans({}, 'admin') }}
+                            {{ 'dashboard.recent_files'|trans({}, lexio_admin_ui.translation_domain) }}
                         </h2>
-                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_files.subtitle'|trans({}, 'admin') }}</p>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_files.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
                     </div>
                     <a href="{{ path('admin.file.index') }}" class="dashboard-widget__footer-link">
-                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                         {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
                     </a>
                 </div>
@@ -234,7 +234,7 @@
                 {% if recentFiles is empty %}
                     <p class="dashboard-widget__empty">
                         {{ ux_icon('fa6-solid:folder-open', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
-                        {{ 'dashboard.no_files'|trans({}, 'admin') }}
+                        {{ 'dashboard.no_files'|trans({}, lexio_admin_ui.translation_domain) }}
                     </p>
                 {% else %}
                     <ul class="dashboard-widget__list">
@@ -258,7 +258,7 @@
                 <div class="dashboard-widget__footer">
                     <a href="{{ path('admin.file.upload') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:upload', {height: '11px', width: '11px', 'aria-hidden': true}) }}
-                        {{ 'admin.file.upload'|trans({}, 'admin') }}
+                        {{ 'admin.file.upload'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                 </div>
             </div>
@@ -271,12 +271,12 @@
                     <div>
                         <h2 class="dashboard-widget__title">
                             {{ ux_icon('fa6-solid:envelope', {height: '14px', width: '14px', class: 'me-1 text-info', 'aria-hidden': true}) }}
-                            {{ 'dashboard.recent_contacts'|trans({}, 'admin') }}
+                            {{ 'dashboard.recent_contacts'|trans({}, lexio_admin_ui.translation_domain) }}
                         </h2>
-                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_contacts.subtitle'|trans({}, 'admin') }}</p>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.recent_contacts.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
                     </div>
                     <a href="{{ path('admin.contact.index') }}" class="dashboard-widget__footer-link">
-                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                         {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
                     </a>
                 </div>
@@ -284,7 +284,7 @@
                 {% if recentContacts is empty %}
                     <p class="dashboard-widget__empty">
                         {{ ux_icon('fa6-solid:envelope', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
-                        {{ 'dashboard.no_contacts'|trans({}, 'admin') }}
+                        {{ 'dashboard.no_contacts'|trans({}, lexio_admin_ui.translation_domain) }}
                     </p>
                 {% else %}
                     <ul class="dashboard-widget__list">
@@ -326,7 +326,7 @@
                 <div class="dashboard-widget__footer">
                     <a href="{{ path('admin.contact.index') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
-                        {{ 'admin.contact.index'|trans({}, 'admin') }}
+                        {{ 'admin.contact.index'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                 </div>
             </div>
@@ -339,12 +339,12 @@
                     <div>
                         <h2 class="dashboard-widget__title">
                             {{ ux_icon('fa6-solid:trophy', {height: '14px', width: '14px', class: 'me-1 text-warning', 'aria-hidden': true}) }}
-                            {{ 'dashboard.leaderboard'|trans({}, 'admin') }}
+                            {{ 'dashboard.leaderboard'|trans({}, lexio_admin_ui.translation_domain) }}
                         </h2>
-                        <p class="dashboard-widget__subtitle">{{ 'dashboard.leaderboard.subtitle'|trans({}, 'admin') }}</p>
+                        <p class="dashboard-widget__subtitle">{{ 'dashboard.leaderboard.subtitle'|trans({}, lexio_admin_ui.translation_domain) }}</p>
                     </div>
                     <a href="{{ path('admin.security_log.index') }}" class="dashboard-widget__footer-link">
-                        {{ 'button.view_all'|trans({}, 'admin') }}
+                        {{ 'button.view_all'|trans({}, lexio_admin_ui.translation_domain) }}
                         {{ ux_icon('fa6-solid:arrow-right', {height: '10px', width: '10px', 'aria-hidden': true}) }}
                     </a>
                 </div>
@@ -352,7 +352,7 @@
                 {% if leaderboard is empty %}
                     <p class="dashboard-widget__empty">
                         {{ ux_icon('fa6-solid:trophy', {height: '16px', width: '16px', class: 'me-1', 'aria-hidden': true}) }}
-                        {{ 'dashboard.no_activity'|trans({}, 'admin') }}
+                        {{ 'dashboard.no_activity'|trans({}, lexio_admin_ui.translation_domain) }}
                     </p>
                 {% else %}
                     <ul class="dashboard-widget__list">
@@ -394,7 +394,7 @@
                 <div class="dashboard-widget__footer">
                     <a href="{{ path('admin.security_log.index') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:list', {height: '11px', width: '11px', 'aria-hidden': true}) }}
-                        {{ 'admin.security_log.index'|trans({}, 'admin') }}
+                        {{ 'admin.security_log.index'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                 </div>
             </div>

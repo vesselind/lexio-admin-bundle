@@ -85,6 +85,8 @@ lexio_admin:
 TRANSLATION_SYNC_ENABLED=1
 DEPLOYED_APP_URL=https://deployed.example.com
 TRANSLATION_SYNC_SALT=replace-with-a-long-random-value
+# Optional: set both values only when the deployed app requires HTTP Basic Auth.
+# Leave both empty when HMAC authentication is sufficient.
 TRANSLATION_SYNC_BASIC_AUTH_USERNAME=
 TRANSLATION_SYNC_BASIC_AUTH_PASSWORD=
 ```

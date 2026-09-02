@@ -52,7 +52,11 @@ class EntityAutoTranslator implements EntityAutoTranslatorInterface
 
                 if ($translatedText) {
                     $accessor->setValue($this->entity, $field, $translatedText);
-                    /** @phpstan-ignore-next-line method.notFound */
+
+                    if (!method_exists($this->entity, 'setTranslatableLocale')) {
+                        throw new \LogicException('Translatable entities must provide setTranslatableLocale().');
+                    }
+
                     $this->entity->setTranslatableLocale($locale);
                 }
             }
@@ -76,7 +80,10 @@ class EntityAutoTranslator implements EntityAutoTranslatorInterface
             $translatedText = $this->performTranslation($defaultValue, $locale);
 
             if ($translatedText) {
-                /** @phpstan-ignore-next-line method.notFound */
+                if (!method_exists($entity, 'setTranslatableLocale')) {
+                    throw new \LogicException('Translatable entities must provide setTranslatableLocale().');
+                }
+
                 $entity->setTranslatableLocale($locale);
                 $this->entityManager->refresh($entity);
                 $accessor->setValue($entity, $field, $translatedText);

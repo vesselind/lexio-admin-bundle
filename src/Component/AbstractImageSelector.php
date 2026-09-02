@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Component;
 
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -25,7 +24,6 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
  *       }
  *   }
  */
-#[AsLiveComponent(name: 'ImageSelector', template: '@LexioAdmin/components/ImageSelector.html.twig')]
 abstract class AbstractImageSelector
 {
     use DefaultActionTrait;

@@ -8,6 +8,9 @@ class Tab implements TabInterface
 {
     private ?object $entityInstance = null;
 
+    /**
+     * @param array<string, mixed> $routeParams
+     */
     public function __construct(
         private readonly string $title,
         private readonly string $pageRoute,
@@ -25,6 +28,9 @@ class Tab implements TabInterface
         return $this->pageRoute;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(): array
     {
         return $this->routeParams;

@@ -1,6 +1,6 @@
 # Mailer & Notifier
 
-For async email dispatch, see `messenger.mdc`. For Twig email templates, see `twig.mdc`. For testing dispatched emails, see `testing.mdc`.
+For async email dispatch, see `messenger.md`. For Twig email templates, see `twig.md`. For testing dispatched emails, see `testing.md`.
 
 ## Core Principles
 
@@ -10,8 +10,8 @@ For async email dispatch, see `messenger.mdc`. For Twig email templates, see `tw
 4. **One transport per environment** — Use `null://` in test, `native://default` in dev, SMTP/SES/API in prod. Configure via `MAILER_DSN` env var with typed processors.
 5. **Semantic email classes** — Wrap `TemplatedEmail` in domain-specific factory methods or dedicated email builder classes. Controllers never construct emails directly.
 6. **Notifier for multi-channel** — Use `Notification` + `ChatNotifierInterface` / `SmsNotifierInterface` when delivery spans email + SMS + Slack. Mailer alone for email-only flows.
-7. **PII in email context** — Never log full email bodies. Log recipient hash + message class + timestamp. See `observability.mdc` for PII masking patterns.
-8. **Idempotent email dispatch** — Guard against duplicate sends in async retries: check a `notification_sent_at` flag before dispatching. See `messenger.mdc` for idempotence patterns.
+7. **PII in email context** — Never log full email bodies. Log recipient hash + message class + timestamp. See `observability.md` for PII masking patterns.
+8. **Idempotent email dispatch** — Guard against duplicate sends in async retries: check a `notification_sent_at` flag before dispatching. See `messenger.md` for idempotence patterns.
 
 ---
 
@@ -170,7 +170,7 @@ $mailer->expects(self::once())->method('send');
 | Synchronous email in HTTP request | Route `SendEmailMessage` to async transport via Messenger |
 | Credentials in mailer DSN config | Use `%env(MAILER_DSN)%`. Store secrets via `secrets:set` |
 | No `null://` in test env | Configure `when@test` with `null://null` DSN |
-| Duplicate emails on async retry | Check `notification_sent_at` flag before dispatch. See `messenger.mdc` |
-| Logging full email body | Log recipient hash + message class only. See `observability.mdc` |
+| Duplicate emails on async retry | Check `notification_sent_at` flag before dispatch. See `messenger.md` |
+| Logging full email body | Log recipient hash + message class only. See `observability.md` |
 | Building emails in controllers | Create domain email factory/builder classes for reuse and testability |
 | No envelope sender configured | Set `framework.mailer.envelope.sender` globally |

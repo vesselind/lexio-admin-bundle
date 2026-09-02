@@ -62,6 +62,35 @@ final class MakeAdminSectionCommandTemplateTest extends TestCase
         self::assertStringNotContainsString('use App\\AdminCore\\', $rendered);
     }
 
+    public function test_crud_controller_template_initializes_entity_contexts_in_crud_actions(): void
+    {
+        $twig = new Environment(
+            new FilesystemLoader(__DIR__ . '/../../../templates'),
+            ['strict_variables' => true],
+        );
+
+        $rendered = $twig->render('maker/crud_controller.html.twig', [
+            'columnName' => null,
+            'shortClassName' => 'Invoice',
+            'shortClassNameLowercase' => 'invoice',
+            'snakeCaseClassName' => 'invoice',
+            'kebabCaseClassName' => 'invoice',
+        ]);
+
+        self::assertStringContainsString(
+            "        \$listingContext\n            ->setEntityFqcn(Invoice::class)\n            ->setFilter(\$filter)",
+            $rendered,
+        );
+        self::assertStringContainsString(
+            "\$formContext->setEntityInstance(\$entity);\n\n        return \$this->renderCreate(\$entity, \$formContext);",
+            $rendered,
+        );
+        self::assertStringContainsString(
+            "\$formContext->setEntityInstance(\$invoice);\n\n        return \$this->renderUpdate(\$invoice, \$formContext);",
+            $rendered,
+        );
+    }
+
     public function test_admin_test_template_uses_the_command_kebab_case_variable(): void
     {
         $twig = new Environment(

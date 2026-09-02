@@ -1,6 +1,6 @@
 # Security
 
-For QueryBuilder parameterization, see `doctrine.mdc`. For serialization groups, see `api.mdc` and `api-platform.mdc`. For SSRF prevention, see `http-client.mdc`. For PII masking, see `observability.mdc`. For static analysis, see `quality-pipeline.mdc`.
+For QueryBuilder parameterization, see `doctrine.md`. For serialization groups, see `api.md` and `api-platform.md`. For SSRF prevention, see `http-client.md`. For PII masking, see `observability.md`. For static analysis, see `quality-pipeline.md`.
 
 ## Core Principles
 
@@ -9,10 +9,10 @@ For QueryBuilder parameterization, see `doctrine.mdc`. For serialization groups,
 3. **Rate limiting on sensitive endpoints** — Sliding window on login, registration, password reset, contact, webhooks.
 4. **Strict CORS** — No wildcards on authenticated endpoints. Explicit origins only.
 5. **Multi-level IP filtering** — WAF → web server (Apache/nginx) → application (`security.yaml`). Defense in depth.
-6. **UUID for all exposed identifiers** — No sequential IDs. Prevents enumeration and info leakage. See `doctrine.mdc` for UUID v7 implementation patterns.
+6. **UUID for all exposed identifiers** — No sequential IDs. Prevents enumeration and info leakage. See `doctrine.md` for UUID v7 implementation patterns.
 7. **composer audit in CI** — Run every pipeline. Block on vulnerabilities.
 8. **No secrets in code** — All secrets via env vars, `.env.local` (gitignored), or Symfony secrets vault. Never in committed `.env`.
-9. **Input validation on DTOs** — See `dto.mdc` for DTO validation patterns. Never `$request->get()` without type validation.
+9. **Input validation on DTOs** — See `dto.md` for DTO validation patterns. Never `$request->get()` without type validation.
 10. **OWASP API Security Top 10** — Address each risk with Symfony-specific mitigations.
 
 ---
@@ -185,7 +185,7 @@ $apiKey = 'sk_live_xxx';  // Hardcoded — leaks via git history
 
 ### Input Validation on DTOs
 
-> See `dto.mdc` for complete DTO validation patterns, naming, and immutability conventions. See `api.mdc` for `#[MapRequestPayload]` automatic validation.
+> See `dto.md` for complete DTO validation patterns, naming, and immutability conventions. See `api.md` for `#[MapRequestPayload]` automatic validation.
 
 From a security perspective, the critical points are:
 - **Always validate before processing** — `#[Assert\...]` on DTOs, never raw `$request->get()`
@@ -203,7 +203,7 @@ From a security perspective, the critical points are:
 | API4 | Unrestricted Resource Consumption | Rate limiter; pagination `max_items_per_page` |
 | API5 | Broken Function-Level Authorization | Strict `role_hierarchy`; Voters per operation |
 | API6 | Unrestricted Sensitive Business Flows | Rate limiter on password reset, webhooks |
-| API7 | SSRF | `NoPrivateNetworkHttpClient`; see `http-client.mdc` |
+| API7 | SSRF | `NoPrivateNetworkHttpClient`; see `http-client.md` |
 | API8 | Security Misconfiguration | No debug in prod; strict CORS; `composer audit` |
 | API9 | Improper Inventory Management | Disable unused operations; version APIs |
 | API10 | Unsafe Third-Party Consumption | Validate external responses; timeout + circuit breaker |
@@ -213,7 +213,7 @@ From a security perspective, the critical points are:
 **Inputs & outputs (SBD-01–03):**
 - SBD-01: Validate all inputs via Symfony Validator or API Platform DTOs. Zero concatenation in Doctrine (QueryBuilder + `setParameter()` only).
 - SBD-02: Isolate system prompts (LLM); user data must not alter system instructions.
-- SBD-03: Rely on Twig auto-escaping (see `twig.mdc`); alert on `{{ var|raw }}`. Security headers: CSP, HSTS, X-Frame-Options.
+- SBD-03: Rely on Twig auto-escaping (see `twig.md`); alert on `{{ var|raw }}`. Security headers: CSP, HSTS, X-Frame-Options.
 
 **Identity & access (SBD-04–06):**
 - SBD-04: `UserPasswordHasherInterface` (Argon2id); `login_throttling`; JWT with short exp (< 1h).
@@ -227,12 +227,12 @@ From a security perspective, the critical points are:
 
 **Sessions & flow (SBD-10–13):**
 - SBD-10: `cookie_secure: auto`, `cookie_httponly: true`, `cookie_samesite: lax` (or strict).
-- SBD-11: `csrf_protection: true`; every state-changing form must verify CSRF. See `forms.mdc`.
+- SBD-11: `csrf_protection: true`; every state-changing form must verify CSRF. See `forms.md`.
 - SBD-12: File uploads: strict mime validation; store outside `public/` or use S3; filenames from UUID.
-- SBD-13: SSRF prevention on user-provided URLs. See `http-client.mdc` for `NoPrivateNetworkHttpClient`.
+- SBD-13: SSRF prevention on user-provided URLs. See `http-client.md` for `NoPrivateNetworkHttpClient`.
 
 **Resilience & monitoring (SBD-14–16):**
-- SBD-14: Dedicated security log channel. See `observability.mdc` for PII masking and Monolog processor conventions.
+- SBD-14: Dedicated security log channel. See `observability.md` for PII masking and Monolog processor conventions.
 - SBD-15: Rate limiter on sensitive endpoints (forgot password, contact, webhooks), not just login.
 - SBD-16: No stack traces in prod; generic error pages; no info disclosure.
 
@@ -241,7 +241,7 @@ From a security perspective, the critical points are:
 - SBD-18: Disable public API by default; limit GraphQL/REST depth (max_depth) to avoid DoS.
 - SBD-19: PHP not running as root; disable dangerous functions in php.ini.
 - SBD-20: Explicit strict CORS (no wildcard on authenticated).
-- SBD-21: Static analysis in CI. See `quality-pipeline.mdc` for PHPStan level 9 and CS-Fixer conventions.
+- SBD-21: Static analysis in CI. See `quality-pipeline.md` for PHPStan level 9 and CS-Fixer conventions.
 - SBD-22: Definition of Done: Voters implemented and tested; static checks pass; no secrets in source.
 
 ### Red Flags Checklist (Reject Immediately)
@@ -255,9 +255,9 @@ From a security perspective, the critical points are:
 | Secrets | `.env` with real credentials committed to repository |
 | Debug | `APP_DEBUG=1` or Profiler enabled in production |
 | Crypto | Home-made crypto instead of `PasswordHasher` / `sodium_*` |
-| Input | `$request->get()` without DTO validation — see `dto.mdc` |
+| Input | `$request->get()` without DTO validation — see `dto.md` |
 | ORM | Raw DQL/SQL concatenation instead of `setParameter()` |
-| API | Entities exposed without DTOs — see `dto.mdc` |
+| API | Entities exposed without DTOs — see `dto.md` |
 | CI | Missing `composer audit` in pipeline |
 
 ---

@@ -10,6 +10,9 @@ interface TabInterface
 
     public function getRoute(): ?string;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(): array;
 
     public function setEntityInstance(object $entity): static;

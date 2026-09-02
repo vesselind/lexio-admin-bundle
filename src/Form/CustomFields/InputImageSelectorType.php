@@ -24,6 +24,8 @@ class InputImageSelectorType extends AbstractType
     public function __construct(
         private readonly RouterInterface     $router,
         private readonly TranslatorInterface $translator,
+        private readonly string               $imageGalleryRouteName = 'admin.image.modal_gallery',
+        private readonly string               $translationDomain = 'LexioAdminBundle',
     ) {
     }
 
@@ -38,8 +40,8 @@ class InputImageSelectorType extends AbstractType
             'attr' => function (Options $options): array {
                 return [
                     'data-controller'                              => 'input-image-selector open-base-modal',
-                    'data-open-base-modal-modal-title-value'       => $this->translator->trans('modal.gallery', [], 'admin'),
-                    'data-open-base-modal-visit-url-value'         => $this->router->generate('admin.image.modal_gallery'),
+                    'data-open-base-modal-modal-title-value'       => $this->translator->trans('modal.gallery', [], $this->translationDomain),
+                    'data-open-base-modal-visit-url-value'         => $this->router->generate($this->imageGalleryRouteName),
                     'data-open-base-modal-modal-size-value'        => 'modal-xl',
                     'data-open-base-modal-close-on-success-value'  => 'false',
                     'data-action'                                  => 'image-gallery:image-selected@window->input-image-selector#selectImage',

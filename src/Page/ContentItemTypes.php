@@ -16,6 +16,9 @@ enum ContentItemTypes: string
     case TEXT_INPUT = 'text_input';
 
 
+    /**
+     * @return class-string<\Symfony\Component\Form\FormTypeInterface>
+     */
     public function getFormTypeClass(): string
     {
         return match ($this) {

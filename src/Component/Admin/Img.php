@@ -6,7 +6,7 @@ namespace Lexio\AdminBundle\Component\Admin;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent(name: 'Img', template: '@LexioAdmin/components/Img.html.twig')]
+#[AsTwigComponent(name: 'Admin:Img', template: '@LexioAdmin/components/Admin/Img.html.twig')]
 final class Img
 {
 

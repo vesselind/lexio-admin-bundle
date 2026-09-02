@@ -2,12 +2,10 @@
 
 namespace Lexio\AdminBundle\Form;
 
-use Lexio\AdminBundle\Entity\Blog;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\RouterInterface;
 
 class BlogShortType extends AbstractType
 {
@@ -24,7 +22,7 @@ class BlogShortType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Blog::class,
+            'data_class' => null,
         ]);
     }
 }

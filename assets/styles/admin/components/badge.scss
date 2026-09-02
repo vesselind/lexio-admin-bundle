@@ -1,0 +1,100 @@
+// ============================================================
+// Badges — shadcn/ui-inspired subtle badges
+// ============================================================
+
+.badge {
+  font-weight: $badge-font-weight;
+  letter-spacing: 0.01em;
+
+  &.bg-secondary,
+  &.bg-light {
+    color: $gray-900;
+    background-color: $gray-100 !important;
+    border: 1px solid $border-color;
+  }
+}
+// ============================================================
+// Outline badge — transparent bg, colored border + text
+// Usage: <span class="badge badge-outline-success">On rent</span>
+//        <span class="badge badge-outline-danger">Expired</span>
+// ============================================================
+
+// Base outline badge reset
+.badge[class*="badge-outline"] {
+  background: transparent !important;
+  font-weight: 500;
+}
+
+// Generate outline badges for each theme color
+@each $name, $color in (
+  "primary":   $primary,
+  "secondary": $gray-500,
+  "success":   $success,
+  "danger":    $danger,
+  "warning":   $warning,
+  "info":      $info,
+  "dark":      $dark,
+) {
+  .badge-outline-#{$name} {
+    background: transparent !important;
+    color: $color;
+    border: 1px solid rgba($color, 0.4);
+  }
+}
+// Generate outline badges for base colors
+@each $name, $color in (
+  "blue":    $blue,
+  "indigo":  $indigo,
+  "purple":  $purple,
+  "pink":    $pink,
+  "red":     $red,
+  "orange":  $orange,
+  "yellow":  shade-color($yellow, 15%),
+  "green":   $green,
+  "teal":    $teal,
+  "cyan":    $cyan,
+) {
+  .badge-outline-#{$name} {
+    background: transparent !important;
+    color: $color;
+    border: 1px solid rgba($color, 0.4);
+  }
+}
+
+// ============================================================
+// Subtle badge — tinted bg, colored text, no/light border
+// Usage: <span class="badge badge-subtle-success">Active</span>
+// ============================================================
+
+@each $name, $color in (
+  "primary":   $primary,
+  "success":   $success,
+  "danger":    $danger,
+  "warning":   $warning,
+  "info":      $info,
+) {
+  .badge-subtle-#{$name} {
+    background: rgba($color, 0.1) !important;
+    color: $color;
+    border: 1px solid rgba($color, 0.15);
+  }
+}
+
+@each $name, $color in (
+  "blue":    $blue,
+  "indigo":  $indigo,
+  "purple":  $purple,
+  "pink":    $pink,
+  "red":     $red,
+  "orange":  $orange,
+  "yellow":  shade-color($yellow, 15%),
+  "green":   $green,
+  "teal":    $teal,
+  "cyan":    $cyan,
+) {
+  .badge-subtle-#{$name} {
+    background: rgba($color, 0.1) !important;
+    color: $color;
+    border: 1px solid rgba($color, 0.15);
+  }
+}

@@ -11,6 +11,7 @@ use Lexio\AdminBundle\AdminCore\Breadcrumbs\AdminBreadcrumbs;
 use Lexio\AdminBundle\AdminCore\FormContext;
 use Lexio\AdminBundle\AdminCore\Listing\ListingContext;
 use Lexio\AdminBundle\Component\ConfirmationModal;
+use Lexio\AdminBundle\Controller\Admin\ModalContextAwareTrait;
 use Lexio\AdminBundle\Enum\Flash;
 use Lexio\AdminBundle\Event\AdminLifecycle\AfterEntityPersisted;
 use Lexio\AdminBundle\Event\AdminLifecycle\AfterEntityUpdated;
@@ -34,6 +35,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Abstract base controller for all admin CRUD sections.
  *
  * Concrete controllers extend this class and implement {@see getEntityFqcn()}.
+ * Concrete actions must initialize their contexts explicitly: listing actions call
+ * {@see ListingContext::setEntityFqcn()} before configuring columns, while form
+ * actions call {@see FormContext::setEntityInstance()} before using a render helper.
  * Helper methods (renderListing, renderCreate, renderUpdate, renderDelete, renderDetails, renderSeo)
  * handle all common CRUD actions with lifecycle events, flash messages, breadcrumbs and redirects.
  *
@@ -42,12 +46,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class BaseCrudController extends AbstractController
 {
+    use ModalContextAwareTrait;
+
     // ─── Listing ─────────────────────────────────────────────────────────────
 
     /**
      * @param ListingContext $listingContext
      * @param string|null $view #Template
-     * @param array $params
+     * @param array<string, mixed> $params
      * @return Response
      */
     public function renderListing(
@@ -57,10 +63,6 @@ abstract class BaseCrudController extends AbstractController
     ): Response
     {
         $request = $listingContext->getRequest();
-
-        $listingContext
-            ->setEntityFqcn($this->getEntityFqcn())
-            ->refreshColumnsSortability();
 
         $filtersForm = null;
         if ($listingContext->getFilter()) {
@@ -91,7 +93,9 @@ abstract class BaseCrudController extends AbstractController
             $listingContext->getItemsPerPage()
         );
 
-        $this->breadcrumbs()->forIndex($this->getIndexTitle());
+        if ($this->breadcrumbs()->hasItems() === false) {
+            $this->breadcrumbs()->forIndex($this->getIndexTitle());
+        }
 
         return $this->render($view ?? '@LexioAdmin/admin/base_crud/listing.html.twig', array_merge($params, [
             'title' => $this->getIndexTitle(),
@@ -107,6 +111,7 @@ abstract class BaseCrudController extends AbstractController
 
     /**
      * @param string|null $view #Template
+     * @param array<string, mixed> $params
      */
     public function renderCreate(
         object      $entity,
@@ -115,8 +120,6 @@ abstract class BaseCrudController extends AbstractController
         array       $params = [],
     ): Response
     {
-        $formContext->setEntityInstance($entity);
-
         $form = $this->createForm(
             $formContext->getFormType(),
             $entity,
@@ -142,14 +145,16 @@ abstract class BaseCrudController extends AbstractController
                 new AfterEntityPersisted($entity, $formContext->getCurrentLocale())
             );
 
-            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_created', [], 'admin'));
+            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_created', [], $this->translationDomain()));
 
             $formContext->getRequest()->attributes->set('_created_entity', $entity);
 
             return $formContext->redirectOnSuccess();
         }
 
-        $this->breadcrumbs()->forPage($this->getIndexTitle(), $formContext->getPageTitle());
+        if ($this->breadcrumbs()->hasItems() === false) {
+            $this->breadcrumbs()->forPage($this->getIndexTitle(), $formContext->getPageTitle());
+        }
 
         return $this->render($view ?? '@LexioAdmin/admin/base_crud/form.html.twig', array_merge($params, [
             'formContext' => $formContext,
@@ -162,6 +167,7 @@ abstract class BaseCrudController extends AbstractController
 
     /**
      * @param string|null $view #Template
+     * @param array<string, mixed> $params
      */
     public function renderUpdate(
         object      $entity,
@@ -170,8 +176,6 @@ abstract class BaseCrudController extends AbstractController
         array       $params = [],
     ): Response
     {
-        $formContext->setEntityInstance($entity);
-
         if (method_exists($entity, 'setTranslatableLocale')) {
             $entity->setTranslatableLocale($formContext->getCurrentLocale());
             $this->manager()->refresh($entity);
@@ -188,7 +192,7 @@ abstract class BaseCrudController extends AbstractController
 
             $this->manager()->flush();
 
-            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_updated', [], 'admin'));
+            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_updated', [], $this->translationDomain()));
 
             $this->eventDispatcher()->dispatch(
                 new AfterEntityUpdated($entity, $formContext->getCurrentLocale())
@@ -197,7 +201,9 @@ abstract class BaseCrudController extends AbstractController
             return $formContext->redirectOnSuccess();
         }
 
-        $this->breadcrumbs()->forPage($this->getIndexTitle(), $formContext->getPageTitle());
+        if ($this->breadcrumbs()->hasItems() === false) {
+            $this->breadcrumbs()->forPage($this->getIndexTitle(), $formContext->getPageTitle());
+        }
 
         return $this->render($view ?? '@LexioAdmin/admin/base_crud/form.html.twig', array_merge($params, [
             'formContext' => $formContext,
@@ -224,21 +230,22 @@ abstract class BaseCrudController extends AbstractController
             $this->manager()->remove($entity);
             $this->manager()->flush();
 
-            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_deleted', [], 'admin'));
+            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_deleted', [], $this->translationDomain()));
         } catch (\Exception $e) {
             $this->addFlash(
                 Flash::ERROR->value,
-                $this->translator()->trans('message.item_could_not_be_deleted', ['%message%' => $e->getMessage()], 'admin')
+                $this->translator()->trans('message.item_could_not_be_deleted', ['%message%' => $e->getMessage()], $this->translationDomain())
             );
         }
 
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirect($request->headers->get('referer') ?? $this->adminUrlGenerator()->indexLink());
     }
 
     // ─── Details ─────────────────────────────────────────────────────────────
 
     /**
      * @param string|null $view #Template
+     * @param array<string, mixed> $params
      */
     public function renderDetails(
         object  $entity,
@@ -249,10 +256,12 @@ abstract class BaseCrudController extends AbstractController
         $pageTitle = $this->translator()->trans(
             sprintf('admin.%s.details', $this->getSnakeEntityName()),
             [],
-            'admin'
+            $this->translationDomain()
         );
 
-        $this->breadcrumbs()->forPage($this->getIndexTitle(), $pageTitle);
+        if ($this->breadcrumbs()->hasItems() === false) {
+            $this->breadcrumbs()->forPage($this->getIndexTitle(), $pageTitle);
+        }
 
         return $this->render($view ?? '@LexioAdmin/admin/base_crud/details.html.twig', array_merge($params, [
             'pageTitle' => $pageTitle,
@@ -265,6 +274,7 @@ abstract class BaseCrudController extends AbstractController
 
     /**
      * @param string|null $view #Template
+     * @param array<string, mixed> $params
      */
     public function renderSeo(
         object      $entity,
@@ -273,8 +283,7 @@ abstract class BaseCrudController extends AbstractController
         array       $params = [],
     ): Response
     {
-        $formContext->setEntityInstance($entity)
-            ->setFormType(SeoType::class)
+        $formContext->setFormType(SeoType::class)
             ->disableLocalesTab();
 
         $form = $this->createForm($formContext->getFormType(), $entity, [
@@ -287,7 +296,7 @@ abstract class BaseCrudController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager()->flush();
 
-            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_updated', [], 'admin'));
+            $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('message.item_updated', [], $this->translationDomain()));
 
             return $this->redirect($formContext->getRequest()->getUri());
         }
@@ -301,6 +310,9 @@ abstract class BaseCrudController extends AbstractController
 
     // ─── Abstract / override points ──────────────────────────────────────────
 
+    /**
+     * @return class-string
+     */
     abstract public function getEntityFqcn(): string;
 
     protected function getSnakeEntityName(): string
@@ -310,7 +322,7 @@ abstract class BaseCrudController extends AbstractController
 
     protected function getIndexTitle(): string
     {
-        return $this->translator()->trans('admin.' . $this->getSnakeEntityName() . '.index', [], 'admin');
+        return $this->translator()->trans('admin.' . $this->getSnakeEntityName() . '.index', [], $this->translationDomain());
     }
 
     // ─── Service accessors (ServiceSubscriber pattern) ────────────────────────
@@ -328,6 +340,16 @@ abstract class BaseCrudController extends AbstractController
     public function translator(): TranslatorInterface
     {
         return $this->container->get('translator');
+    }
+
+    protected function translationDomain(): string
+    {
+        $domain = $this->container->get('parameter_bag')->get('lexio_admin.ui.translation_domain');
+        if (!is_string($domain) || '' === $domain) {
+            throw new \LogicException('The admin UI translation domain must be a non-empty string.');
+        }
+
+        return $domain;
     }
 
     public function breadcrumbs(): AdminBreadcrumbs

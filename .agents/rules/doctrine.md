@@ -1,6 +1,6 @@
 # Doctrine
 
-Use this rule **when the bundle defines entities/mapping**. Map entities in XML under `config/` when possible; make entity/repository classes **configurable** (see `symfony-bundle.mdc`).
+Use this rule **when the bundle defines entities/mapping**. Map entities in XML under `config/` when possible; make entity/repository classes **configurable** (see `symfony-bundle.md`).
 
 ## Core Principles
 
@@ -224,7 +224,7 @@ foreach ($orders as $order) { /* OOM risk */ }
 
 ### Lazy Objects — Interface-Driven, DI Only
 
-For heavy, rarely used services: `lazy: true` in DI or `#[Autoconfigure(lazy: true)]`. Always program to interfaces — consumer is unaware of lazy behavior. See `coding-standards.mdc` > Lazy Services for DI patterns.
+For heavy, rarely used services: `lazy: true` in DI or `#[Autoconfigure(lazy: true)]`. Always program to interfaces — consumer is unaware of lazy behavior. See `coding-standards.md` > Lazy Services for DI patterns.
 
 **Do:** `#[Autoconfigure(lazy: true)]` on implementation + interface alias. Consumer type-hints interface.
 
@@ -249,8 +249,8 @@ Review SQL before applying. Ensure reversibility. Test on staging data. Never au
 | N+1 queries (lazy-load in loops) | `leftJoin` + `addSelect`. Verify with Symfony Profiler |
 | `getResult()` on large datasets | `toIterable()` + `detach()` or `clear()` every 500 items |
 | `findBy`/`findOneBy` magic methods | Explicit QueryBuilder methods. `SELECT 1 LIMIT 1` for existence |
-| `#[Assert\...]` on entities | Validate DTOs/Commands only (see `dto.mdc`). Entities use domain logic + VOs |
-| Serializing entities directly | Map to DTOs first (see `api.mdc`). Normalizers need `CacheableSupportsMethodInterface` |
+| `#[Assert\...]` on entities | Validate DTOs/Commands only (see `dto.md`). Entities use domain logic + VOs |
+| Serializing entities directly | Map to DTOs first (see `api.md`). Normalizers need `CacheableSupportsMethodInterface` |
 | Serializing lazy objects | Map to DTO before serialization. Never expose lazy via API |
 | Lazy objects on collections (N+1) | Eager loading for lists. Lazy for single deep graphs only |
 | Auto-increment IDs in APIs | UUID v7 for all public identifiers |

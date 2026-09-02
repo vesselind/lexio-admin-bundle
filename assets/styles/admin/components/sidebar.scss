@@ -1,0 +1,225 @@
+// ============================================================
+// Sidebar — shadcn/ui-inspired clean navigation
+// ============================================================
+
+.sidebar {
+  background: var(--lexio-admin-sidebar-background, #{$sidebar-background}) !important;
+
+  width: var(--lexio-admin-sidebar-width, #{$lexio-admin-sidebar-width});
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100;
+  padding: 15px 0 0;
+  border-right: 1px solid $border-color;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .dropdown-toggle {
+    outline: 0;
+  }
+
+  .nav-link {
+    font-weight: 400;
+    color: $sidebar-font-color;
+    border-radius: $sidebar-navlink-border-radius;
+
+    display: flex;
+    gap: 0.625rem;
+    align-items: center;
+
+    font-size: $navlink-font-size;
+    padding: 0.5rem 0.75rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: var(--lexio-admin-sidebar-hover-background, #{$sidebar-hover-background});
+      color: $gray-900;
+    }
+
+    &.active {
+      background-color: var(--lexio-admin-sidebar-active-background, #{$sidebar-active-background});
+      color: $gray-900;
+      font-weight: 500;
+    }
+
+    .feather {
+      color: inherit;
+    }
+  }
+
+  .sidebar-heading {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .subtle-header {
+    font-size: $font-size-base * 0.75;
+    color: $sidebar-section-header-color;
+    margin-top: 1.25rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding-left: 0.75rem;
+  }
+
+  .dropdown-panel {
+
+    &.show-border {
+      border-left-style: solid;
+      border-left-color: $primary;
+      border-left-width: 2px;
+    }
+
+    .btn-toggle {
+      font-weight: 400;
+      color: $sidebar-font-color;
+      border-radius: $sidebar-navlink-border-radius;
+      padding: 0.5rem 0.75rem;
+      transition: background-color 0.15s ease, color 0.15s ease;
+
+      &:hover,
+      &:focus {
+        color: $gray-900;
+        background-color: var(--lexio-admin-sidebar-hover-background, #{$sidebar-hover-background});
+      }
+
+      /* arrow */
+      &::after {
+        width: 1.25em;
+        height: 1em;
+        margin-left: auto;
+        content: '';
+        background-color: $gray-400;
+        mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="24" viewBox="0 0 12 24"><path fill="black" fill-rule="evenodd" d="m7.588 12.43l-1.061 1.06L.748 7.713a.996.996 0 0 1 0-1.413L6.527.52l1.06 1.06l-5.424 5.425z" transform="rotate(-180 5.02 9.505)"/></svg>');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="24" viewBox="0 0 12 24"><path fill="black" fill-rule="evenodd" d="m7.588 12.43l-1.061 1.06L.748 7.713a.996.996 0 0 1 0-1.413L6.527.52l1.06 1.06l-5.424 5.425z" transform="rotate(-180 5.02 9.505)"/></svg>');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        transition: transform .2s ease;
+        transform-origin: center center;
+      }
+
+      &[aria-expanded="true"]::after {
+        transform: rotate(90deg);
+      }
+    }
+
+
+    .small-menu {
+      color: $sidebar-font-color;
+
+      li {
+        list-style: none;
+      }
+
+      .active {
+        a {
+          background-color: var(--lexio-admin-sidebar-active-background, #{$sidebar-active-background});
+          color: $gray-900 !important;
+          font-weight: 500;
+        }
+      }
+
+      a {
+        padding: 0.375rem 0.75rem 0.375rem 2.75rem !important;
+        color: $sidebar-font-color !important;
+        font-size: $small-menu-font-size;
+        margin-top: 0.125rem;
+        text-decoration: none;
+        display: block;
+        border-radius: $sidebar-navlink-border-radius;
+        transition: background-color 0.15s ease;
+
+        &:hover,
+        &:focus {
+          background-color: var(--lexio-admin-sidebar-hover-background, #{$sidebar-hover-background});
+          color: $gray-900 !important;
+        }
+      }
+    }
+  }
+
+
+  @media(max-width: 768px) {
+    .small-menu a {
+      font-size: 1rem;
+    }
+  }
+
+}
+
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-left: 1rem !important;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+
+.form-control-dark {
+  color: $white;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+
+.form-group {
+  position: relative;
+}
+
+.form-group:after {
+  display: none;
+}
+
+.form-group .input-icon {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+}

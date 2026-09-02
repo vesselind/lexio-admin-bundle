@@ -8,13 +8,13 @@
 2. **Strict by default** — `declare(strict_types=1)` in every PHP file.
 3. **Final by default** — Classes are final unless explicitly designed for extension.
 4. **SOLID mandatory** — Single responsibility, dependency inversion, interface segregation.
-5. **Thin boundaries** — Controllers, entities, and event classes contain no business logic. See `ai-new/rules/dto.md` for DTO mapping patterns.
+5. **Thin boundaries** — Controllers, entities, and event classes contain no business logic. See `dto.md` for DTO mapping patterns.
 6. **Constructor injection only** — All dependencies via constructor. No service locator, no setter injection.
 7. **Interface-driven DI** — Type-hint interfaces in constructors (DIP). Bind implementations via alias or `#[AsAlias]`.
 8. **Explicit over implicit** — Use yield/iterables when returning collections; type `iterable` in interfaces (LSP).
 9. **Production-safe** — No `dump()` or `dd()` in committed code.
-10. **Internationalization** — See `ai-new/rules/i18n.md` for TranslatableMessage, ICU, semantic keys.
-11. **Observability** — See `ai-new/rules/observability.md` for structured logging, LogSubscriber, Monolog.
+10. **Internationalization** — See `i18n.md` for TranslatableMessage, ICU, semantic keys.
+11. **Observability** — See `observability.md` for structured logging, LogSubscriber, Monolog.
 
 ---
 
@@ -198,7 +198,7 @@ final class InMemoryMetricsCollector implements ResetInterface
 
 ### Service Container — Lazy Services for Heavy Dependencies
 
-See `ai-new/rules/doctrine.md` > Lazy Objects for Doctrine-specific lazy patterns and serialization caveats.
+See `doctrine.md` > Lazy Objects for Doctrine-specific lazy patterns and serialization caveats.
 
 **Do:**
 
@@ -237,7 +237,7 @@ final class OrderController extends AbstractController
 }
 ```
 
-**Don't:** Put domain logic, persistence calls, or side effects in controllers. See `ai-new/rules/dto.md` > DTO to Entity Mapping for where mapping belongs.
+**Don't:** Put domain logic, persistence calls, or side effects in controllers. See `dto.md` > DTO to Entity Mapping for where mapping belongs.
 
 ### Iterables — Use `iterable` in Interfaces (LSP)
 
@@ -263,7 +263,7 @@ interface InvoiceLineRepositoryInterface
 
 ### Iterables — Yield and Batch Principles
 
-For batch processing conventions (`detach()`, `flush()+clear()`, `toIterable`), see `ai-new/rules/doctrine.md`. Yield immutable DTOs from repository iterators. Never `getResult()` on large queries.
+For batch processing conventions (`detach()`, `flush()+clear()`, `toIterable`), see `doctrine.md`. Yield immutable DTOs from repository iterators. Never `getResult()` on large queries.
 
 ### Iterables — IteratorAggregate for Business Collections
 
@@ -316,9 +316,9 @@ dd($order);
 
 ### Internationalization & Observability
 
-For translation conventions (semantic keys, ICU, TranslatableMessage), see `ai-new/rules/i18n.md`.
+For translation conventions (semantic keys, ICU, TranslatableMessage), see `i18n.md`.
 
-For logging conventions (structured logging, LogSubscriber, Monolog channels, PII masking), see `ai-new/rules/observability.md`.
+For logging conventions (structured logging, LogSubscriber, Monolog channels, PII masking), see `observability.md`.
 
 ---
 

@@ -15,6 +15,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class FileDownloadField extends BaseField
 {
+    /**
+     * @param array<string, string> $routeParams
+     */
     public function __construct(
         public readonly string $label,
         public readonly string $linkToUrl   = '',
@@ -28,13 +31,20 @@ class FileDownloadField extends BaseField
         return !empty($this->routeParams);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(): array
     {
         $accessor       = PropertyAccess::createPropertyAccessor();
         $entityInstance = $this->getEntityInstance();
 
+        if ($entityInstance === null) {
+            throw new \LogicException('The entity instance must be set before reading file download route parameters.');
+        }
+
         return array_map(
-            static fn (mixed $propertyPath) => $accessor->getValue($entityInstance, $propertyPath),
+            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->routeParams
         );
     }

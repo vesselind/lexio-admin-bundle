@@ -8,14 +8,14 @@
                 {% if block('header') %}
                     <div class="modal-header pb-0">
                         {% block header %}
-                            <h5>{{ 'confirmation_modal.title'|trans({}, 'text') }}</h5>
+                            <h5>{{ 'confirmation_modal.title'|trans({}, lexio_admin_ui.translation_domain) }}</h5>
                         {% endblock %}
                     </div>
                 {% endif %}
 
                 <div class="modal-body">
                     {% block content %}
-                        {{ 'confirmation_modal.text'|trans({}, 'text') }}
+                        {{ 'confirmation_modal.text'|trans({}, lexio_admin_ui.translation_domain) }}
                     {% endblock %}
                 </div>
 
@@ -23,7 +23,7 @@
                     {% block footer %}
                         <button type="button" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                 data-loading="addAttribute(disabled)">
-                            {{ 'button.cancel'|trans({}, 'admin') }}
+                            {{ 'button.cancel'|trans({}, lexio_admin_ui.translation_domain) }}
                         </button>
 
                         {% block confirm_button %}
@@ -34,7 +34,7 @@
                         <span class=""
                               data-loading="addClass(spinner-border spinner-border-sm)"
                               aria-hidden="true"></span>
-                                {{ 'button.confirm'|trans({}, 'admin') }}
+                                {{ 'button.confirm'|trans({}, lexio_admin_ui.translation_domain) }}
                             </button>
                         {% endblock %}
                     {% endblock %}

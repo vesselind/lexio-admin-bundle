@@ -1,12 +1,13 @@
 <twig:Admin:BaseModalBody>
 
     <div class="modal-gallery" {{ stimulus_controller('image-gallery', {
-        uploadUrl: path('admin.image.modal_upload'),
-        currentUrl: path('admin.image.modal_gallery'),
+        uploadUrl: path(lexio_admin_ui.routes.image_modal_upload),
+        currentUrl: path(lexio_admin_ui.routes.image_modal_gallery),
         currentFrame: 'base-modal-body',
+        flashUrl: path(lexio_admin_ui.routes.flash),
     }) }}>
         <div class="row">
-            <form method="GET" class="input-group" action="{{ path('admin.image.modal_gallery') }}"
+            <form method="GET" class="input-group" action="{{ path(lexio_admin_ui.routes.image_modal_gallery) }}"
                     {{ stimulus_controller('autosubmit') }}
                   data-turbo-frame="images-container"
             >
@@ -14,7 +15,7 @@
                 <input type="search" id="search" value="{{ app.request.query.get('q') }}"
                        class="form-control" name="name" aria-describedby="search"
                         {{ stimulus_action('autosubmit', 'debouncedSubmit') }}
-                       placeholder="{{ 'placeholder.search_by_title'|trans({}, 'admin') }}">
+                        placeholder="{{ 'placeholder.search_by_title'|trans({}, lexio_admin_ui.translation_domain) }}">
             </form>
 
             <div class="loading-indicator" aria-hidden="true">
@@ -57,9 +58,10 @@
 
         {# Image form #}
         <div class="card mb-2 p-3">
-            <h5>Качване на файл</h5>
+            <h5>{{ 'button.upload_file'|trans({}, lexio_admin_ui.translation_domain) }}</h5>
             <div class="input-group mb-3">
                 <input type="file" class="form-control" name="" id="file" placeholder=""
+                        {{ stimulus_target('image-gallery', 'file') }}
                         {{ stimulus_action('image-gallery', 'uploadImageSubmit', 'change') }}
                        aria-describedby="file" formenctype="multipart/form-data">
             </div>
@@ -70,7 +72,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             <i class="fa-solid fa-xmark"></i>
-            {{ 'button.close'|trans({}, 'admin') }}
+            {{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}
         </button>
     </div>
 

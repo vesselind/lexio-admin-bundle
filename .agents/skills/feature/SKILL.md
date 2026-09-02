@@ -29,7 +29,7 @@ Before launching the PM subagent, ask the user to confirm:
 
 ### Phase 1: PM Subagent (Requirements)
 
-Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
+Launch the PM subagent (read `../../agents/pm.md` for persona) with the task:
 
 1. Scope requirements — understand the full ask, identify stakeholders and user roles
 2. Ask clarifying questions aggressively to surface edge cases, acceptance criteria, and error scenarios
@@ -43,12 +43,12 @@ Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
 
 ### Phase 2: Architect Subagent (Technical Design)
 
-Launch the Architect subagent (read `ai-new/agents/architect.md` for persona) in **readonly** mode with the task:
+Launch the Architect subagent (read `../../agents/architect.md` for persona) in **readonly** mode with the task:
 
 1. Read the PM specification from `docs/stories/`
 2. Explore the existing codebase — detect patterns, layer structure, naming conventions
-3. Design from scratch: for a **bundle**, implementation order = config Extension → services (XML/loadExtension) → public Contract/events → tests (minimal Kernel) → optional Doctrine/API/UX per `ai-new/rules/architecture.md` and `ai-new/rules/symfony-bundle.md`
-4. Select applicable rules — list which rules from `ai-new/rules/` the main agent MUST read before implementing
+3. Design from scratch: for a **bundle**, implementation order = config Extension → services (XML/loadExtension) → public Contract/events → tests (minimal Kernel) → optional Doctrine/API/UX per `../../rules/architecture.md` and `../../rules/symfony-bundle.md`
+4. Select applicable rules — list which rules from `../../rules/` the main agent MUST read before implementing
 5. Save the design to `docs/handoffs/FEAT-NNN-architecture.md`
 
 **Output:** Technical design with components, implementation order, applicable rules list, risks.
@@ -67,7 +67,7 @@ You (the main agent) implement. Do NOT delegate implementation to a subagent.
 
 **Layer verification:** After each layer, run `make ci`. If it fails, fix before continuing.
 
-**Final Verification (QA):** Once all layers are implemented, automatically launch the QA subagent (read `ai-new/agents/qa.md` for persona) with the task:
+**Final Verification (QA):** Once all layers are implemented, automatically launch the QA subagent (read `../../agents/qa.md` for persona) with the task:
 1. Run `make ci` — report pass/fail
 2. Full acceptance: compare implementation against PM spec — all criteria met? edge cases covered?
 3. Rule compliance: verify code follows each applicable rule from the Architect's list
