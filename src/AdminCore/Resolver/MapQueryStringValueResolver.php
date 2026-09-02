@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\AdminCore\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -27,7 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *  - automatically hydrate entity-typed properties from their ID query parameter, and
  *  - support the existing MapQueryString mapping pipeline.
  */
-final class MapQueryStringValueResolver
+final class MapQueryStringValueResolver implements EventSubscriberInterface
 {
     private const array CONTEXT_DENORMALIZE = [
         'collect_denormalization_errors' => true,
