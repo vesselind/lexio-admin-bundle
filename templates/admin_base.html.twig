@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>
-        {% block title %}{% endblock %} | {{ 'site_title'|trans({}, 'text') }}
+        {% block title %}{% endblock %}{% block title_suffix %}{% if lexio_admin_ui.title_translation_key %} | {{ lexio_admin_ui.title_translation_key|trans({}, lexio_admin_ui.title_translation_domain) }}{% endif %}{% endblock %}
     </title>
 
     {% block favicon %}
-        <link rel="icon" type="image/svg+xml" sizes="any" href="{{ asset('build/images/logo.svg') }}">
+        {% if lexio_admin_ui.favicon_asset %}
+            <link rel="icon" type="image/svg+xml" sizes="any" href="{{ asset(lexio_admin_ui.favicon_asset) }}">
+        {% endif %}
     {% endblock %}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -24,7 +26,11 @@
         <meta name="turbo-cache-control" content="no-cache">
     {% endblock %}
 
-    {% block seo %}{% endblock %}
+    {% block seo %}
+        {% if lexio_admin_ui.seo_template %}
+            {% include lexio_admin_ui.seo_template %}
+        {% endif %}
+    {% endblock %}
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('admin') }}
@@ -73,23 +79,24 @@
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             {% block header_logo %}
-                                {{ dump(frontHomePageRoute) }}
-                                <a href="{{ path(frontHomePageRoute) }}"
-                                   class="d-flex align-items-center text-decoration-none">
-                                    <img width="100px" src="{{ asset('build/images/admin-logo.svg') }}"
-                                         alt="Admin Logo">
-                                </a>
+                                {% if lexio_admin_ui.admin_logo_asset %}
+                                    <a href="{{ path(lexio_admin_ui.routes.home) }}"
+                                       class="d-flex align-items-center text-decoration-none">
+                                        <img class="admin-header-logo" src="{{ asset(lexio_admin_ui.admin_logo_asset) }}"
+                                             alt="{{ lexio_admin_ui.admin_logo_alt|trans({}, lexio_admin_ui.translation_domain) }}">
+                                    </a>
+                                {% endif %}
                             {% endblock %}
                         </div>
 
                         {% block header_search %}
                             <div class="header-search me-auto d-none d-md-block" id="header-search">
                                 <select type="text" class="form-control"
-                                        placeholder="{{ 'header_search.placeholder'|trans({}, 'admin') }}"
+                                        placeholder="{{ 'header_search.placeholder'|trans({}, lexio_admin_ui.translation_domain) }}"
                                     {{ stimulus_controller('autocomplete-search', {
-                                        url: path('admin.header_search'),
+                                        url: path(lexio_admin_ui.routes.header_search),
                                     }) }}
-                                        aria-label="{{ 'header_search.placeholder'|trans({}, 'admin') }}"
+                                        aria-label="{{ 'header_search.placeholder'|trans({}, lexio_admin_ui.translation_domain) }}"
                                 >
                                 </select>
                                 <i class="fa fa-search" id="header-search-icon"></i>
@@ -122,9 +129,9 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 {% block user_menu_items %}
                                     <li>
-                                        <a class="dropdown-item" href="{{ path('admin.user.profile') }}">
+                                        <a class="dropdown-item" href="{{ path(lexio_admin_ui.routes.profile) }}">
                                             <i class="fa-solid fa-id-card"></i>
-                                            {{ 'user_menu.profile'|trans({}, 'admin') }}
+                                            {{ 'user_menu.profile'|trans({}, lexio_admin_ui.translation_domain) }}
                                         </a>
                                     </li>
                                     <li>
@@ -133,16 +140,16 @@
                                     {% if is_granted('ROLE_IMPERSONATOR') %}
                                         <li>
                                             <a class="dropdown-item"
-                                               href="{{ path('home_page', {'_switch_user': '_exit'}) }}">
+                                               href="{{ path(lexio_admin_ui.routes.exit_impersonation, {'_switch_user': '_exit'}) }}">
                                                 <i class="fa-solid fa-user-secret"></i>
-                                                {{ 'user_menu.exit_impersonation'|trans({}, 'admin') }}
+                                                {{ 'user_menu.exit_impersonation'|trans({}, lexio_admin_ui.translation_domain) }}
                                             </a>
                                         </li>
                                     {% endif %}
                                     <li>
-                                        <a class="dropdown-item" href="{{ path('security.logout') }}">
+                                        <a class="dropdown-item" href="{{ path(lexio_admin_ui.routes.logout) }}">
                                             <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                            {{ 'user_menu.logout'|trans({}, 'admin') }}
+                                            {{ 'user_menu.logout'|trans({}, lexio_admin_ui.translation_domain) }}
                                         </a>
                                     </li>
                                 {% endblock %}
@@ -184,7 +191,7 @@
         </div>
 
         <div id="flash-messages" class="flash-messages"></div>
-        {% include '@LexioAdmin/flash.stream.html.twig' %}
+        {% include '@LexioAdmin/admin/flash.stream.html.twig' %}
     </div>
 </div>
 

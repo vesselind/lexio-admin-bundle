@@ -20,7 +20,10 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class CKEditorType extends AbstractType
 {
-    public function __construct(private readonly RouterInterface $router)
+    public function __construct(
+        private readonly RouterInterface $router,
+        private readonly string $uploadRouteName = 'admin.ckeditor.upload',
+    )
     {
     }
 
@@ -31,13 +34,24 @@ class CKEditorType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        try {
+            $defaultDataUploadUrl = $this->router->generate($this->uploadRouteName);
+        } catch (\Exception) {
+            throw new \RuntimeException(sprintf(
+                'The route "%s" must be defined in the host application for CKEditorType to work.',
+                $this->uploadRouteName,
+            ));
+        }
+
         $resolver->setDefaults([
             'links_search' => true,
             'required'     => false,
-            'attr'         => function (Options $options): array {
+            'attr'         => function (Options $options) use ($defaultDataUploadUrl): array {
                 return [
-                    'data-controller'  => 'ckeditor',
-                    'data-upload-url'  => $this->router->generate('admin.ckeditor.upload'),
+                    'data-controller'                    => 'ckeditor',
+                    'data-ckeditor-upload-url-value'    => $defaultDataUploadUrl,
+                    // Retained for hosts that still read the pre-package attribute.
+                    'data-upload-url'                    => $defaultDataUploadUrl,
                 ];
             },
         ]);

@@ -1,0 +1,43 @@
+// CSS custom properties are generated from the same Sass inputs used by the
+// Bootstrap-compatible build. Consumers may override these at runtime on
+// `:root` or on `[data-lexio-admin-theme]`.
+
+:root,
+[data-lexio-admin-theme] {
+  --lexio-admin-main-bg: #{$main-bg};
+  --lexio-admin-body-bg: #{$body-bg};
+  --lexio-admin-body-color: #{$body-color};
+  --lexio-admin-headings-color: #{$headings-color};
+
+  --lexio-admin-primary: #{$primary};
+  --lexio-admin-secondary: #{$secondary};
+  --lexio-admin-success: #{$success};
+  --lexio-admin-info: #{$info};
+  --lexio-admin-warning: #{$warning};
+  --lexio-admin-danger: #{$danger};
+  --lexio-admin-light: #{$light};
+  --lexio-admin-dark: #{$dark};
+  --lexio-admin-accent: #{$accent};
+
+  --lexio-admin-border-color: #{$border-color};
+  --lexio-admin-font-family: #{$font-family-sans-serif};
+  --lexio-admin-font-size-base: #{$font-size-base};
+  --lexio-admin-font-size-sm: #{$font-size-sm};
+  --lexio-admin-radius: #{$border-radius};
+  --lexio-admin-radius-sm: #{$border-radius-sm};
+  --lexio-admin-radius-lg: #{$border-radius-lg};
+
+  --lexio-admin-sidebar-width: #{$lexio-admin-sidebar-width};
+  --lexio-admin-sidebar-background: #{$sidebar-background};
+  --lexio-admin-sidebar-color: #{$sidebar-font-color};
+  --lexio-admin-sidebar-hover-background: #{$sidebar-hover-background};
+  --lexio-admin-sidebar-active-background: #{$sidebar-active-background};
+  --lexio-admin-sidebar-section-color: #{$sidebar-section-header-color};
+  --lexio-admin-sidebar-radius: #{$sidebar-navlink-border-radius};
+  --lexio-admin-navbar-background: #{$navbar-background};
+  --lexio-admin-navbar-mobile-background: #{$navbar-mobile-background};
+
+  --lexio-admin-header-logo-width: #{$lexio-admin-header-logo-width};
+  --lexio-admin-sidebar-logo-width: #{$lexio-admin-sidebar-logo-width};
+  --lexio-admin-logo-height: #{$lexio-admin-logo-height};
+}

@@ -84,7 +84,7 @@ For each boilerplate rule that does NOT have a matching composer dependency in t
 
 ### Step 5: Generate Project DNA
 
-Write the `## Project DNA` section in `ai-new/AGENTS.md`. Replace the placeholder with a factual architecture fingerprint.
+Write the `## Project DNA` section in the repository-root `AGENTS.md`. Replace the placeholder with a factual architecture fingerprint.
 
 **Structure:**
 - **Symfony version:** X.Y
@@ -97,7 +97,7 @@ Do NOT use labels like "DDD" or "MVC" unless the code explicitly shows those pat
 
 ### Step 6: Detect or Create Makefile Targets (3 targets only)
 
-**Contract:** Only three targets are required: `make quality`, `make tests`, `make ci`. All tools (PHPStan, Deptrac, PHPUnit, Infection, lint, etc.) run inside these. See `ai-new/rules/quality-pipeline.md` and the `quality-install` skill templates for reference.
+**Contract:** Only three targets are required: `make quality`, `make tests`, `make ci`. All tools (PHPStan, Deptrac, PHPUnit, Infection, lint, etc.) run inside these. See `../../rules/quality-pipeline.md` and the `quality-install` skill templates for reference.
 
 **Makefile-solution:** If the project has a root Makefile that `include`s `Makefile-solution`, add or edit these three targets in **Makefile-solution** only, not in the root Makefile.
 
@@ -114,7 +114,7 @@ Ensure the following targets exist (in the project's Makefile or in Makefile-sol
 - [ ] composer.json read — Symfony version and components extracted
 - [ ] Three codebase areas explored (infrastructure, source, test)
 - [ ] User answered interactive questions for rules without matching composer deps
-- [ ] Project DNA written to `ai-new/AGENTS.md` with factual fingerprint (no prescribed labels)
+- [ ] Project DNA written to the repository-root `AGENTS.md` with factual fingerprint (no prescribed labels)
 - [ ] Makefile (or Makefile-solution if used) has `make quality`, `make tests`, `make ci`
 
 ## On Failure

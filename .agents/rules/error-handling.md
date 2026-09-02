@@ -5,11 +5,11 @@
 1. **Domain exceptions are meaningful** — Custom exception classes per bounded context. Never raw `\RuntimeException` with magic strings.
 2. **Exception hierarchy** — Base `DomainException` per context, extended by specific exceptions (`OrderNotFoundException`, `InsufficientBalanceException`).
 3. **ExceptionListener for HTTP mapping** — Map domain exceptions to HTTP status codes in a single listener. Never catch-and-rethrow in controllers.
-4. **Problem Details RFC 7807** — All error responses follow RFC 7807 format: `type`, `title`, `status`, `detail`. See `api.mdc` and `api-platform.mdc`.
-5. **No exception swallowing** — Never empty `catch {}`. Log, rethrow, or handle. See `observability.mdc` for logging patterns.
-6. **Production error pages** — Custom Twig templates for 403/404/500 (see `twig.mdc`). No stack traces in production.
-7. **TranslatableMessage in exceptions** — Domain exceptions carry `TranslatableMessage` for user-facing errors. See `i18n.mdc`.
-8. **Test error paths** — Every API endpoint tests 400/401/403/404/409 responses. See `testing.mdc`.
+4. **Problem Details RFC 7807** — All error responses follow RFC 7807 format: `type`, `title`, `status`, `detail`. See `api.md` and `api-platform.md`.
+5. **No exception swallowing** — Never empty `catch {}`. Log, rethrow, or handle. See `observability.md` for logging patterns.
+6. **Production error pages** — Custom Twig templates for 403/404/500 (see `twig.md`). No stack traces in production.
+7. **TranslatableMessage in exceptions** — Domain exceptions carry `TranslatableMessage` for user-facing errors. See `i18n.md`.
+8. **Test error paths** — Every API endpoint tests 400/401/403/404/409 responses. See `testing.md`.
 
 ---
 
@@ -180,4 +180,4 @@ throw new OrderNotFoundException('Order ' . $id . ' not found');  // Inconsisten
 | Empty `catch {}` blocks | Log, rethrow, or handle. Never swallow exceptions |
 | Stack traces in production | Custom Twig error templates for 403/404/500 |
 | Inconsistent error response format | Problem Details RFC 7807 (`application/problem+json`) |
-| No error path tests | Test 400/401/403/404/409 for every endpoint. See `testing.mdc` |
+| No error path tests | Test 400/401/403/404/409 for every endpoint. See `testing.md` |

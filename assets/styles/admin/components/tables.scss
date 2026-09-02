@@ -1,0 +1,63 @@
+// ============================================================
+// Tables — shadcn/ui-inspired clean data tables
+// ============================================================
+
+$table-font-size: 0.875rem; // 14px — consistent for both th and td
+
+.table {
+    font-size: $table-font-size;
+    border-color: $border-color;
+    margin-bottom: 0;
+
+    > :not(caption) > * > * {
+        border-bottom-color: $border-color;
+    }
+
+    th {
+        background-color: $gray-100;
+        color: $gray-500;
+    }
+}
+
+
+thead {
+    th {
+        background-color: $gray-600;
+    }
+
+    &.table-light {
+        th {
+            background-color: $gray-100;
+        }
+    }
+
+    th {
+        font-size: $table-font-size;
+        font-weight: 500;
+        color: $gray-500;
+        white-space: nowrap;
+        border-bottom-width: 1px;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+}
+
+tbody {
+    td {
+        vertical-align: middle;
+        color: $gray-700;
+        font-size: $table-font-size;
+    }
+}
+
+tr {
+    &.selected {
+        td {
+            background-color: $gray-100 !important;
+        }
+    }
+
+    &:last-child {
+        border-bottom-width: 0 !important;
+    }
+}

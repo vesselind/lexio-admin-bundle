@@ -1,0 +1,10 @@
+/***
+     $theme-colors are already added from bootstrap core
+     So we add here the additional $colors.
+ */
+
+@each $state, $value in $colors {
+    .border-#{$state} {
+        border-color: $value !important;
+    }
+}

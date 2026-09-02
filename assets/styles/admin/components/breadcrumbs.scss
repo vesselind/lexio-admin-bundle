@@ -1,0 +1,41 @@
+// ============================================================
+// Breadcrumbs — shadcn/ui-inspired minimal
+// ============================================================
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  list-style: none;
+  text-align: left;
+  padding: 0.75rem 0;
+
+  .breadcrumb {
+    margin-bottom: 0;
+    font-size: $font-size-sm;
+    --bs-breadcrumb-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%23a1a1aa'/%3E%3C/svg%3E");
+  }
+
+  .separator {
+    display: inline-block;
+    margin: 0 5px 0 0;
+  }
+
+  li {
+    color: $gray-500;
+    font-size: $font-size-sm;
+
+    a {
+      color: $gray-500;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: $gray-900;
+      }
+    }
+
+    &.active {
+      color: $gray-900;
+    }
+  }
+}

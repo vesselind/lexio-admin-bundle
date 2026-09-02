@@ -35,12 +35,12 @@ class BaseFilterType extends AbstractType
         $reflection = new \ReflectionClass($options['data']);
 
         foreach ($reflection->getProperties() as $property) {
-            if ($property->getType() instanceof \ReflectionUnionType) {
+            $type = $property->getType();
+            if (!$type instanceof \ReflectionNamedType) {
                 continue;
             }
 
-            /** @phpstan-ignore-next-line */
-            $fieldType = $property->getType()?->getName();
+            $fieldType = $type->getName();
             $fieldName = $property->getName();
 
             if ($fieldType === 'string') {
@@ -55,7 +55,7 @@ class BaseFilterType extends AbstractType
                     'label'    => 'label.' . AdminUtils::toSnakeCase($fieldName),
                     'required' => false,
                 ]);
-            } elseif ($property->getType() !== null && !$property->getType()->isBuiltin()) {
+            } elseif (!$type->isBuiltin()) {
                 // Detect if it's a Doctrine entity
                 if (class_exists($fieldType) && str_contains($fieldType, 'Entity')) {
                     $builder->add($fieldName, EntityType::class, [

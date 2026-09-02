@@ -14,9 +14,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<SecurityLog>
  *
  * @method SecurityLog|null find($id, $lockMode = null, $lockVersion = null)
- * @method SecurityLog|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SecurityLog|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method SecurityLog[]    findAll()
- * @method SecurityLog[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SecurityLog[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class SecurityLogRepository extends ServiceEntityRepository
 {
@@ -52,6 +52,7 @@ class SecurityLogRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    /** @return array<int, SecurityLog>|null */
     public function getOlderThan(int $months): ?array
     {
         $olderThanDate = Carbon::now()->subMonths($months)->toDateTimeImmutable();

@@ -1,0 +1,95 @@
+// ============================================================
+// Buttons — shadcn/ui-inspired minimal style
+// ============================================================
+
+// Global button hover — subtle shift instead of heavy shadow
+.btn {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Primary button (dark, shadcn default)
+.btn-primary {
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Secondary button — light zinc background
+.btn-secondary {
+  color: $gray-900 !important;
+  background-color: $secondary;
+  border-color: $border-color;
+
+  &:hover {
+    background-color: darken($secondary, 4%) !important;
+    color: $gray-900 !important;
+  }
+}
+
+// Outline variants — thin border, subtle fills on hover
+.btn-outline-primary {
+  border-color: $border-color;
+  color: $gray-900;
+
+  &:hover {
+    background-color: $gray-100;
+    color: $gray-900;
+    border-color: $gray-300;
+  }
+}
+
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-warning {
+  &:hover {
+    color: $white !important;
+  }
+}
+
+// Warning text adjustment
+.btn-warning {
+  color: $gray-900 !important;
+}
+
+// Ghost button (shadcn-style — no border, subtle hover)
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: $gray-700;
+  padding: 0.5rem 0.75rem;
+
+  &:hover {
+    background-color: $gray-100;
+    color: $gray-900;
+  }
+}
+
+// Gray utility button
+.btn-gray {
+  background-color: $gray-100 !important;
+  border: 1px solid $border-color;
+  color: $gray-700;
+
+  &:hover {
+    background-color: $gray-200 !important;
+    color: $gray-900;
+  }
+}
+
+// Success button subtle refinement
+.btn-success {
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Danger button subtle refinement
+.btn-danger {
+  &:hover {
+    opacity: 0.9;
+  }
+}

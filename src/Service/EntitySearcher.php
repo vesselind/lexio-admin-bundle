@@ -31,17 +31,8 @@ class EntitySearcher
     ): ?Query {
         $entityInstance = new $entityClass();
 
-        /** @phpstan-ignore-next-line  */
-        if (!$entityInstance instanceof SearchableEntityInterface) {
-            throw new \RuntimeException(sprintf(
-                'The entity %s must implement %s to be used with EntitySearcher.',
-                $entityClass,
-                SearchableEntityInterface::class,
-            ));
-        }
-
         $metadata = $this->entityManager->getClassMetadata($entityClass);
-        $fields   = array_values($entityInstance->getSearchableParameters()->searchableFields);
+        $fields   = $entityInstance->getSearchableParameters()->searchableFields;
 
         if (empty($fields)) {
             throw new \RuntimeException(sprintf(

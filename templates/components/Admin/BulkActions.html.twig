@@ -17,7 +17,7 @@
                 <i class="{{ bulkAction.icon }}"></i>
             {% endif %}
 
-            {{ bulkAction.label|trans({}, 'admin') }}
+            {{ bulkAction.label|trans({}, lexio_admin_ui.translation_domain) }}
         </button>
     {% endfor %}
 
@@ -26,21 +26,21 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ 'bulk_action.modal_confirmation_title'|trans({}, 'admin') }}</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ 'bulk_action.modal_confirmation_title'|trans({}, lexio_admin_ui.translation_domain) }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" {{ stimulus_target('bulk-action', 'modalBody') }}>
                     {{ 'bulk_action.modal_confirmation_text'|trans({
                         '%action%': '<strong>%action%</strong>',
                         '%count%': '<strong>%count%</strong>',
-                    }, 'admin')|raw }}
+                    }, lexio_admin_ui.translation_domain)|raw }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        {{ 'button.cancel'|trans({}, 'admin') }}
+                        {{ 'button.cancel'|trans({}, lexio_admin_ui.translation_domain) }}
                     </button>
                     <button class="btn btn-danger" data-bs-dismiss="modal" {{ stimulus_action('bulk-action', 'confirm') }}>
-                        {{ 'button.confirm'|trans({}, 'admin') }}
+                        {{ 'button.confirm'|trans({}, lexio_admin_ui.translation_domain) }}
                     </button>
                 </div>
             </div>

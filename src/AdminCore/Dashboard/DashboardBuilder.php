@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class DashboardBuilder
 {
+    /** @var ArrayCollection<int, DashboardItem> */
     private ArrayCollection $items;
 
     public function __construct()

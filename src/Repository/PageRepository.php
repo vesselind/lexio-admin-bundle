@@ -3,7 +3,6 @@
 namespace Lexio\AdminBundle\Repository;
 
 use Lexio\AdminBundle\Entity\Page;
-use Lexio\AdminBundle\Enum\Pages;
 use Lexio\AdminBundle\Filter\PageFilter;
 use Lexio\AdminBundle\Normalizer\ContentItemNormalizer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,19 +15,21 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @extends ServiceEntityRepository<Page>
  *
  * @method Page|null find($id, $lockMode = null, $lockVersion = null)
- * @method Page|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Page|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Page[]    findAll()
- * @method Page[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Page[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class PageRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly SerializerInterface $serializer)
+    use TranslatableHints;
+
+    public function __construct(ManagerRegistry $registry, private readonly NormalizerInterface $serializer)
     {
         parent::__construct($registry, Page::class);
     }
@@ -59,23 +60,33 @@ class PageRepository extends ServiceEntityRepository
         }
     }
 
-    public function get(Pages $page): ?Page
+    public function get(string $pageName): ?Page
     {
         return $this->createQueryBuilder('page')
             ->andWhere('page.name = :pageName')
-            ->setParameter('pageName', $page->value)
+            ->setParameter('pageName', $pageName)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
-    public function getNormalized(Pages $pages): ?array
+    /** @return array<string, mixed>|null */
+    public function getNormalized(string $pageName): ?array
     {
-        $page = $this->get($pages);
+        $page = $this->get($pageName);
 
-        /** @phpstan-ignore-next-line  */
-        return $this->serializer->normalize($page);
+        if ($page === null) {
+            return null;
+        }
+
+        $normalized = $this->serializer->normalize($page);
+        if (!is_array($normalized)) {
+            throw new \UnexpectedValueException('A page must normalize to an array.');
+        }
+
+        return $normalized;
     }
 
+    /** @return array<int, Page> */
     public function searchByTitle(string $title): array
     {
         $title = str_replace(' ', '%', $title);

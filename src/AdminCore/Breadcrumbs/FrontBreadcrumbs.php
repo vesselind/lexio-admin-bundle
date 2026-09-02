@@ -20,17 +20,19 @@ class FrontBreadcrumbs
     ) {
     }
 
-    public function forHome(): Breadcrumbs
+
+    public function forHome(): static
     {
         $this->breadcrumbs->addItem(
-            $this->translator->trans('home', [], 'text'),
+            $this->translator->trans('home', [], 'breadcrumbs'),
             $this->router->generate($this->frontHomePageRoute)
         );
 
-        return $this->breadcrumbs;
+        return $this;
     }
 
     /**
+     * The translation domain is by default the `breadcrumbs`.
      * @param string $text #TranslationKey
      * @param string $route #Route
      * @param array<string, mixed> $routeParams #RouteParams
@@ -38,7 +40,10 @@ class FrontBreadcrumbs
      */
     public function addItem(string $text, string $route, array $routeParams = []): static
     {
-        $this->breadcrumbs->addItem($text, $this->router->generate($route, $routeParams));
+        $this->breadcrumbs->addItem(
+            $this->translator->trans($text, [], 'breadcrumbs'),
+            $this->router->generate($route, $routeParams)
+        );
 
         return $this;
     }

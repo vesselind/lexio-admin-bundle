@@ -1,0 +1,285 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
+.datepicker {
+  width: -moz-min-content;
+  width: min-content;
+}
+
+.datepicker:not(.active) {
+  display: none;
+}
+
+.datepicker-dropdown {
+  padding-top: $spacer * 0.25;
+  position: absolute;
+  z-index: $zindex-dropdown;
+}
+
+.datepicker-dropdown.datepicker-orient-top {
+  padding-bottom: $spacer * 0.25;
+  padding-top: 0;
+}
+
+.datepicker-picker {
+  background-color: $white;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+}
+
+.datepicker-dropdown .datepicker-picker {
+  box-shadow: 0 $spacer * 0.5 $spacer rgba(0, 0, 0, 0.15);
+}
+
+.datepicker-main {
+  flex: auto;
+  padding: $spacer * 0.125;
+}
+
+.datepicker-footer {
+  background-color: $gray-100;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.datepicker-title {
+  background-color: $gray-100;
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.1);
+  font-weight: $font-weight-bold;
+  padding: $spacer * 0.375 $spacer * 0.75;
+  text-align: center;
+}
+
+.datepicker-controls {
+  display: flex;
+}
+
+.datepicker-header .datepicker-controls {
+  padding: $spacer * 0.125 0;
+}
+
+.datepicker-controls .btn {
+  background-color: $white;
+  border-color: $gray-200;
+}
+
+.datepicker-controls .btn:focus, .datepicker-controls .btn:hover {
+  background-color: $gray-200;
+  border-color: $gray-300;
+  color: $black;
+}
+
+.datepicker-controls .btn:focus {
+  box-shadow: 0 0 0 $spacer * 0.25 rgba($blue, 0.5);
+}
+
+.datepicker-controls .btn:disabled {
+  background-color: $gray-100;
+  border-color: $gray-100;
+  color: $black;
+}
+
+.datepicker-controls .btn:not(:disabled):active {
+  background-color: $gray-300;
+  border-color: $gray-400;
+  color: $black;
+}
+
+.datepicker-controls .btn:not(:disabled):active:focus {
+  box-shadow: 0 0 0 $spacer * 0.25 rgba($blue, 0.5);
+}
+
+.datepicker-header .datepicker-controls .btn {
+  border-color: transparent;
+  font-weight: $font-weight-bold;
+}
+
+.datepicker-footer .datepicker-controls .btn {
+  border-radius: $border-radius-sm;
+  flex: auto;
+  font-size: $font-size-sm;
+  margin: calc($spacer * 0.375 - 1px) $spacer * 0.375;
+}
+
+.datepicker-controls .view-switch {
+  flex: auto;
+}
+
+.datepicker-controls .next-button, .datepicker-controls .prev-button {
+  flex: 0 0 14.2857142857%;
+  padding-left: $spacer * 0.375;
+  padding-right: $spacer * 0.375;
+}
+
+.datepicker-controls .next-button.disabled, .datepicker-controls .prev-button.disabled {
+  visibility: hidden;
+}
+
+.datepicker-grid, .datepicker-view {
+  display: flex;
+}
+
+.datepicker-view {
+  align-items: stretch;
+  width: 15.75rem;
+}
+
+.datepicker-grid {
+  flex: auto;
+  flex-wrap: wrap;
+}
+
+.datepicker .days {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+}
+
+.datepicker .days-of-week {
+  display: flex;
+}
+
+.datepicker .week-numbers {
+  display: flex;
+  flex: 0 0 9.6774193548%;
+  flex-direction: column;
+}
+
+.datepicker .weeks {
+  align-items: stretch;
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+}
+
+.datepicker span {
+  -webkit-touch-callout: none;
+  align-items: center;
+  border-radius: $border-radius;
+  cursor: default;
+  display: flex;
+  justify-content: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.datepicker .dow {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  height: $spacer * 1.5;
+}
+
+.datepicker .week {
+  color: $gray-300;
+  flex: auto;
+  font-size: $font-size-sm;
+}
+
+.datepicker .days .dow, .datepicker-cell {
+  flex-basis: 14.2857142857%;
+}
+
+.datepicker-cell {
+  height: $spacer * 2.25;
+}
+
+.datepicker-cell:not(.day) {
+  flex-basis: 25%;
+  height: $spacer * 4.5;
+}
+
+.datepicker-cell:not(.disabled):hover {
+  background-color: $gray-100;
+  cursor: pointer;
+}
+
+.datepicker-cell.focused:not(.selected) {
+  background-color: $gray-200;
+}
+
+.datepicker-cell.selected, .datepicker-cell.selected:hover {
+  background-color: $primary;
+  color: $white;
+  font-weight: $font-weight-semibold;
+}
+
+.datepicker-cell.disabled {
+  color: rgba($black, 0.5);
+}
+
+.datepicker-cell.next:not(.disabled), .datepicker-cell.prev:not(.disabled) {
+  color: $gray-600;
+}
+
+.datepicker-cell.next.selected, .datepicker-cell.prev.selected {
+  color: $gray-100;
+}
+
+.datepicker-cell.highlighted:not(.selected):not(.range):not(.today) {
+  background-color: $gray-100;
+  border-radius: 0;
+}
+
+.datepicker-cell.highlighted:not(.selected):not(.range):not(.today):not(.disabled):hover {
+  background-color: $gray-200;
+}
+
+.datepicker-cell.highlighted:not(.selected):not(.range):not(.today).focused {
+  background-color: $gray-200;
+}
+
+.datepicker-cell.today:not(.selected) {
+  background-color: $success;
+}
+
+.datepicker-cell.today:not(.selected):not(.disabled) {
+  color: $white;
+}
+
+.datepicker-cell.today.focused:not(.selected) {
+  background-color: darken($success, 5%);
+}
+
+.datepicker-cell.range-end:not(.selected), .datepicker-cell.range-start:not(.selected) {
+  background-color: $gray-600;
+  color: $white;
+}
+
+.datepicker-cell.range-end.focused:not(.selected), .datepicker-cell.range-start.focused:not(.selected) {
+  background-color: darken($gray-600, 5%);
+}
+
+.datepicker-cell.range-start:not(.range-end) {
+  border-radius: $border-radius 0 0 $border-radius;
+}
+
+.datepicker-cell.range-end:not(.range-start) {
+  border-radius: 0 $border-radius $border-radius 0;
+}
+
+.datepicker-cell.range {
+  background-color: $gray-200;
+  border-radius: 0;
+}
+
+.datepicker-cell.range:not(.disabled):not(.focused):not(.today):hover {
+  background-color: $gray-300;
+}
+
+.datepicker-cell.range.disabled {
+  color: $gray-400;
+}
+
+.datepicker-cell.range.focused {
+  background-color: $gray-300;
+}
+
+.datepicker-input.in-edit {
+  border-color: lighten($primary, 20%);
+}
+
+.datepicker-input.in-edit:active, .datepicker-input.in-edit:focus {
+  box-shadow: 0 0 $spacer * 0.25 $spacer * 0.25 rgba(lighten($primary, 20%), 0.2);
+}

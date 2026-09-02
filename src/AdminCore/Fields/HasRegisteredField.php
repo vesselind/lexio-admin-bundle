@@ -16,6 +16,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class HasRegisteredField extends BaseField
 {
+    /**
+     * @param class-string|null $userEntityClass
+     */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ?string $userEntityClass = null,
@@ -30,13 +33,20 @@ class HasRegisteredField extends BaseField
             );
         }
 
-        try {
-            $email = $this->getEntityInstance()->getEmail();
-        } catch (\Throwable) {
+        if (!class_exists($this->userEntityClass)) {
+            throw new \LogicException(
+                sprintf('Configured user entity class "%s" does not exist.', $this->userEntityClass)
+            );
+        }
+
+        $entityInstance = $this->getEntityInstance();
+        if ($entityInstance === null || !method_exists($entityInstance, 'getEmail')) {
             throw new \RuntimeException(
                 'HasRegisteredField can only be used with entities that expose a getEmail() method.'
             );
         }
+
+        $email = $entityInstance->getEmail();
 
         return $this->entityManager->getRepository($this->userEntityClass)
             ->findOneBy(['email' => $email]) !== null;

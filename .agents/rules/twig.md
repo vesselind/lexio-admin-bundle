@@ -1,6 +1,6 @@
 # Twig (v3)
 
-For Stimulus/Turbo/Live Components/AssetMapper, see `frontend.mdc`. For translation filters (`|trans`, `t()`), see `i18n.mdc`. For `{% cache %}` pool configuration and tag invalidation, see `caching.mdc`.
+For Stimulus/Turbo/Live Components/AssetMapper, see `frontend.md`. For translation filters (`|trans`, `t()`), see `i18n.md`. For `{% cache %}` pool configuration and tag invalidation, see `caching.md`.
 
 ## Core Principles
 

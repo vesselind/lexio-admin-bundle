@@ -17,6 +17,7 @@ trait FieldComponentTrait
     #[LiveProp(writable: true)]
     public ?int $entityId = null;
 
+    /** @var class-string|null */
     #[LiveProp(writable: true)]
     public ?string $entityFqcn = null;
 
@@ -29,14 +30,23 @@ trait FieldComponentTrait
 
     public function mount(BaseField $field): void
     {
-        $this->entityFqcn = $field->getColumn()?->getEntityFqcn();
+        $column = $field->getColumn();
+        if ($column === null) {
+            throw new \LogicException('A field column must be set before mounting its live component.');
+        }
+
+        $this->entityFqcn = $column->getEntityFqcn();
         $this->entityId = $field->getEntityInstance()?->getId();
-        $this->propertyName = $field->getColumn()->propertyName;
+        $this->propertyName = $column->propertyName;
         $this->fieldValue = $field->getValue();
     }
 
     protected function getEntityData(): ?object
     {
+        if ($this->entityFqcn === null || $this->entityId === null) {
+            return null;
+        }
+
         return $this->manager()->getRepository($this->entityFqcn)->find($this->entityId);
     }
 

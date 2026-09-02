@@ -4,19 +4,19 @@
 
 **Bundle context** — Prefer a minimal `TestKernel` that registers only this bundle (+ required deps). Integration tests boot the container and assert services/tags/config. Functional HTTP tests apply only if the bundle exposes routes/controllers.
 
-For EntityManagerInterface and DAMA DoctrineTestBundle, see `ai-new/rules/doctrine.md`. For bus testing, see `ai-new/rules/messenger.md`.
+For EntityManagerInterface and DAMA DoctrineTestBundle, see `doctrine.md`. For bus testing, see `messenger.md`.
 
 ## Core Principles
 
 1. **Three test types** — Unit (no DB, mocked deps), integration (real DB, repositories), functional (HTTP, ApiTestCase).
 2. **Unit tests** — For handlers, services, value objects, validators. Mock all dependencies. No database.
 3. **Integration tests** — For repositories. Use real database (not SQLite). Verify queries and mappings.
-4. **Functional tests** — Use ApiTestCase (see `ai-new/rules/api-platform.md`). Structure with Given/When/Then. Test success AND error paths.
+4. **Functional tests** — Use ApiTestCase (see `api-platform.md`). Structure with Given/When/Then. Test success AND error paths.
 5. **TDD mandatory for bug fixes** — Write regression test first, then fix. Never fix then test.
 6. **FIRST principles** — Fast, Independent, Repeatable, Self-validating, Timely.
 7. **Infection mutation testing** — MSI >= 70% overall, covered MSI >= 80%.
 8. **DAMA transaction isolation** — Each test wrapped in a rollback transaction. No DB pollution.
-9. **Given phase via Message Bus** — Use Commands to set up test state (ISO-functional). Not EntityManager. See `ai-new/rules/messenger.md` for bus configuration.
+9. **Given phase via Message Bus** — Use Commands to set up test state (ISO-functional). Not EntityManager. See `messenger.md` for bus configuration.
 10. **Tests alongside code** — Write tests when writing code. Never add tests only at the end.
 
 ---
@@ -268,7 +268,7 @@ public function test_deleted_order_cannot_be_placed(): void
 
 ### Infection Mutation Testing
 
-> See `ai-new/rules/quality-pipeline.md` for Infection configuration, MSI thresholds (>= 70%), and CI integration. Fix or add tests when mutations survive.
+> See `quality-pipeline.md` for Infection configuration, MSI thresholds (>= 70%), and CI integration. Fix or add tests when mutations survive.
 
 ### Memory Assertion for Batch/Export Tests
 

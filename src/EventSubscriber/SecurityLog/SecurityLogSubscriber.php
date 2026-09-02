@@ -33,7 +33,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setAffectedUser($event->getTargetUser()->getUserIdentifier())
             ->setType(SecurityEvents::SWITCH_USER)
             ->setUserAgent($request->headers->get('User-Agent', 'n/a'))
@@ -47,7 +47,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setAffectedUser($event->getAuthenticationToken()->getUserIdentifier())
             ->setType(SecurityEvents::LOGIN)
             ->setUserAgent($request->headers->get('User-Agent', 'n/a'));
@@ -67,8 +67,8 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
-            ->setAffectedUser($request->request->get('email', 'n/a'))
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
+            ->setAffectedUser($request->request->getString('email', 'n/a'))
             ->setType(SecurityEvents::LOGIN_FAILURE)
             ->setUserAgent($request->headers->get('User-Agent', 'n/a'));
 
@@ -87,7 +87,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         }
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setActingUser($currentUser->getUserIdentifier())
             ->setType(SecurityEvents::LOGOUT)
             ->setUserAgent($request->headers->get('User-Agent', 'n/a'))
@@ -108,7 +108,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         $user = $this->security->getUser();
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setAffectedUser($event->affectedUser)
             ->setType($event->success ? SecurityEvents::PASSWORD_CHANGE : SecurityEvents::PASSWORD_CHANGE_FAILED)
             ->setUserAgent($request->headers->get('User-Agent', 'n/a'))
@@ -127,7 +127,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         }
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setActingUser($event->actingUser)
             ->setAffectedUser($event->affectedUser)
             ->setType(SecurityEvents::PASSWORD_RESET_REQUEST)
@@ -146,7 +146,7 @@ final readonly class SecurityLogSubscriber implements EventSubscriberInterface
         }
 
         $eventEntity = new SecurityLog()
-            ->setIpAddress($request->getClientIp())
+            ->setIpAddress($request->getClientIp() ?? 'n/a')
             ->setActingUser($event->actingUser)
             ->setAffectedUser($event->affectedUser)
             ->setType(SecurityEvents::USER_REGISTERED)

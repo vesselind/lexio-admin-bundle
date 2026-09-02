@@ -1,6 +1,6 @@
 <div {{ attributes }}>
 
-        <label for="perPageSelect" class="form-label mb-0 me-2">{{ 'table.items_per_page'|trans({}, 'admin') }}</label>
+        <label for="perPageSelect" class="form-label mb-0 me-2">{{ 'table.items_per_page'|trans({}, lexio_admin_ui.translation_domain) }}</label>
 
         {% set current = itemsPerPage %}
         {% set options = options|default([10,20,50,100,300]) %}

@@ -5,4 +5,4 @@
 {# @var field \App\AdminCore\Listing\Fields\TitleField #}
 
 <span>{{ field.value|strip_words(25) }}</span>
-<span class="ms-2 badge {{ field.entityInstance.status.color }}">{{ field.entityInstance.status.name|trans({}, 'admin') }}</span>
+<span class="ms-2 badge {{ field.entityInstance.status.color }}">{{ field.entityInstance.status.name|trans({}, lexio_admin_ui.translation_domain) }}</span>

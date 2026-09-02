@@ -1,0 +1,25 @@
+/**
+* Toast color variants — shadcn/ui-inspired subtle styling
+*/
+
+$toast-margin-bottom:           1rem;
+
+$toast-bg-scale:                -80%;
+$toast-border-scale:            -70%;
+$toast-color-scale:             40%;
+
+$min-contrast-ratio:   4.5 !default;
+
+@each $state, $value in $theme-colors {
+    $toast-background: shift-color($value, $toast-bg-scale);
+    $toast-border: shift-color($value, $toast-border-scale);
+    $toast-color: shift-color($value, $alert-color-scale);
+    @if (contrast-ratio($toast-background, $toast-color) < $min-contrast-ratio) {
+      $toast-color: mix($value, color-contrast($toast-background), abs($toast-color-scale));
+    }
+    .toast-#{$state} {
+      background: $toast-background;
+      color: $gray-900;
+      border-color: $toast-border;
+    }
+  }

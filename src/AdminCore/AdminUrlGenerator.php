@@ -70,11 +70,14 @@ class AdminUrlGenerator
         return sprintf('admin.%s.update', $this->entitySnakeName);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function updateRouteParams(?string $locale = null): array
     {
-        $this->assertEntityInstanceNotNull('updateRouteParams');
+        $entityInstance = $this->getEntityInstanceOrFail('updateRouteParams');
 
-        return ['id' => $this->entityInstance->getId(), 'language' => $locale ?? $this->defaultLocale];
+        return ['id' => $entityInstance->getId(), 'language' => $locale ?? $this->defaultLocale];
     }
 
     public function updateLink(?string $locale = null): string
@@ -82,11 +85,14 @@ class AdminUrlGenerator
         return $this->router->generate($this->updateRoute(), $this->updateRouteParams($locale));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function deleteRouteParams(): array
     {
-        $this->assertEntityInstanceNotNull('deleteRouteParams');
+        $entityInstance = $this->getEntityInstanceOrFail('deleteRouteParams');
 
-        return ['id' => $this->entityInstance->getId()];
+        return ['id' => $entityInstance->getId()];
     }
 
     public function deleteRoute(): string
@@ -99,13 +105,15 @@ class AdminUrlGenerator
         return $this->router->generate($this->deleteRoute(), $this->deleteRouteParams());
     }
 
-    private function assertEntityInstanceNotNull(string $caller): void
+    private function getEntityInstanceOrFail(string $caller): object
     {
         if ($this->entityInstance === null) {
             throw new \RuntimeException(
                 sprintf('[AdminUrlGenerator] Entity instance must be set before calling %s().', $caller)
             );
         }
+
+        return $this->entityInstance;
     }
 }
 

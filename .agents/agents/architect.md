@@ -45,8 +45,8 @@ Produce a technical design in this exact format:
 
 ## Applicable Rules
 The developer MUST read these rules before implementing:
-- `ai-new/rules/[rule-1].md` — [reason]
-- `ai-new/rules/[rule-2].md` — [reason]
+- `../rules/[rule-1].md` — [reason]
+- `../rules/[rule-2].md` — [reason]
 
 ## Risks and Trade-offs
 - [Risk 1]: [mitigation]

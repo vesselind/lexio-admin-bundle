@@ -1,17 +1,17 @@
 # API (Symfony Native — without API Platform)
 
-> **Bundles** — Applies when the bundle exposes HTTP controllers. If the host uses API Platform for those endpoints, prefer `api-platform.mdc`. For DTO conventions, see `dto.mdc`.
+> **Bundles** — Applies when the bundle exposes HTTP controllers. If the host uses API Platform for those endpoints, prefer `api-platform.md`. For DTO conventions, see `dto.md`.
 
 ## Core Principles
 
 1. **MapRequestPayload for input** — Symfony 6.3+ attribute automates JSON → DTO → validation. No manual `$request->getContent()` + deserialize.
 2. **MapQueryString for filters** — Query parameters mapped to typed filter DTOs. No `$request->query->get()`.
 3. **MapQueryParameter for scalars** — Single query params like `page`, `limit` mapped directly to controller arguments.
-4. **Serializer groups for output** — Control exposed fields per operation with `#[Groups]`. Convention: `<resource>:<action>` (e.g. `user:read`, `user:list`). API Platform projects use 3-segment groups instead — see `api-platform.mdc`.
-5. **Problem Details RFC 7807 for errors** — Symfony's native error handler returns structured JSON errors. Configure via `framework.exceptions`. See `error-handling.mdc` for the full ExceptionListener pattern.
+4. **Serializer groups for output** — Control exposed fields per operation with `#[Groups]`. Convention: `<resource>:<action>` (e.g. `user:read`, `user:list`). API Platform projects use 3-segment groups instead — see `api-platform.md`.
+5. **Problem Details RFC 7807 for errors** — Symfony's native error handler returns structured JSON errors. Configure via `framework.exceptions`. See `error-handling.md` for the full ExceptionListener pattern.
 6. **DTOs for input AND output** — Never serialize Doctrine entities directly. Input DTOs for write, output DTOs or entity-with-groups for read.
-7. **Controller stays anemic** — Receive DTO, dispatch to handler/service, return response. No business logic. See `coding-standards.mdc` for the canonical Do/Don't and `dto.mdc > DTO to Entity Mapping`.
-8. **Custom normalizers with `getSupportedTypes()`** — Value Objects (Money, Address) need dedicated normalizers. Always implement `getSupportedTypes()` for cache. See `serializer.mdc` for context builders and advanced normalizer patterns.
+7. **Controller stays anemic** — Receive DTO, dispatch to handler/service, return response. No business logic. See `coding-standards.md` for the canonical Do/Don't and `dto.md > DTO to Entity Mapping`.
+8. **Custom normalizers with `getSupportedTypes()`** — Value Objects (Money, Address) need dedicated normalizers. Always implement `getSupportedTypes()` for cache. See `serializer.md` for context builders and advanced normalizer patterns.
 9. **Content negotiation** — Return format based on `Accept` header. JSON default for APIs. Configure `framework.request.formats`.
 10. **Versioning via route prefix** — `/api/v1/...`. Never break existing clients.
 
@@ -62,7 +62,7 @@ public function list(
 }
 ```
 
-> See `dto.mdc > Query Filter DTO` for the `ProductFilter` pattern.
+> See `dto.md > Query Filter DTO` for the `ProductFilter` pattern.
 
 **Don't:**
 
@@ -281,11 +281,11 @@ if (!$order) {
 |---------|-----|
 | Manual `json_decode` + validate | Use `#[MapRequestPayload]`. Automatic deserialization + validation |
 | `$request->query->get()` for filters | Use `#[MapQueryString]` with typed filter DTO |
-| Entity serialized directly | Output DTOs or entity with strict `#[Groups]`. See `dto.mdc` |
+| Entity serialized directly | Output DTOs or entity with strict `#[Groups]`. See `dto.md` |
 | Inconsistent error format | Problem Details RFC 7807 via `framework.exceptions` config |
 | Missing `getSupportedTypes()` on normalizer | Required since Symfony 6.3. Without it, perf catastrophe |
 | Generic groups (`read`/`write`) | Convention: `<resource>:<action>` (e.g. `user:read`, `order:list`) |
 | No content negotiation | Configure `framework.request.formats`. Return JSON for API clients |
-| All logic in controller | Controller receives DTO, dispatches to handler. See `dto.mdc` |
+| All logic in controller | Controller receives DTO, dispatches to handler. See `dto.md` |
 | `MapQueryString` for single scalar param | Use `#[MapQueryParameter]` for individual typed params |
 | Circular reference on entity serialization | Use output DTOs (flat structure) or `#[MaxDepth]` with groups |

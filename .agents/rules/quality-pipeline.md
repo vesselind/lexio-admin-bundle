@@ -5,9 +5,9 @@
 ## Core Principles
 
 1. **PHPStan level 9, zero baseline** — Highest strictness. Never generate or maintain a baseline. Fix all errors including pre-existing ones in touched files.
-2. **PHP-CS-Fixer or Pint** — Consistent code style. Config committed. Format on save or pre-commit. See `ai-new/rules/coding-standards.md` for the conventions enforced (strict_types, final classes, etc.).
+2. **PHP-CS-Fixer or Pint** — Consistent code style. Config committed. Format on save or pre-commit. See `coding-standards.md` for the conventions enforced (strict_types, final classes, etc.).
 3. **Deptrac** — Module boundary validation. Layer violation = architectural boundary crossed. Refactor or explicitly allow with documented rationale.
-4. **Infection** — Mutation testing. MSI >= 70%, covered MSI >= 80%. Handle equivalent mutations as false positives. See `ai-new/rules/testing.md` for test conventions.
+4. **Infection** — Mutation testing. MSI >= 70%, covered MSI >= 80%. Handle equivalent mutations as false positives. See `testing.md` for test conventions.
 5. **GrumPHP** — Pre-commit hook that calls `make quality` (not individual tools). Single source of truth.
 6. **Three Makefile targets only** — `make ci`, `make tests`, `make quality`. All tools are invoked inside these targets. No separate contract for make help, make format, make security-check, etc.; the user may add them if desired.
 7. **make ci = quality + tests** — Full pipeline. Optionally include security-check (composer audit) inside `make ci`. Same commands locally and in CI. **After any implementation, run `make ci`.**

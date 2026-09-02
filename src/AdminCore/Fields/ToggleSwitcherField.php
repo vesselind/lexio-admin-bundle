@@ -6,7 +6,7 @@ namespace Lexio\AdminBundle\AdminCore\Fields;
 
 final class ToggleSwitcherField extends BaseField
 {
-    public function twigComponent(): ?string
+    public function twigComponent(): string
     {
         return 'Admin:ToggleSwitcher';
     }

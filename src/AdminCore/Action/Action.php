@@ -9,7 +9,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use function Symfony\Component\String\u;
 
-class Action
+final class Action
 {
     public ?BaseField $parentField = null;
 
@@ -19,8 +19,13 @@ class Action
     private bool    $confirmationModal = false;
     private ?string $confirmationText  = null;
     private ?string $confirmationRoute = null;
+
+    /** @var array<string, string> */
     private array   $confirmationParams = [];
 
+    /**
+     * @param array<string, string> $routeParams
+     */
     private function __construct(
         private readonly string  $label,
         private readonly string  $route,
@@ -29,9 +34,12 @@ class Action
     ) {
     }
 
+    /**
+     * @param array<string, string> $routeParams
+     */
     public static function new(string $label, string $route, array $routeParams = [], ?string $icon = null): static
     {
-        return new static($label, $route, $routeParams, $icon);
+        return new self($label, $route, $routeParams, $icon);
     }
 
     public function setParentField(BaseField $parentField): static
@@ -43,7 +51,16 @@ class Action
 
     public function getEntityInstance(): object
     {
-        return $this->parentField->getEntityInstance();
+        if ($this->parentField === null) {
+            throw new \LogicException('The parent field must be set before reading the entity instance.');
+        }
+
+        $entityInstance = $this->parentField->getEntityInstance();
+        if ($entityInstance === null) {
+            throw new \LogicException('The parent field entity instance must be set before reading an action route.');
+        }
+
+        return $entityInstance;
     }
 
     public function getLabel(): string
@@ -66,13 +83,16 @@ class Action
         return !empty($this->routeParams);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(): array
     {
         $accessor       = PropertyAccess::createPropertyAccessor();
         $entityInstance = $this->getEntityInstance();
 
         return array_map(
-            static fn (mixed $propertyPath) => $accessor->getValue($entityInstance, $propertyPath),
+            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->routeParams
         );
     }
@@ -95,6 +115,9 @@ class Action
         return $this->openInModal;
     }
 
+    /**
+     * @param array<string, string> $routeParams
+     */
     public function confirmationModal(string $confirmationText, string $route, array $routeParams = []): static
     {
         $this->confirmationModal  = true;
@@ -112,21 +135,32 @@ class Action
 
     public function getConfirmationModalText(): string
     {
+        if ($this->confirmationText === null) {
+            throw new \LogicException('The confirmation modal must be configured before reading its text.');
+        }
+
         return $this->confirmationText;
     }
 
     public function getConfirmationRoute(): string
     {
+        if ($this->confirmationRoute === null) {
+            throw new \LogicException('The confirmation modal must be configured before reading its route.');
+        }
+
         return $this->confirmationRoute;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getConfirmationRouteParams(): array
     {
         $accessor       = PropertyAccess::createPropertyAccessor();
         $entityInstance = $this->getEntityInstance();
 
         return array_map(
-            static fn (mixed $propertyPath) => $accessor->getValue($entityInstance, $propertyPath),
+            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->confirmationParams
         );
     }

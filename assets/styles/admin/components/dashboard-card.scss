@@ -1,0 +1,87 @@
+// ============================================================
+// Dashboard Card — polished stat cards
+// ============================================================
+
+.dashboard-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: $gray-300;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  // Icon badge — circular background with themed color
+  &__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-lg;
+    flex-shrink: 0;
+
+    // Default variant
+    &--primary {
+      background-color: rgba($primary, 0.08);
+      color: $primary;
+    }
+
+    &--success, &--green {
+      background-color: rgba($success, 0.1);
+      color: $success;
+    }
+
+    &--danger, &--red {
+      background-color: rgba($danger, 0.1);
+      color: $danger;
+    }
+
+    &--warning, &--orange {
+      background-color: rgba($warning, 0.1);
+      color: shade-color($warning, 15%);
+    }
+
+    &--info, &--blue {
+      background-color: rgba($info, 0.1);
+      color: $info;
+    }
+
+    &--purple {
+      background-color: rgba($purple, 0.1);
+      color: $purple;
+    }
+
+    &--cyan {
+      background-color: rgba($cyan, 0.1);
+      color: $cyan;
+    }
+
+    &--teal {
+      background-color: rgba($teal, 0.1);
+      color: $teal;
+    }
+
+    &--indigo {
+      background-color: rgba($indigo, 0.1);
+      color: $indigo;
+    }
+
+    &--pink {
+      background-color: rgba($pink, 0.1);
+      color: $pink;
+    }
+  }
+
+  // Footer link
+  &__link {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $gray-500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: $gray-900;
+    }
+  }
+}

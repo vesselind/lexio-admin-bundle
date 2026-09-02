@@ -17,6 +17,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 abstract class SitemapSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @param array<int, string> $locales
+     */
     public function __construct(
         protected readonly EntityManagerInterface $manager,
         protected readonly array $locales,

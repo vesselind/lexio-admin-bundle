@@ -1,0 +1,52 @@
+// ============================================================
+// Scrollbar — subtle, minimal styling
+// ============================================================
+
+$scrollbar-background: rgba($gray-400, 0.35);
+$scrollbar-width: 5px;
+
+.scrollbar {
+    overflow-y: scroll;
+}
+
+.scrollbar-600 {
+	max-height: 600px;
+    overflow-y: scroll;
+}
+
+.force-overflow {
+	min-height: 450px;
+}
+
+.scroll-element::-webkit-scrollbar-track {
+	border-radius: 10px;
+	background-color: transparent;
+}
+
+.scroll-element::-webkit-scrollbar {
+	width: $scrollbar-width;
+	background-color: transparent;
+}
+
+.scroll-element:hover::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: $scrollbar-background;
+}
+
+.scroll-element-light {
+    &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar {
+        width: $scrollbar-width;
+        background-color: transparent;
+    }
+
+    &:hover {
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: rgba($gray-300, 0.5);
+        }
+    }
+}

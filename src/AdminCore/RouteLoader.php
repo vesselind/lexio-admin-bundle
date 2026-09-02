@@ -34,20 +34,24 @@ final readonly class RouteLoader
         return $cache->get(self::CACHE_KEY, function (ItemInterface $item): array {
             $item->expiresAfter(3600);
 
+            /** @var list<string> $routes */
             $routes = [];
 
             foreach ($this->router->getRouteCollection() as $route) {
                 $path = $route->getPath();
                 if (str_starts_with($path, '/admin')) {
                     try {
-                        $routes[] = $this->router->match($path)['_route'];
+                        $routeName = $this->router->match($path)['_route'] ?? null;
+                        if (is_string($routeName)) {
+                            $routes[] = $routeName;
+                        }
                     } catch (\Exception) {
                         continue;
                     }
                 }
             }
 
-            return array_filter($routes, static fn (string $r) => str_ends_with($r, 'index'));
+            return array_values(array_filter($routes, static fn (string $r): bool => str_ends_with($r, 'index')));
         });
     }
 }

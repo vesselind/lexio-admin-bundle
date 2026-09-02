@@ -7,7 +7,6 @@ namespace Lexio\AdminBundle\Twig\Runtime;
 use Lexio\AdminBundle\AdminCore\AdminUrlGenerator;
 use Lexio\AdminBundle\AdminCore\Listing\Column;
 use Lexio\AdminBundle\AdminCore\Menu\MenuBuilder;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -22,7 +21,6 @@ use Twig\Markup;
 final class AdminExtensionRuntime implements RuntimeExtensionInterface, ServiceSubscriberInterface
 {
     public function __construct(
-        private readonly ContainerInterface        $locator,
         private readonly ComponentRendererInterface $componentRenderer,
         private readonly Environment               $environment,
         private readonly AdminUrlGenerator         $adminUrlGenerator,

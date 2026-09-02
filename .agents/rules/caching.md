@@ -1,6 +1,6 @@
 # Caching
 
-For authenticated endpoint cache policies (`Vary: Authorization`), see `security.mdc`.
+For authenticated endpoint cache policies (`Vary: Authorization`), see `security.md`.
 
 ## Core Principles
 
@@ -10,7 +10,7 @@ For authenticated endpoint cache policies (`Vary: Authorization`), see `security
 4. **Private by default on auth** — Authenticated endpoints MUST return `Cache-Control: private`. No exceptions.
 5. **Stampede prevention** — Use lock-based warming or probabilistic early expiry. Never let expired keys trigger parallel regeneration.
 6. **Separate pools** — One pool per domain concern (products, routing, API responses). Different backends, independent purging.
-7. **ESI for mixed TTLs** — Use Edge Side Includes (`render_esi()` — see `twig.mdc`) when a page mixes public and dynamic content. Only the ESI fragment hits PHP.
+7. **ESI for mixed TTLs** — Use Edge Side Includes (`render_esi()` — see `twig.md`) when a page mixes public and dynamic content. Only the ESI fragment hits PHP.
 8. **Attributes over manual headers** — Use `#[Cache]` attributes or centralized listeners. Never set `Cache-Control` directly in controllers.
 9. **Test cache headers** — Functional tests assert `Cache-Control`, `Vary`, and `ETag` headers. Detect regressions automatically.
 10. **ArrayAdapter in tests** — Unit-test decorators with `ArrayAdapter`. Never mock Redis or Memcached.

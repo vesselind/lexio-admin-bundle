@@ -1,0 +1,61 @@
+{% block association_modal_widget -%}
+    <div class="input-group" {{ stimulus_controller('association-modal-type', {class: class}) }}>
+        {{ form_widget(form, {attr: {'data-association-modal-type-target': 'selectItem'}}) }}
+
+        <button class="btn btn-success" type="button"
+                aria-label="{{ modalTitle|trans({}, lexio_admin_ui.translation_domain) }}"
+                {{ stimulus_controller('open-base-modal', {
+                    visitUrl: visitUrl,
+                    modalTitle: modalTitle|trans({}, lexio_admin_ui.translation_domain),
+                    closeOnSuccess: true,
+                }) }}
+        ><i class="fa fa-plus" aria-hidden="true"></i></button>
+    </div>
+{%- endblock association_modal_widget %}
+
+{% block ck_editor_label %}
+
+    <div class="d-flex align-items-center" {% if linksSearch %}{{ stimulus_controller('links-search-field', {addedBadgeText: 'badge.link_added'|trans({}, lexio_admin_ui.translation_domain)}) }}{% endif %}>
+        {{ form_label(form) }}
+        <div class="ms-auto mb-2">
+            {% if linksSearch %}
+                {% set modalId = 'addLink_' ~  form.vars.unique_block_prefix %}
+                {% set modalBody = modalId ~ '_body' %}
+                {% set modalLabel = modalId ~ '_label' %}
+                <button type="button" class="btn btn-primary btn-sm"
+                        aria-label="{{ 'tooltip.add_internal_link'|trans({}, lexio_admin_ui.translation_domain) }}"
+                        data-bs-toggle="modal" data-bs-target="#{{ modalId }}"
+                        {{ stimulus_controller('navigate-turbo', {url: path(lexio_admin_ui.routes.links_search, {frameId: modalBody}), frameId: modalBody })|
+                        stimulus_controller('tooltip', {title: 'tooltip.add_internal_link'|trans({}, lexio_admin_ui.translation_domain)})
+
+                        }}
+                >
+                    <i class="fa fa-link" aria-hidden="true"></i>
+                </button>
+
+                <div class="modal fade" id="addLink_{{ form.vars.unique_block_prefix }}" tabindex="-1"
+                     aria-labelledby="{{ modalLabel }}" aria-hidden="true"
+                        {{ stimulus_controller('modal') }}
+                >
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5"
+                                    id="{{ modalLabel }}">{{ 'modal.search_links_title'|trans({}, lexio_admin_ui.translation_domain) }}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="{{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <turbo-frame id="{{ modalBody }}"></turbo-frame>
+                            </div>
+                            <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+// ============================================================
+// Progress — shadcn/ui-inspired clean progress bars
+// ============================================================
+
+.progress-wrapper {
+  position: relative;
+}
+
+.progress-bar {
+  box-shadow: none;
+  border-radius: 0;
+  height: auto;
+}
+
+.progress {
+  height: 6px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  background-color: $gray-200;
+  font-size: .75rem;
+  font-weight: 500;
+  box-shadow: none;
+  border-radius: 9999px;
+
+  &-xl {
+    height: .8rem;
+  }
+
+  &-lg {
+    height: .6rem;
+  }
+
+  &-sm {
+    height: .2rem;
+  }
+
+  &-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+
+    .progress-label {
+      span {
+        display: inline-block;
+        color: $gray-900;
+        font-size: $font-size-base;
+        font-weight: 500;
+      }
+    }
+
+    .progress-percentage {
+      text-align: right;
+
+      span {
+        display: inline-block;
+        color: $gray-500;
+        font-size: $font-size-sm;
+        font-weight: 500;
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Console Commands
 
-For Scheduler/RecurringMessage transport, see `messenger.mdc`. For CommandTester test patterns, see `testing.mdc`. For entity persistence patterns, see `doctrine.mdc`.
+For Scheduler/RecurringMessage transport, see `messenger.md`. For CommandTester test patterns, see `testing.md`. For entity persistence patterns, see `doctrine.md`.
 
 ## Core Principles
 

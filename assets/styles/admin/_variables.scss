@@ -1,0 +1,298 @@
+// Public theme inputs are declared by the entry points in this directory.
+// Keep this file private: component partials should not be imported directly.
+$web-font-path: $lexio-admin-web-font-path !default;
+@if $web-font-path {
+  @import url($web-font-path);
+}
+
+// ============================================================
+// shadcn/ui-inspired Theme — Zinc Neutral Palette
+// ============================================================
+
+/**
+ * Body Background
+ */
+$main-bg: $lexio-admin-main-bg !default;
+$body-bg: $lexio-admin-body-bg !default;
+
+//
+// Color system — Zinc-based neutral scale (shadcn/ui)
+//
+
+$white:    #fff !default;
+$gray-100: hsl(240, 4.8%, 95.9%) !default;  // zinc-100
+$gray-200: hsl(240, 5.9%, 90%) !default;     // zinc-200
+$gray-300: hsl(240, 4.9%, 83.9%) !default;   // zinc-300
+$gray-400: hsl(240, 5%, 64.9%) !default;     // zinc-400
+$gray-500: hsl(240, 3.8%, 46.1%) !default;   // zinc-500 (muted-foreground)
+$gray-600: hsl(240, 5.2%, 33.9%) !default;   // zinc-600
+$gray-700: hsl(240, 5.3%, 26.1%) !default;   // zinc-700
+$gray-800: hsl(240, 3.7%, 15.9%) !default;   // zinc-800
+$gray-900: hsl(240, 5.9%, 10%) !default;     // zinc-900 (foreground)
+$black:    hsl(240, 10%, 3.9%) !default;     // zinc-950
+
+$blue:    hsl(221, 83%, 53%) !default;
+$indigo:  hsl(239, 84%, 67%) !default;
+$purple:  hsl(262, 83%, 58%) !default;
+$pink:    hsl(330, 81%, 60%) !default;
+$red:     hsl(0, 72%, 51%) !default;
+$orange:  hsl(25, 95%, 53%) !default;
+$yellow:  hsl(48, 96%, 53%) !default;
+$green:   hsl(142, 71%, 45%) !default;
+$teal:    hsl(166, 72%, 29%) !default;
+$cyan:    hsl(199, 89%, 48%) !default;
+
+// Theme colors
+$primary:       $lexio-admin-primary !default;
+$secondary:     $lexio-admin-secondary !default;
+$success:       $lexio-admin-success !default;
+$info:          $lexio-admin-info !default;
+$warning:       $lexio-admin-warning !default;
+$danger:        $lexio-admin-danger !default;
+$light:         $lexio-admin-light !default;
+$dark:          $lexio-admin-dark !default;
+
+// Accent color (warm tone for special highlights)
+$accent:        $lexio-admin-accent !default;
+
+/** Colors map **/
+$colors: (
+        "blue":       $blue,
+        "indigo":     $indigo,
+        "purple":     $purple,
+        "pink":       $pink,
+        "red":        $red,
+        "orange":     $orange,
+        "yellow":     $yellow,
+        "green":      $green,
+        "teal":       $teal,
+        "cyan":       $cyan,
+        "black":      $black,
+        "white":      $white,
+        "gray":       $gray-500,
+        "gray-dark":  $gray-800,
+) !default;
+
+// Gradients (kept minimal for compatibility)
+$midnight-blue-gradient: linear-gradient(180deg, hsl(194, 80%, 25%) 0%, hsl(211, 91%, 23%) 100%);
+$purple-blue-gradient: linear-gradient(90deg, hsla(278, 78%, 84%, 0.85) 0%, hsla(204, 95%, 77%, 0.66) 100%);
+
+$gradients : (
+        "midnight-blue": $midnight-blue-gradient,
+        "purple-blue": $purple-blue-gradient,
+) !default;
+
+// Typography
+$h1-font-size: 1.75rem;
+
+$min-contrast-ratio:   1.45 !default;
+
+// ============================================================
+// Global options — shadcn uses borders, not shadows
+// ============================================================
+$enable-shadows:              false !default;
+$enable-negative-margins:     true !default;
+
+$link-decoration:             none !default;
+$link-color:                  $primary !default;
+$link-hover-color:            $gray-600 !default;
+
+// Body
+$body-color:                $lexio-admin-body-color !default;
+$headings-color:            $lexio-admin-headings-color !default;
+
+// ============================================================
+// Borders — the backbone of shadcn/ui
+// ============================================================
+$border-width      : 1px !default;
+$border-width-md   : 0.125rem !default;
+$border-width-lg   : 0.25rem !default;
+$border-width-xl   : 0.375rem !default;
+$border-color-white: $white !default;
+$border-color      : $lexio-admin-border-color !default;
+
+$border-radius     : $lexio-admin-radius !default;
+$border-radius-sm  : $lexio-admin-radius-sm !default;
+$border-radius-lg  : $lexio-admin-radius-lg !default;
+$border-radius-xl  : 1rem !default;
+$border-radius-pill: 50rem !default;
+$circle-radius     : 50% !default;
+
+// Fonts
+// stylelint-disable-next-line value-keyword-case
+$font-family-sans-serif:      $lexio-admin-font-family !default;
+$font-size-base:              $lexio-admin-font-size-base !default;
+$font-size-sm:                $lexio-admin-font-size-sm !default;
+
+// ============================================================
+// Shadows — minimal / near-none
+// ============================================================
+$box-shadow:                  none !default;
+$box-shadow-sm:               0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$box-shadow-lg:               0 1px 3px 0 rgba(0, 0, 0, 0.06) !default;
+
+// ============================================================
+// Tables
+// ============================================================
+$table-bg:                    $white;
+
+$table-cell-padding-y:        0.75rem !default;
+$table-cell-padding-x:        1rem !default;
+$table-cell-padding-y-sm:     .5rem !default;
+$table-cell-padding-x-sm:     .5rem !default;
+
+$table-th-font-weight:        500 !default;
+$table-hover-bg:              $gray-100;
+$table-border-color:          $border-color;
+
+// ============================================================
+// Buttons + Forms
+// ============================================================
+$input-btn-padding-y:         0.5rem !default;
+$input-btn-padding-x:         1rem !default;
+$input-btn-font-size:         $font-size-base !default;
+
+// Buttons
+$btn-font-weight:             500 !default;
+$btn-box-shadow:              none !default;
+$btn-focus-box-shadow:        none !default;
+$btn-active-box-shadow:       none !default;
+$btn-border-radius:           $border-radius !default;
+
+// Forms
+$form-label-font-weight:                500 !default;
+$form-label-font-size:                  $font-size-base !default;
+
+$input-box-shadow:                      none !default;
+
+$input-group-addon-bg:                  $gray-100 !default;
+$input-border-width:                    1px !default;
+$input-border-color:                    $border-color;
+$input-focus-border-color:              $gray-900;
+$input-focus-box-shadow:                0 0 0 2px rgba($gray-900, 0.1);
+$form-check-input-checked-bg-color:     $primary;
+$form-check-input-border:               1px solid $border-color;
+$form-check-input-width:                1.1em !default;
+$form-switch-width:                     2.2em !default;
+
+$input-border-radius:                   $border-radius !default;
+
+// Navs
+$nav-link-color:                    $gray-500 !default;
+$nav-link-hover-color:              $gray-900 !default;
+
+// Nav tabs — underline style (shadcn)
+$nav-tabs-border-radius:            0 !default;
+$nav-tabs-link-active-color:        $gray-900 !default;
+$nav-tabs-border-color:             $border-color !default;
+$nav-tabs-link-active-bg:           transparent !default;
+$nav-tabs-link-active-border-color: transparent transparent $primary transparent !default;
+
+// Navbar
+$navbar-padding-y:                  .75rem !default;
+
+$navbar-nav-link-padding-x:         .75rem !default;
+
+$navbar-dark-color:                 $white !default;
+$navbar-dark-hover-color:           $white !default;
+$navbar-dark-active-color:          $white !default;
+
+$navbar-light-color:                $gray-700 !default;
+$navbar-light-hover-color:          $gray-900 !default;
+$navbar-light-active-color:         $gray-900 !default;
+
+// Dropdowns
+$dropdown-bg:                       $white;
+$dropdown-font-size:                $font-size-base !default;
+$dropdown-border-color:             $border-color !default;
+$dropdown-divider-bg:               $border-color !default;
+$dropdown-box-shadow:               0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+
+$dropdown-link-hover-color:         $gray-900 !default;
+$dropdown-link-hover-bg:            $gray-100 !default;
+
+$dropdown-link-active-color:        $gray-900;
+$dropdown-link-active-bg:           $gray-100;
+
+$dropdown-item-padding-y:           .5rem !default;
+$dropdown-item-padding-x:           0.75rem !default;
+
+// Pagination
+$pagination-padding-y:              .5rem !default;
+$pagination-padding-x:              .75rem !default;
+
+$pagination-color:                  $gray-700 !default;
+$pagination-bg:                     transparent !default;
+$pagination-border-color:           $border-color !default;
+
+$pagination-focus-color:            $gray-900 !default;
+
+$pagination-hover-color:            $gray-900 !default;
+$pagination-hover-bg:               $gray-100 !default;
+$pagination-font-size:              $font-size-base !default;
+
+$pagination-active-bg:              $primary !default;
+$pagination-active-border-color:    $primary !default;
+$pagination-active-color:           $white !default;
+
+// ============================================================
+// Cards — border-driven (shadcn signature)
+// ============================================================
+$card-spacer-x:                     1.5rem !default;
+$card-spacer-y:                     1.5rem !default;
+$card-cap-padding-y:                1rem !default;
+$card-cap-padding-x:                1.5rem !default;
+$card-border-width:                 1px !default;
+$card-border-color:                 $border-color;
+$card-cap-bg:                       transparent;
+$card-header-border-bottom:         1px solid $border-color !default;
+$card-bg:                           $white !default;
+
+// Toasts
+$toast-header-color:                $headings-color !default;
+
+// Modals
+$modal-border-color:                $border-color !default;
+$modal-content-border-color:        $border-color !default;
+$modal-footer-bg:                   $gray-100 !default;
+$modal-footer-border-color:         $border-color !default;
+$modal-footer-border-width:         1px !default;
+
+// List group
+$list-group-item-padding-y:         0.75rem !default;
+$list-group-item-padding-x:         1rem !default;
+$list-group-border-color:           $border-color !default;
+
+// Breadcrumbs
+$breadcrumb-padding-x:              0rem !default;
+$breadcrumb-divider:                quote("/") !default;
+$breadcrumb-font-size:              $font-size-sm;
+$breadcrumb-active-color:           $gray-500;
+
+// Badge
+$badge-font-size:                   $font-size-base * .78;
+$badge-font-weight:                 500;
+$badge-padding-y:                   0.35em;
+$badge-padding-x:                   0.75em;
+
+// Alert
+$alert-border-radius:               $border-radius;
+
+// ============================================================
+// ADMIN SIDEBAR — clean & minimal
+// ============================================================
+$btn-toggle-font-size: $font-size-base;
+$small-menu-font-size: $font-size-base * 0.925;
+
+$sidebar-background: $lexio-admin-sidebar-background !default;
+
+$sidebar-font-color: $lexio-admin-sidebar-color !default;
+$sidebar-hover-background: $lexio-admin-sidebar-hover-background !default;
+$sidebar-active-background: $lexio-admin-sidebar-active-background !default;
+$sidebar-navlink-border-radius: $lexio-admin-sidebar-radius !default;
+$navlink-font-size: $font-size-base;
+$sidebar-section-header-color: $lexio-admin-sidebar-section-color !default;
+
+// ADMIN NAVBAR
+$navbar-background: $lexio-admin-navbar-background !default;
+$navbar-mobile-background: $lexio-admin-navbar-mobile-background !default;

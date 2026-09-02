@@ -1,6 +1,6 @@
 # Workflow
 
-For entity mapping (`#[ORM\Entity]`, `EntityManager`), see `doctrine.mdc`. For guard authorization (`AuthorizationCheckerInterface`), see `security.mdc`. For transition matrix tests, see `testing.mdc`.
+For entity mapping (`#[ORM\Entity]`, `EntityManager`), see `doctrine.md`. For guard authorization (`AuthorizationCheckerInterface`), see `security.md`. For transition matrix tests, see `testing.md`.
 
 ## Core Principles
 
@@ -13,7 +13,7 @@ For entity mapping (`#[ORM\Entity]`, `EntityManager`), see `doctrine.mdc`. For g
 7. **One config file per domain** — Workflow YAML in `config/packages/workflows/`. One file per bounded context (e.g., `invoice_workflow.yaml`).
 8. **Transactions around transitions** — `apply()` + `flush()` wrapped in a database transaction. Pessimistic locking under concurrency.
 9. **Living documentation** — `workflow:dump` generates graphs in CI. The generated diagram is the source of truth for the business.
-10. **Transition matrix tests** — `@dataProvider` covering every valid and invalid transition. Full state machine contract at low cost. See `testing.mdc` for test conventions.
+10. **Transition matrix tests** — `@dataProvider` covering every valid and invalid transition. Full state machine contract at low cost. See `testing.md` for test conventions.
 
 ---
 

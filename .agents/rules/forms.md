@@ -2,16 +2,16 @@
 
 ## Core Principles
 
-1. **DTO-only binding** — Forms hydrate DTOs, NEVER Doctrine entities. See `dto.mdc` for DTO conventions. Form DTOs use `XxxFormData` naming and are NOT readonly (forms need property write access).
-2. **Anemic controller** — Controller creates the form, handles submission, dispatches the DTO to a handler. See `dto.mdc > DTO to Entity Mapping`.
+1. **DTO-only binding** — Forms hydrate DTOs, NEVER Doctrine entities. See `dto.md` for DTO conventions. Form DTOs use `XxxFormData` naming and are NOT readonly (forms need property write access).
+2. **Anemic controller** — Controller creates the form, handles submission, dispatches the DTO to a handler. See `dto.md > DTO to Entity Mapping`.
 3. **HTTP-agnostic FormType** — FormType never touches `Request`, `Session`, or services directly. All context through `$options`.
-4. **Validation on the DTO** — `#[Assert\...]` on DTO properties (see `dto.mdc`). FormType `constraints` option only for edge cases. See `validator.mdc` for custom constraints and CompoundConstraint.
+4. **Validation on the DTO** — `#[Assert\...]` on DTO properties (see `dto.md`). FormType `constraints` option only for edge cases. See `validator.md` for custom constraints and CompoundConstraint.
 5. **EventSubscriber for dynamic fields** — Conditional fields added via `FormEvents::PRE_SUBMIT` subscribers. No conditional logic in `buildForm`.
 6. **DataTransformers in separate classes** — Complex value conversions extracted into dedicated `DataTransformerInterface` implementations.
 7. **OptionsResolver fail-fast** — Custom options typed with `setAllowedTypes()` / `setAllowedValues()`. Invalid config fails at form creation, not at runtime.
 8. **TypeTestCase for every FormType** — Submit an array, assert the hydrated DTO. No database, no kernel boot.
-9. **Form themes for reusable UI** — Shared widget/label/row rendering in dedicated Twig files. No ad-hoc overrides if reused. See `twig.mdc` for template conventions.
-10. **API endpoints skip forms** — For JSON APIs, see `api.mdc` (MapRequestPayload, MapQueryString). Forms are for Twig/UI only.
+9. **Form themes for reusable UI** — Shared widget/label/row rendering in dedicated Twig files. No ad-hoc overrides if reused. See `twig.md` for template conventions.
+10. **API endpoints skip forms** — For JSON APIs, see `api.md` (MapRequestPayload, MapQueryString). Forms are for Twig/UI only.
 
 ---
 
@@ -19,7 +19,7 @@
 
 ### DTO-Based Form Binding
 
-> See `dto.mdc > Form-Specific DTO` for the full pattern. Form DTOs use `XxxFormData` naming and are NOT readonly.
+> See `dto.md > Form-Specific DTO` for the full pattern. Form DTOs use `XxxFormData` naming and are NOT readonly.
 
 **Do:**
 
@@ -69,7 +69,7 @@ public function new(Request $request, CreateArticleHandler $handler): Response
 }
 ```
 
-**Don't:** Put entity creation, persistence, or side effects in the controller. See `dto.mdc > DTO to Entity Mapping` and `coding-standards.mdc > No Business Logic in Controllers`.
+**Don't:** Put entity creation, persistence, or side effects in the controller. See `dto.md > DTO to Entity Mapping` and `coding-standards.md > No Business Logic in Controllers`.
 
 ### FormType — Focused and Typed
 
@@ -281,11 +281,11 @@ $builder->add('category', EntityType::class, [
 
 | Pitfall | Fix |
 |---------|-----|
-| Form bound to Doctrine entity | Bind to DTO (`XxxFormData`). See `dto.mdc` |
-| Business logic in controller | Controller dispatches DTO to handler. See `coding-standards.mdc` |
+| Form bound to Doctrine entity | Bind to DTO (`XxxFormData`). See `dto.md` |
+| Business logic in controller | Controller dispatches DTO to handler. See `coding-standards.md` |
 | Missing TypeTestCase | `TypeTestCase` for every FormType. Submit array, assert DTO |
 | Dynamic fields via static `$options` | `FormEvents::PRE_SUBMIT` subscriber for dynamic fields |
 | EntityType loading all rows | `choice_loader` with paginated query or UX Autocomplete |
 | DataTransformer inline in buildForm | Extract to dedicated `DataTransformerInterface` class |
 | CSRF disabled without justification | Keep enabled. Disable only on public GET + document reason |
-| Forms used for JSON API endpoints | See `api.mdc` for MapRequestPayload. Forms for Twig/UI only |
+| Forms used for JSON API endpoints | See `api.md` for MapRequestPayload. Forms for Twig/UI only |

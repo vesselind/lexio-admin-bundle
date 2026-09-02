@@ -101,7 +101,7 @@ abstract class TranslationController extends BaseController
         if (0 < $validator->validate($input)->count()) {
             $this->addFlash(
                 Flash::ERROR->value,
-                $this->translator()->trans('translation.update_failed', [], 'admin'),
+                $this->translator()->trans('translation.update_failed', [], $this->translationDomain()),
             );
 
             return $this->redirectToRoute('admin.translation.index', $this->indexParameters($request, $input->domain, $input->locale));
@@ -111,12 +111,12 @@ abstract class TranslationController extends BaseController
             $catalog->update($input->domain, $input->locale, $input->key, $input->value);
             $this->addFlash(
                 Flash::SUCCESS->value,
-                $this->translator()->trans('translation.updated', [], 'admin'),
+                $this->translator()->trans('translation.updated', [], $this->translationDomain()),
             );
         } catch (TranslationCatalogException) {
             $this->addFlash(
                 Flash::ERROR->value,
-                $this->translator()->trans('translation.update_failed', [], 'admin'),
+                $this->translator()->trans('translation.update_failed', [], $this->translationDomain()),
             );
         }
 
@@ -151,12 +151,12 @@ abstract class TranslationController extends BaseController
             $cacheClearer->clear();
             $this->addFlash(
                 Flash::SUCCESS->value,
-                $this->translator()->trans('translation.cache.cleared', [], 'admin'),
+                $this->translator()->trans('translation.cache.cleared', [], $this->translationDomain()),
             );
         } catch (TranslationCacheException) {
             $this->addFlash(
                 Flash::ERROR->value,
-                $this->translator()->trans('translation.cache.clear_failed', [], 'admin'),
+                $this->translator()->trans('translation.cache.clear_failed', [], $this->translationDomain()),
             );
         }
 
@@ -216,12 +216,12 @@ abstract class TranslationController extends BaseController
             $result = 'upload' === $operation ? $synchronizer->upload() : $synchronizer->download();
             $this->addFlash(
                 Flash::SUCCESS->value,
-                $this->translator()->trans('translation.sync.' . $operation . '.success', $this->resultParameters($result), 'admin'),
+                $this->translator()->trans('translation.sync.' . $operation . '.success', $this->resultParameters($result), $this->translationDomain()),
             );
         } catch (TranslationSynchronizationException) {
             $this->addFlash(
                 Flash::ERROR->value,
-                $this->translator()->trans('translation.sync.' . $operation . '.failed', [], 'admin'),
+                $this->translator()->trans('translation.sync.' . $operation . '.failed', [], $this->translationDomain()),
             );
         }
 

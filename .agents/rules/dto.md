@@ -2,11 +2,11 @@
 
 > DTOs: immutability, context-based naming, validation at boundary, mapping, no public setters.
 
-For API usage (`#[MapRequestPayload]`), see `ai-new/rules/api.md` and `ai-new/rules/api-platform.md`. For form binding, see `ai-new/rules/forms.md`.
+For API usage (`#[MapRequestPayload]`), see `api.md` and `api-platform.md`. For form binding, see `forms.md`.
 
 ## Core Principles
 
-1. **Never bind entities to external input** — Entities enforce invariants (see `ai-new/rules/doctrine.md`). DTOs represent the shape of external data (request body, query string, form submission). Mixing them leaks persistence schema and causes mass-assignment vulnerabilities.
+1. **Never bind entities to external input** — Entities enforce invariants (see `doctrine.md`). DTOs represent the shape of external data (request body, query string, form submission). Mixing them leaks persistence schema and causes mass-assignment vulnerabilities.
 2. **Immutable by default** — `readonly` properties via constructor promotion. DTO state is set once and never mutated.
 3. **Validate at the boundary** — `#[Assert\...]` on DTO properties. Fail fast before any business logic or persistence. Never validate on Doctrine entities.
 4. **One DTO per use case** — `CreateOrderInput` and `UpdateOrderInput` are separate classes, even if fields overlap. Avoids optional-field hell and unclear intent.

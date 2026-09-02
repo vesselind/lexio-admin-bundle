@@ -47,7 +47,7 @@ Run `git status` and `git diff --stat`. Challenge:
 
 ### Step 3: Quality Gate
 
-Run `make ci` to verify the full CI pipeline (security-check + quality + tests). Conventions are defined in `ai-new/rules/quality-pipeline.md`.
+Run `make ci` to verify the full CI pipeline (security-check + quality + tests). Conventions are defined in `../../rules/quality-pipeline.md`.
 
 If `make ci` does not exist, warn the user and suggest `/quality-install`.
 

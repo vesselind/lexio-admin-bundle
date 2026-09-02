@@ -1,6 +1,6 @@
 # Symfony Messenger
 
-For entity persistence in middleware, see `doctrine.mdc`. For testing bus dispatches, see `testing.mdc`. For DTO immutability and naming conventions, see `dto.mdc`. For scheduled tasks and recurring commands, see `console-commands.mdc`.
+For entity persistence in middleware, see `doctrine.md`. For testing bus dispatches, see `testing.md`. For DTO immutability and naming conventions, see `dto.md`. For scheduled tasks and recurring commands, see `console-commands.md`.
 
 ## Core Principles
 

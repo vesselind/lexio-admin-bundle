@@ -31,18 +31,10 @@ class SeoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('metaTitle', TextType::class, [
-                'label'    => 'label.meta_title',
-                'required' => false,
-            ])
             ->add('metaDescription', TextareaType::class, [
                 'label'    => 'label.meta_description',
                 'required' => false,
                 'attr'     => ['rows' => 3],
-            ])
-            ->add('metaKeywords', TextType::class, [
-                'label'    => 'label.meta_keywords',
-                'required' => false,
             ])
             ->add('ogTitle', TextType::class, [
                 'label'    => 'label.og_title',

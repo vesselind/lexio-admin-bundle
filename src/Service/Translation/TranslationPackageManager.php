@@ -230,8 +230,8 @@ final readonly class TranslationPackageManager
                 }
                 $seenNames[$normalizedName] = true;
 
-                $size = $stat['size'] ?? null;
-                if (!is_int($size) || $size < 0) {
+                $size = $stat['size'];
+                if ($size < 0) {
                     throw new TranslationSynchronizationException('The translation package contains an invalid file.');
                 }
                 $uncompressedBytes += $size;

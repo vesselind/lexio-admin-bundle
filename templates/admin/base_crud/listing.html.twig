@@ -16,7 +16,7 @@
     {% if listingContext.showCreateButton %}
         <a href="{{ adminUrlGenerator.createLink(entityFqcn) }}" class="btn btn-success">
             <i class="fa fa-plus"></i>
-            {{ 'button.add'|trans({}, 'admin') }}
+            {{ 'button.add'|trans({}, lexio_admin_ui.translation_domain) }}
         </a>
     {% endif %}
 
@@ -43,10 +43,10 @@
                 </div>
                 <div class="card-footer py-2 d-flex justify-content-end gap-2">
                     <a href="{{ adminUrlGenerator.indexLink }}" class="btn btn-secondary btn-sm">
-                        <i class="fa fa-remove"></i> {{ 'button.clear_filter'|trans({}, 'admin') }}
+                        <i class="fa fa-remove"></i> {{ 'button.clear_filter'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>
                     <button type="submit" class="btn btn-primary btn-sm"><i
-                                class="fa fa-filter"></i> {{ 'button.filter'|trans({}, 'admin') }}</button>
+                                class="fa fa-filter"></i> {{ 'button.filter'|trans({}, lexio_admin_ui.translation_domain) }}</button>
                 </div>
 
                 {{ form_end(filtersForm) }}
@@ -72,7 +72,7 @@
                             {# @var column \App\AdminCore\Listing\Column #}
                             {% if column.sortable %}
                                 <th style="max-width: 150px; min-width: 70px"><a href="{{ column.sortLink }}">
-                                        {{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}
+                                        {{ ('column.' ~ column.fieldName)|trans({}, lexio_admin_ui.translation_domain) }}
                                         {% if not column.sorted %}
                                             <i class="fa fa-fw fa-sort text-muted"></i>
                                         {% else %}
@@ -85,7 +85,7 @@
                                     </a>
                                 </th>
                             {% else %}
-                                <th>{{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}</th>
+                                <th>{{ ('column.' ~ column.fieldName)|trans({}, lexio_admin_ui.translation_domain) }}</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
@@ -113,7 +113,7 @@
                     {% else %}
                         <tr>
                             <td class="text-center" colspan="{{ listingContext.columns|length + 1 }}">
-                                <i class="fa fa-info-circle text-gray"></i> {{ 'no_records_found'|trans({}, 'admin') }}
+                                <i class="fa fa-info-circle text-gray"></i> {{ 'no_records_found'|trans({}, lexio_admin_ui.translation_domain) }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -130,7 +130,7 @@
 
     {% block pagination %}
         <div class="d-flex mb-4 mt-3 align-items-center">
-            <span class="small"><strong>{{ items.totalItemCount }}</strong> {{ 'listing_results'|trans({}, 'admin') }}</span>
+            <span class="small"><strong>{{ items.totalItemCount }}</strong> {{ 'listing_results'|trans({}, lexio_admin_ui.translation_domain) }}</span>
             <div class="ms-auto">
                 {{ knp_pagination_render(items) }}
             </div>

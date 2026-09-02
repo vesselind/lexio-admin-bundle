@@ -29,7 +29,7 @@ Ask the user to clarify:
 
 ### Phase 1: PM Subagent (Reproduction & Scope)
 
-Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
+Launch the PM subagent (read `../../agents/pm.md` for persona) with the task:
 
 1. Reproduce the bug — understand the exact reproduction path
 2. Document expected vs actual behavior
@@ -41,12 +41,12 @@ Launch the PM subagent (read `ai-new/agents/pm.md` for persona) with the task:
 
 ### Phase 2: Architect Subagent (Root Cause)
 
-Launch the Architect subagent (read `ai-new/agents/architect.md` for persona) in **readonly** mode with the task:
+Launch the Architect subagent (read `../../agents/architect.md` for persona) in **readonly** mode with the task:
 
 1. Root cause analysis — where does the bug originate? why does it occur?
 2. Minimal fix surface — what is the smallest change that fixes the bug?
 3. Regression risk areas — what other code paths or tests might be affected?
-4. List applicable rules from `ai-new/rules/` (e.g. `testing.md` for TDD, relevant domain rules)
+4. List applicable rules from `../../rules/` (e.g. `testing.md` for TDD, relevant domain rules)
 5. Recommend where the regression test should live and what it must assert
 
 **Output:** Root cause, minimal fix approach, regression risk map, applicable rules.
@@ -55,7 +55,7 @@ Launch the Architect subagent (read `ai-new/agents/architect.md` for persona) in
 
 You (the main agent) implement. TDD is mandatory.
 
-1. Read `ai-new/rules/testing.md` and any rules the Architect listed
+1. Read `../../rules/testing.md` and any rules the Architect listed
 2. Write the FAILING regression test FIRST — the test must reproduce the exact bug scenario and fail (red)
 3. Run `make tests` — confirm the new test fails as expected
 4. Implement the fix
@@ -64,7 +64,7 @@ You (the main agent) implement. TDD is mandatory.
 
 **Critical order:** Red (failing test) → Green (fix) → Refactor if needed. Never fix before the regression test exists.
 
-**Final Verification (QA):** Once the fix is complete, automatically launch the QA subagent (read `ai-new/agents/qa.md` for persona) with the task:
+**Final Verification (QA):** Once the fix is complete, automatically launch the QA subagent (read `../../agents/qa.md` for persona) with the task:
 1. Verify the bug is fixed — reproduction scenario no longer occurs
 2. Verify no regressions — existing tests still pass
 3. Verify the regression test covers the exact scenario — it would have caught the bug before the fix

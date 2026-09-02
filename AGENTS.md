@@ -4,14 +4,14 @@
 
 ## Behavioral Directives
 
-- **Language** — Reply in user's language. Generated content in English. User-facing strings in bundle code: translation keys only (see `ai-new/rules/symfony-bundle.md`).
+- **Language** — Reply in user's language. Generated content in English. User-facing strings in bundle code: translation keys only (see `.agents/rules/symfony-bundle.md`).
 - **Token-efficient** — Concise, no recap, straight to point. Expand when needed.
-- NEVER guess Symfony conventions; read the rule from `ai-new/rules/` first.
+- NEVER guess Symfony conventions; read the rule from `.agents/rules/` first.
 - ALWAYS use `make`; never raw composer/php/docker/phpunit/phpstan.
 - After PHP changes run `make ci`; if missing suggest running the `quality-install` skill.
-- **Bundle layer order** — Extension/config → services → public Contract/events → tests → optional Doctrine/API/UX/Flex (see `ai-new/rules/architecture.md`, `ai-new/rules/symfony-bundle.md`).
+- **Bundle layer order** — Extension/config → services → public Contract/events → tests → optional Doctrine/API/UX/Flex (see `.agents/rules/architecture.md`, `.agents/rules/symfony-bundle.md`).
 - **Challenge everything** — Value, architecture, risk. Propose alternatives before implementing.
-- Skills are under `ai-new/skills/`; follow instructions in each SKILL.md when invoked.
+- Skills are under `.agents/skills/`; follow instructions in each SKILL.md when invoked.
 - Bundle root = directory of the package `composer.json` (not the host application).
 - **On PHP changes**, apply: `symfony-bundle`, `coding-standards`, `dto`, `testing`, `security` rules as relevant.
 - When reading a rule, challenge if principles apply.
@@ -25,7 +25,7 @@
 
 ## Rules Index
 
-All rules live in `ai-new/rules/`. Load a rule by reading its `.md` file before implementing.
+All rules live in `.agents/rules/`. Load a rule by reading its `.md` file before implementing.
 
 | File | Topic |
 |------|-------|
@@ -56,7 +56,7 @@ All rules live in `ai-new/rules/`. Load a rule by reading its `.md` file before 
 
 ## Skills Index
 
-Skills live in `ai-new/skills/`. Read the `SKILL.md` file to get full instructions.
+Skills live in `.agents/skills/`. Read the `SKILL.md` file to get full instructions.
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
@@ -71,7 +71,7 @@ Skills live in `ai-new/skills/`. Read the `SKILL.md` file to get full instructio
 
 ## Agent Personas
 
-Agent definitions live in `ai-new/agents/`. When a skill launches a subagent, load the relevant persona.
+Agent definitions live in `.agents/agents/`. When a skill launches a subagent, load the relevant persona.
 
 | File | Role |
 |------|------|
@@ -79,3 +79,19 @@ Agent definitions live in `ai-new/agents/`. When a skill launches a subagent, lo
 | `architect.md` | Software Architect — technical design, layer order, applicable rules |
 | `qa.md` | QA Engineer — specification compliance, rule compliance, verdict |
 
+
+## Tranlations
+For translations both in the host apps and in the bundle we use yaml translation files, which are containing one single record per row. Example:
+
+```yaml
+# translations/messages.en.yaml
+button.save: "Save"
+```
+```yaml
+# translations/messages.bg.yaml
+button.save: "Запази"
+```
+The bundle should support English and Bulgarian locales by default, and the translation files should be located in the `translations` directory of the bundle - but only for the translations needed by the bundle itself.
+
+## Commiting and managing the version tag
+You should manage this bundle's version tag when git committing and/or pushing changes within the bundle. You should update the revision version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9 should become 0.1.10, etc..

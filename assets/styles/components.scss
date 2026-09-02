@@ -1,0 +1,15 @@
+// Bundle component styles without Bootstrap's base/component/utilities rules.
+// Use this entry when the host owns and configures its Bootstrap build.
+
+@import "config";
+@import "admin/variables";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+@import "admin/mixins/mixins";
+@import "admin/components/components";
+@import "admin/layout/layout";
+@import "admin/utilities/utilities";
+@import "flash-messages";
+@import "ckeditor";
+@import "theme-properties";

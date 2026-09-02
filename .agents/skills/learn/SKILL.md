@@ -45,7 +45,7 @@ For each lesson, structure as:
 
 ### Step 4: Append to docs/lessons-learned.md
 
-Append the extracted lessons to `docs/lessons-learned.md`. If the file does not exist, create it with a header and the first entry. Use a consistent markdown structure (e.g. ## YYYY-MM-DD or ### Lesson blocks). No code blocks unless strictly necessary for the lesson (prefer references to files or `ai-new/rules/` rules).
+Append the extracted lessons to `docs/lessons-learned.md`. If the file does not exist, create it with a header and the first entry. Use a consistent markdown structure (e.g. ## YYYY-MM-DD or ### Lesson blocks). No code blocks unless strictly necessary for the lesson (prefer references to files or `../../rules/` rules).
 
 ### Step 5: Challenge Retroactively
 

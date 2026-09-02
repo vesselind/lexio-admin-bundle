@@ -1,8 +1,8 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
 
-{% block title %}{{ 'translation.title'|trans({}, 'admin') }}{% endblock %}
+{% block title %}{{ 'translation.title'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
-{% block heading %}{{ 'translation.title'|trans({}, 'admin') }}{% endblock %}
+{% block heading %}{{ 'translation.title'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 
 {% block page_actions %}
     {% set currentFile = selectedFile ? selectedFile.filename : '' %}
@@ -16,7 +16,7 @@
             <input type="hidden" name="page" value="{{ currentPage }}">
             <button type="submit" class="btn btn-warning">
                 <i class="fa fa-cloud-upload me-1" aria-hidden="true"></i>
-                {{ 'translation.sync.send'|trans({}, 'admin') }}
+                {{ 'translation.sync.send'|trans({}, lexio_admin_ui.translation_domain) }}
             </button>
         </form>
         <form method="post" action="{{ path('admin.translation.receive') }}">
@@ -27,7 +27,7 @@
             <input type="hidden" name="page" value="{{ currentPage }}">
             <button type="submit" class="btn btn-info">
                 <i class="fa fa-cloud-download me-1" aria-hidden="true"></i>
-                {{ 'translation.sync.receive'|trans({}, 'admin') }}
+                {{ 'translation.sync.receive'|trans({}, lexio_admin_ui.translation_domain) }}
             </button>
         </form>
     {% endif %}
@@ -37,9 +37,9 @@
         <input type="hidden" name="search_key" value="{{ searchKey }}">
         <input type="hidden" name="search_value" value="{{ searchValue }}">
         <input type="hidden" name="page" value="{{ currentPage }}">
-        <button type="submit" class="btn btn-secondary">
+        <button type="submit" class="btn btn-primary">
             <i class="fa fa-refresh me-1" aria-hidden="true"></i>
-            {{ 'translation.cache.clear'|trans({}, 'admin') }}
+            {{ 'translation.cache.clear'|trans({}, lexio_admin_ui.translation_domain) }}
         </button>
     </form>
 {% endblock %}
@@ -47,12 +47,14 @@
 {% block content %}
     <div class="card mb-4">
         <div class="card-body">
-            <form method="get" action="{{ path('admin.translation.index') }}" class="row g-3 align-items-end">
-                <div class="col-md-10">
+            <form method="get" action="{{ path('admin.translation.index') }}"
+                  class="row g-3 align-items-end" {{ stimulus_controller('autosubmit') }}>
+                <div class="col-md-12">
                     <label class="form-label" for="translation-file">
-                        {{ 'translation.file'|trans({}, 'admin') }}
+                        {{ 'translation.file'|trans({}, lexio_admin_ui.translation_domain) }}
                     </label>
-                    <select id="translation-file" name="file" class="form-select">
+                    <select id="translation-file" name="file"
+                            class="form-select" {{ stimulus_action('autosubmit', 'debouncedSubmit') }}>
                         {% for file in files %}
                             <option value="{{ file.filename }}"{% if selectedFile and selectedFile.filename == file.filename %} selected{% endif %}>
                                 {{ file.filename }}
@@ -60,34 +62,32 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        {{ 'translation.select_file'|trans({}, 'admin') }}
-                    </button>
-                </div>
             </form>
 
             {% if selectedFile %}
-                <form method="get" action="{{ path('admin.translation.index') }}" class="row g-3 align-items-end mt-1">
+                <form method="get" action="{{ path('admin.translation.index') }}"
+                      data-turbo-frame="search-results"
+                      class="row g-3 align-items-end mt-1" {{ stimulus_controller('autosubmit') }}>
                     <input type="hidden" name="file" value="{{ selectedFile.filename }}">
                     <div class="col-md-5">
                         <label class="form-label" for="translation-search-key">
-                            {{ 'translation.search_key'|trans({}, 'admin') }}
+                            {{ 'translation.search_key'|trans({}, lexio_admin_ui.translation_domain) }}
                         </label>
                         <input type="search" id="translation-search-key" name="search_key"
-                               value="{{ searchKey }}" class="form-control">
+                               value="{{ searchKey }}"
+                               class="form-control" {{ stimulus_action('autosubmit', 'debouncedSubmit') }}>
                     </div>
                     <div class="col-md-5">
                         <label class="form-label" for="translation-search-value">
-                            {{ 'translation.search_value'|trans({}, 'admin') }}
+                            {{ 'translation.search_value'|trans({}, lexio_admin_ui.translation_domain) }}
                         </label>
                         <input type="search" id="translation-search-value" name="search_value"
-                               value="{{ searchValue }}" class="form-control">
+                               value="{{ searchValue }}"
+                               class="form-control" {{ stimulus_action('autosubmit', 'debouncedSubmit') }}>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-info w-100">
-                            <i class="fa fa-search me-1" aria-hidden="true"></i>
-                            {{ 'translation.search'|trans({}, 'admin') }}
+                        <button type="reset" class="btn btn-secondary w-100">
+                            {{ 'button.clear'|trans({}, lexio_admin_ui.translation_domain) }}
                         </button>
                     </div>
                 </form>
@@ -95,63 +95,72 @@
         </div>
     </div>
 
-    {% if selectedFile %}
-        <div class="card">
-            <div class="card-header">
-                <strong>{{ selectedFile.filename }}</strong>
-                <span class="text-muted ms-2">({{ selectedFile.domain }} / {{ selectedFile.locale }})</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                    <tr>
-                        <th>{{ 'translation.key'|trans({}, 'admin') }}</th>
-                        <th>{{ 'translation.value'|trans({}, 'admin') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for entry in entries %}
+    <turbo-frame id="search-results">
+        {% if selectedFile %}
+            <div class="card">
+                <div class="card-header">
+                    <strong>{{ selectedFile.filename }}</strong>
+                    <span class="text-muted ms-2">({{ selectedFile.domain }} / {{ selectedFile.locale }})</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
                         <tr>
-                            <td><code>{{ entry.key }}</code></td>
-                            <td>
-                                <form method="post" action="{{ path('admin.translation.update') }}" class="d-flex gap-2 align-items-start">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('translation.update') }}">
-                                    <input type="hidden" name="domain" value="{{ selectedFile.domain }}">
-                                    <input type="hidden" name="locale" value="{{ selectedFile.locale }}">
-                                    <input type="hidden" name="key" value="{{ entry.key }}">
-                                    <input type="hidden" name="search_key" value="{{ searchKey }}">
-                                    <input type="hidden" name="search_value" value="{{ searchValue }}">
-                                    <input type="hidden" name="page" value="{{ app.request.query.getInt('page', 1) }}">
-                                    <textarea name="value" class="form-control" rows="2">{{ entry.value }}</textarea>
-                                    <button type="submit" class="btn btn-success text-nowrap">
-                                        {{ 'translation.save'|trans({}, 'admin') }}
-                                    </button>
-                                </form>
-                            </td>
+                            <th>{{ 'translation.key'|trans({}, lexio_admin_ui.translation_domain) }}</th>
+                            <th>{{ 'translation.value'|trans({}, lexio_admin_ui.translation_domain) }}</th>
                         </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="2" class="text-center">
-                                {{ 'translation.no_entries'|trans({}, 'admin') }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {% if entries.totalItemCount > 0 %}
-            <div class="d-flex mb-4 mt-3 align-items-center">
-                <span class="small"><strong>{{ entries.totalItemCount }}</strong> {{ 'listing_results'|trans({}, 'admin') }}</span>
-                <div class="ms-auto">
-                    {{ knp_pagination_render(entries) }}
+                        </thead>
+                        <tbody>
+                        {% for entry in entries %}
+                            <tr>
+                                <td><code>{{ entry.key }}</code></td>
+                                <td>
+                                    <turbo-frame id="result_{{ entry.key|url_encode }}">
+                                        <form method="post" action="{{ path('admin.translation.update') }}"
+                                              class="d-flex gap-2 align-items-start">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('translation.update') }}">
+                                            <input type="hidden" name="domain" value="{{ selectedFile.domain }}">
+                                            <input type="hidden" name="locale" value="{{ selectedFile.locale }}">
+                                            <input type="hidden" name="key" value="{{ entry.key }}">
+                                            <input type="hidden" name="search_key" value="{{ searchKey }}">
+                                            <input type="hidden" name="search_value" value="{{ searchValue }}">
+                                            <input type="hidden" name="page"
+                                                   value="{{ app.request.query.getInt('page', 1) }}">
+                                            <textarea name="value" class="form-control"
+                                                      rows="2">{{ entry.value }}</textarea>
+                                            <button type="submit" class="btn btn-success text-nowrap">
+                                                {{ 'translation.save'|trans({}, lexio_admin_ui.translation_domain) }}
+                                            </button>
+                                        </form>
+                                        {% include '@LexioAdmin/admin/flash.stream.html.twig' %}
+                                    </turbo-frame>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    {{ 'translation.no_entries'|trans({}, lexio_admin_ui.translation_domain) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+            {% if entries.totalItemCount > 0 %}
+                <div class="d-flex mb-4 mt-3 align-items-center">
+                    <span class="small"><strong>{{ entries.totalItemCount }}</strong> {{ 'listing_results'|trans({}, lexio_admin_ui.translation_domain) }}</span>
+                    <div class="ms-auto">
+                        {{ knp_pagination_render(entries) }}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                {{ 'translation.no_files'|trans({}, lexio_admin_ui.translation_domain) }}
+            </div>
         {% endif %}
-    {% else %}
-        <div class="alert alert-info">
-            {{ 'translation.no_files'|trans({}, 'admin') }}
-        </div>
-    {% endif %}
+    </turbo-frame>
 {% endblock %}

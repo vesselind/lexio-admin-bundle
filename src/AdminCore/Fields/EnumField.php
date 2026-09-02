@@ -19,6 +19,10 @@ class EnumField extends BaseField
             return null;
         }
 
+        if (!$enum instanceof \UnitEnum) {
+            return null;
+        }
+
         if (method_exists($enum, 'color')) {
             return $enum->color();
         }
@@ -31,6 +35,10 @@ class EnumField extends BaseField
         $enum = $this->getValue();
 
         if (!$enum) {
+            return null;
+        }
+
+        if (!$enum instanceof \UnitEnum) {
             return null;
         }
 

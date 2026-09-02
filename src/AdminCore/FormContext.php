@@ -22,23 +22,33 @@ class FormContext
     public const array MODAL_FRAMES = ['base-modal-body'];
 
     private ?object $entityInstance  = null;
+
+    /** @var class-string|null */
     private ?string $entityFqcn      = null;
     private ?string $redirectUrl     = null;
     private string  $redirectTargetFrame = '_top';
     private ?string $pageTitle       = null;
     private ?string $formType        = null;
+
+    /** @var array<string, mixed> */
     private array   $formOptions     = [];
+
+    /** @var ArrayCollection<int, TabInterface> */
     private ArrayCollection $tabs;
     private DropdownActionsField $dropdownActionsField;
     private bool    $showLocalesTab  = true;
     private ?string $containerClass  = null;
 
+    /**
+     * @param array<int, string> $locales
+     */
     public function __construct(
         private readonly RequestStack        $requestStack,
         private readonly TranslatorInterface $translator,
         private readonly AdminUrlGenerator   $adminUrlGenerator,
         private readonly array               $locales,
         private readonly string              $defaultLocale,
+        private readonly string              $translationDomain,
     ) {
         $this->tabs                = new ArrayCollection();
         $this->dropdownActionsField = new DropdownActionsField();
@@ -57,9 +67,16 @@ class FormContext
     {
         $this->assertEntityInstanceNotNull();
 
+        if ($this->entityInstance === null) {
+            throw new \LogicException('[FormContext] Entity instance is not set.');
+        }
+
         return $this->entityInstance;
     }
 
+    /**
+     * @return class-string|null
+     */
     public function getEntityFqcn(): ?string
     {
         if (!$this->entityFqcn) {
@@ -89,19 +106,22 @@ class FormContext
         return $this;
     }
 
-    public function getPageTitle(): ?string
+    public function getPageTitle(): string
     {
         if ($this->pageTitle) {
-            return $this->translator->trans($this->pageTitle, [], 'admin');
+            return $this->translator->trans($this->pageTitle, [], $this->translationDomain);
         }
 
         return $this->translator->trans(
-            $this->requestStack->getCurrentRequest()->attributes->get('_route'),
+            $this->getRequest()->attributes->get('_route'),
             [],
-            'admin'
+            $this->translationDomain
         );
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getLocales(): array
     {
         return $this->locales;
@@ -126,7 +146,7 @@ class FormContext
 
     public function getCurrentLocale(): string
     {
-        return $this->requestStack->getCurrentRequest()->query->get('language', $this->defaultLocale);
+        return $this->getRequest()->query->get('language', $this->defaultLocale);
     }
 
     public function setFormType(string $formType): static
@@ -136,15 +156,18 @@ class FormContext
         return $this;
     }
 
-    public function getFormType(): ?string
+    public function getFormType(): string
     {
         if ($this->formType) {
             return $this->formType;
         }
 
-        return str_replace('Entity', 'Form', $this->getEntityFqcn()) . 'Type';
+        return str_replace('Entity', 'Form', $this->getEntityFqcnOrFail()) . 'Type';
     }
 
+    /**
+     * @param array<string, mixed> $formOptions
+     */
     public function setFormOptions(array $formOptions): static
     {
         $this->formOptions = $formOptions;
@@ -152,6 +175,9 @@ class FormContext
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFormOptions(): array
     {
         $defaultOptions = [
@@ -182,7 +208,7 @@ class FormContext
     public function tabs(): Collection
     {
         foreach ($this->tabs as $tab) {
-            if ($tab instanceof Tab) {
+            if ($tab instanceof Tab && $this->entityInstance !== null) {
                 $tab->setEntityInstance($this->entityInstance);
             }
         }
@@ -207,13 +233,19 @@ class FormContext
     public function links(): AdminUrlGenerator
     {
         return $this->adminUrlGenerator
-            ->setEntityFqcn($this->getEntityFqcn())
+            ->setEntityFqcn($this->getEntityFqcnOrFail())
             ->setEntityInstance($this->getEntityInstance());
     }
 
     public function getRequest(): Request
     {
-        return $this->requestStack->getCurrentRequest();
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request === null) {
+            throw new \LogicException('[FormContext] Request is not available outside an HTTP context.');
+        }
+
+        return $request;
     }
 
     public function isModalRequest(): bool
@@ -258,6 +290,20 @@ class FormContext
         if (!$this->entityInstance) {
             throw new \LogicException('[FormContext] Entity instance is not set. Call setEntityInstance() first.');
         }
+    }
+
+    /**
+     * @return class-string
+     */
+    private function getEntityFqcnOrFail(): string
+    {
+        $entityFqcn = $this->getEntityFqcn();
+
+        if ($entityFqcn === null) {
+            throw new \LogicException('[FormContext] Entity FQCN is not set.');
+        }
+
+        return $entityFqcn;
     }
 }
 

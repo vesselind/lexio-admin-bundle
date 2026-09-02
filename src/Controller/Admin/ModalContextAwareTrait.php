@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
  * Trait for controllers that support modal context operations.
  * Sets created/updated entities in request attributes for the ModalContextSubscriber.
  */
-/** @phpstan-ignore-next-line */
 trait ModalContextAwareTrait
 {
     /**

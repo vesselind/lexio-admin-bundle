@@ -9,7 +9,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class DropdownActionsField extends BaseField
 {
+    /** @var ArrayCollection<int, Action> */
     private ArrayCollection $actions;
+
+    /** @var ArrayCollection<int, Action> */
     private ArrayCollection $actionsWithConfirmationModal;
 
     public function __construct()

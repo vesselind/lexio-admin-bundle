@@ -1,12 +1,12 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
-{% block title %}{{ 'admin.menu.header'|trans({}, 'admin') }}{% endblock %}
+{% block title %}{{ 'admin.menu.header'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
 {% block heading %}
-    {{ 'admin.menu.header'|trans({}, 'admin') }}
+    {{ 'admin.menu.header'|trans({}, lexio_admin_ui.translation_domain) }}
 {% endblock %}
 
 {% block page_actions %}
     <a href="{{ path('admin.menu.header_create') }}" class="btn btn-success">
-        <i class="fa fa-plus"></i> {{ 'button.add'|trans({}, 'admin') }}
+        <i class="fa fa-plus"></i> {{ 'button.add'|trans({}, lexio_admin_ui.translation_domain) }}
     </a>
 {% endblock %}
 
@@ -19,9 +19,9 @@
     <section class="row">
         <div class="col-md-12">
             <form action="{{ path('admin.menu.header_update_order') }}" method="POST">
-                <div {{ stimulus_controller('sortable', { updatePositionUrl: path('admin.menu.header_update_order')}) }}>
+                <div {{ stimulus_controller('sortable', { updatePositionUrl: path('admin.menu.header_update_order'), flashUrl: path(lexio_admin_ui.routes.flash)}) }}>
                     {% for menu in headerMenu %}
-                        {# @var menu \App\Entity\HeaderMenu #}
+                        {# @var menu \Lexio\AdminBundle\Entity\HeaderMenu #}
 
                         <div data-id="{{menu.id}}">
                             <div class="card rounded mb-2">
@@ -30,24 +30,21 @@
                                     {{ menu.title }}
                                     <input type="hidden" name="sortedItems[]" value="{{ menu.id }}">
                                     <div class="ms-auto">
-                                        <a class="me-3 btn btn-secondary btn-sm" title="Редакция"
+                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, lexio_admin_ui.translation_domain) }}"
                                            href="{{ path('admin.menu.header_update', {id: menu.id}) }}"><i class="fa fa-edit mx-2"></i></a>
                                     </div>
                                     <form
                                             action="{{ path('admin.menu.header_delete', {id: menu.id}) }}"
                                             method="post"
-                                            {{ stimulus_controller('submit-confirm', {
-                                                text: 'Изтриване на записа?'
-                                            }) }}
-                                            {{ stimulus_action('submit-confirm', 'onSubmit') }}
+                                            onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain)|e('js') }}')"
                                     >
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Изтриване">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="{{ 'button.delete'|trans({}, lexio_admin_ui.translation_domain) }}">
                                             <i class="fa fa-trash mx-2"></i>
                                         </button>
                                     </form>
                                 </div>
                             </div>
-                            <div {{ stimulus_controller('sortable', { updatePositionUrl: path('admin.menu.header_update_order')}) }}>
+                            <div {{ stimulus_controller('sortable', { updatePositionUrl: path('admin.menu.header_update_order'), flashUrl: path(lexio_admin_ui.routes.flash)}) }}>
                             {% if menu.children is not empty %}
                                 {% for item in menu.children %}
                                     <div data-id="{{ item.id }}" class="ms-5 card rounded mb-2" >
@@ -55,18 +52,15 @@
                                             <i class="fa fa-arrows-v me-2"></i>
                                             {{ item.title }}
                                             <div class="ms-auto">
-                                                <a class="me-3 btn btn-secondary btn-sm" title="Редакция"
+                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, lexio_admin_ui.translation_domain) }}"
                                                    href="{{ path('admin.menu.header_update', {id: item.id}) }}"><i class="fa fa-edit mx-2"></i></a>
                                             </div>
                                             <form
                                                     action="{{ path('admin.menu.header_delete', {id: item.id}) }}"
                                                     method="post"
-                                                    {{ stimulus_controller('submit-confirm', {
-                                                        text: 'Изтриване на записа?'
-                                                    }) }}
-                                                    {{ stimulus_action('submit-confirm', 'onSubmit') }}
+                                                    onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain)|e('js') }}')"
                                             >
-                                                <button type="submit" class="btn btn-danger btn-sm " title="Изтриване">
+                                                <button type="submit" class="btn btn-danger btn-sm " title="{{ 'button.delete'|trans({}, lexio_admin_ui.translation_domain) }}">
                                                     <i class="fa fa-trash mx-2"></i>
                                                 </button>
                                             </form>
@@ -78,9 +72,7 @@
                         </div>
 
                     {% else %}
-                        <div>
-                            No menus
-                        </div>
+                        <div>{{ 'menu.no_items'|trans({}, lexio_admin_ui.translation_domain) }}</div>
                     {% endfor %}
                 </div>
             </form>

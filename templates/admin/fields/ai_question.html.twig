@@ -5,9 +5,9 @@
 <div>
     <strong>{{ field.value }}</strong>
     {% if field.entityInstance.isFavourite %}
-        <i class="fa fa-star text-warning" {{ stimulus_controller('tooltip', {title: 'tooltip.favourite'|trans({}, 'admin')}) }}></i>
+        <i class="fa fa-star text-warning" {{ stimulus_controller('tooltip', {title: 'tooltip.favourite'|trans({}, lexio_admin_ui.translation_domain)}) }}></i>
     {% else %}
-        <i class="fa-regular fa-star text-secondary-emphasis" {{ stimulus_controller('tooltip', {title: 'tooltip.not_favourite'|trans({}, 'admin')}) }}></i>
+        <i class="fa-regular fa-star text-secondary-emphasis" {{ stimulus_controller('tooltip', {title: 'tooltip.not_favourite'|trans({}, lexio_admin_ui.translation_domain)}) }}></i>
     {% endif %}
 </div>
 <div class="mt-1">

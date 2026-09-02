@@ -16,10 +16,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-/**
- * @method \App\Entity\User getUser()
- */
-
 abstract class BaseController extends AbstractController
 {
 
@@ -32,6 +28,16 @@ abstract class BaseController extends AbstractController
     public function translator(): TranslatorInterface
     {
         return $this->container->get('translator');
+    }
+
+    protected function translationDomain(): string
+    {
+        $domain = $this->container->get('parameter_bag')->get('lexio_admin.ui.translation_domain');
+        if (!is_string($domain) || '' === $domain) {
+            throw new \LogicException('The admin UI translation domain must be a non-empty string.');
+        }
+
+        return $domain;
     }
 
     public function breadcrumbs(): FrontBreadcrumbs

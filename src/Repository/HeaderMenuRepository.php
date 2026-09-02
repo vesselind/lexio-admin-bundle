@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<HeaderMenu>
  *
  * @method HeaderMenu|null find($id, $lockMode = null, $lockVersion = null)
- * @method HeaderMenu|null findOneBy(array $criteria, array $orderBy = null)
+ * @method HeaderMenu|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method HeaderMenu[]    findAll()
- * @method HeaderMenu[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method HeaderMenu[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class HeaderMenuRepository extends ServiceEntityRepository
 {
@@ -21,6 +21,7 @@ class HeaderMenuRepository extends ServiceEntityRepository
         parent::__construct($registry, HeaderMenu::class);
     }
 
+    /** @return array<int, HeaderMenu>|null */
     public function getParents(): ?array
     {
         return $this->createQueryBuilder('headerMenu')

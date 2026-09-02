@@ -1,16 +1,16 @@
 # Validator
 
-For validation at DTO boundaries, see `dto.mdc`. For form validation, see `forms.mdc`. For API input validation, see `api.mdc`.
+For validation at DTO boundaries, see `dto.md`. For form validation, see `forms.md`. For API input validation, see `api.md`.
 
 ## Core Principles
 
-1. **Validate at boundaries only** — Validate incoming DTOs, never entities. Entities enforce invariants via constructor and methods. DTOs enforce input shape via constraints. See `dto.mdc`.
+1. **Validate at boundaries only** — Validate incoming DTOs, never entities. Entities enforce invariants via constructor and methods. DTOs enforce input shape via constraints. See `dto.md`.
 2. **Attribute constraints on DTOs** — Use `#[Assert\...]` attributes on DTO properties. Never validate via procedural `$validator->validate()` calls in controllers (MapRequestPayload handles this).
 3. **Validation groups for context** — Use groups (`#[Assert\NotBlank(groups: ['create'])]`) when the same DTO serves multiple operations. Default group applies when no group is specified.
 4. **GroupSequence for ordered validation** — When expensive validations depend on cheap ones passing first (e.g., format check before uniqueness), use `#[GroupSequence]`.
 5. **CompoundConstraint for reusable bundles** — Combine repeated constraint sets into a `CompoundConstraint` class. One attribute replaces five.
 6. **Custom ConstraintValidator for domain rules** — Business validation that needs services (repository lookups, API calls) goes in a custom `ConstraintValidator`, not inline in handlers.
-7. **Typed error responses** — Validation failures produce RFC 7807 Problem Details via the framework. See `error-handling.mdc`. Never catch `ValidationFailedException` to build custom error shapes.
+7. **Typed error responses** — Validation failures produce RFC 7807 Problem Details via the framework. See `error-handling.md`. Never catch `ValidationFailedException` to build custom error shapes.
 8. **Test constraints in isolation** — Unit-test custom `ConstraintValidator` classes with `ValidatorBuilder`. Never rely on functional tests alone for constraint logic.
 
 ---
@@ -253,5 +253,5 @@ final class UniqueEmailValidatorTest extends ConstraintValidatorTestCase
 | Expensive validation runs on invalid input | `#[GroupSequence]` — cheap checks first, expensive checks in later group |
 | Repeated constraint sets across DTOs | Extract into `CompoundConstraint` subclass. One attribute replaces many |
 | Business rules in handler instead of validator | Custom `ConstraintValidator` with injected services. Declarative, reusable |
-| Catching `ValidationFailedException` manually | Let the framework produce RFC 7807 responses. See `error-handling.mdc` |
+| Catching `ValidationFailedException` manually | Let the framework produce RFC 7807 responses. See `error-handling.md` |
 | No unit tests for custom validators | Use `ConstraintValidatorTestCase` for isolated, fast constraint testing |

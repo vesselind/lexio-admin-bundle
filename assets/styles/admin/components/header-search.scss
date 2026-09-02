@@ -1,0 +1,34 @@
+// ============================================================
+// Header Search — shadcn/ui-inspired clean search
+// ============================================================
+
+.header-search {
+  position: relative;
+
+  #header-search-icon {
+    position: absolute;
+    top: .7em;
+    left: .9em;
+    transform: rotateY(180deg);
+    color: $gray-400;
+  }
+
+  .ts-wrapper.form-control {
+    width: 25em;
+    border-color: $border-color;
+
+    .ts-control {
+      padding-left: 2.5rem !important;
+    }
+
+    .ts-dropdown {
+      width: 40em;
+      border: 1px solid $border-color;
+      box-shadow: $dropdown-box-shadow;
+    }
+
+    .ts-dropdown-content {
+      max-height: 45vh;
+    }
+  }
+}

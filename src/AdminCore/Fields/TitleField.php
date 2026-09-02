@@ -15,6 +15,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class TitleField extends BaseField
 {
+    /**
+     * @param array<string, string> $routeParams
+     */
     public function __construct(
         public readonly string  $linkToUrl     = '',
         public readonly string  $linkToRoute   = '',
@@ -30,12 +33,15 @@ class TitleField extends BaseField
         return !empty($this->routeParams);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRouteParams(object $entityInstance): array
     {
         $accessor = PropertyAccess::createPropertyAccessor();
 
         return array_map(
-            static fn (mixed $propertyPath) => $accessor->getValue($entityInstance, $propertyPath),
+            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->routeParams
         );
     }
