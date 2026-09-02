@@ -13,9 +13,15 @@ use Lexio\AdminBundle\Service\Translation\TranslationPackageSynchronizer;
 use Lexio\AdminBundle\Service\Translation\TranslationCacheClearer;
 use Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog;
 use Lexio\AdminBundle\Page\PageManager;
+use Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 final class ServiceConfigurationTest extends TestCase
 {
@@ -156,5 +162,39 @@ final class ServiceConfigurationTest extends TestCase
             '$defaultSiteKey: \'%env(default::GOOGLE_RECAPTCHA_SITE_KEY)%\'',
             $servicesConfig,
         );
+    }
+
+    public function test_map_query_string_resolver_is_registered_as_an_event_subscriber(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(MapQueryStringValueResolver::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\AdminCore\\Resolver\\MapQueryStringValueResolver:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString('name: kernel.event_subscriber', $servicesConfig);
+        self::assertTrue(
+            is_subclass_of(MapQueryStringValueResolver::class, EventSubscriberInterface::class),
+        );
+    }
+
+    public function test_map_query_string_resolver_service_passes_event_subscriber_compilation(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register('event_dispatcher', EventDispatcher::class);
+        $container
+            ->register(MapQueryStringValueResolver::class, MapQueryStringValueResolver::class)
+            ->addTag('kernel.event_subscriber');
+
+        (new RegisterListenersPass())->process($container);
+
+        $methodCalls = $container->getDefinition('event_dispatcher')->getMethodCalls();
+
+        self::assertCount(1, $methodCalls);
+        self::assertSame('addListener', $methodCalls[0][0]);
+        self::assertSame(KernelEvents::CONTROLLER_ARGUMENTS, $methodCalls[0][1][0]);
+        self::assertSame('onKernelControllerArguments', $methodCalls[0][1][1][1]);
     }
 }
