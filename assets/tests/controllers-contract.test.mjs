@@ -61,6 +61,18 @@ test('Google reCAPTCHA Enterprise uses a generic captcha identifier and refreshe
     assert.match(source, /this\.form\.requestSubmit\(event\.submitter\)/);
 });
 
+test('image selection keeps the form value and visual preview in sync', () => {
+    const selectorSource = readFileSync(join(sourceDirectory, 'input_image_selector_controller.js'), 'utf8');
+    const gallerySource = readFileSync(join(sourceDirectory, 'image_gallery_controller.js'), 'utf8');
+
+    assert.match(selectorSource, /static targets = \['input', 'card', 'previewContainer'/);
+    assert.match(selectorSource, /this\.inputTarget\.value = imagePath/);
+    assert.match(selectorSource, /this\.previewTarget\.src = imagePath/);
+    assert.match(selectorSource, /new Event\('input', \{bubbles: true\}\)/);
+    assert.match(selectorSource, /new Event\('change', \{bubbles: true\}\)/);
+    assert.match(gallerySource, /imageName: imageName/);
+});
+
 test('runtime dependencies are peers and controller source has no starter-app endpoints', () => {
     for (const dependency of [
         '@hotwired/stimulus',

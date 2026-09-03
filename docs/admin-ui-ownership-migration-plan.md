@@ -118,8 +118,7 @@ recorded.
 - [x] Define the public Twig customization contract: stable block names, template variables,
   component props, form block prefixes, and which parts are semver-protected.
 - [x] Ensure every reusable template references other bundle templates with `@LexioAdmin/...`.
-- [x] Replace host-only SEO copies with a configuration-backed extension point, for example a
-  nullable `lexio_admin.ui.seo_template`. The bundle layout should render it when configured.
+- [x] Remove host-only SEO injections from reusable admin templates.
 - [x] Add configuration for replaceable favicon/admin logo templates or asset paths; remove
   hardcoded `build/images/*.svg` assumptions from the reusable layout.
 - [x] Replace application translation domains such as `text` where the message belongs to the
@@ -281,7 +280,7 @@ copying bundle assets into its source tree.
   - any remaining generic CRUD child → the corresponding `@LexioAdmin/...` parent.
 - [x] Change controller render calls for generic bundle screens to explicit `@LexioAdmin/...`
   paths. The dashboard currently requires this change; modal/security-log calls must be rechecked.
-- [x] Configure the host SEO partial, logo/favicon, route contracts, translations, and brand CSS
+- [x] Configure the host logo/favicon, route contracts, translations, and brand CSS
   through the new extension points.
 - [x] Enable every required bundle controller in `assets/controllers.json`, preserve existing
   Symfony UX package entries, and verify the resulting `data-controller` identifiers against the

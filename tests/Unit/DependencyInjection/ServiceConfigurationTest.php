@@ -14,8 +14,13 @@ use Lexio\AdminBundle\Service\Translation\TranslationCacheClearer;
 use Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog;
 use Lexio\AdminBundle\Page\PageManager;
 use Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver;
+use Lexio\AdminBundle\Component\Admin\InputImageSelector;
+use Lexio\AdminBundle\Command\ProdDeployCommand;
+use Lexio\AdminBundle\Contract\Deployment\DeploymentRunnerInterface;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
+use Lexio\AdminBundle\Service\Deployment\ProcessRunnerInterface;
+use Lexio\AdminBundle\Service\Deployment\SymfonyProcessRunner;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -164,6 +169,23 @@ final class ServiceConfigurationTest extends TestCase
         );
     }
 
+    public function test_input_image_selector_component_is_registered_with_a_stable_name(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(InputImageSelector::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Component\\Admin\\InputImageSelector:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString("name: twig.component, key: 'Admin:InputImageSelector'", $servicesConfig);
+        self::assertStringContainsString(
+            "template: '@LexioAdmin/components/Admin/InputImageSelector.html.twig'",
+            $servicesConfig,
+        );
+    }
+
     public function test_map_query_string_resolver_is_registered_as_an_event_subscriber(): void
     {
         $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
@@ -196,5 +218,29 @@ final class ServiceConfigurationTest extends TestCase
         self::assertSame('addListener', $methodCalls[0][0]);
         self::assertSame(KernelEvents::CONTROLLER_ARGUMENTS, $methodCalls[0][1][0]);
         self::assertSame('onKernelControllerArguments', $methodCalls[0][1][1][1]);
+    }
+
+    public function test_deployment_command_and_runner_contracts_are_registered(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(ProdDeployCommand::class));
+        self::assertTrue(interface_exists(DeploymentRunnerInterface::class));
+        self::assertTrue(interface_exists(ProcessRunnerInterface::class));
+        self::assertTrue(class_exists(SymfonyProcessRunner::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Command\\ProdDeployCommand:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString('command: prod:deploy', $servicesConfig);
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Contract\\Deployment\\DeploymentRunnerInterface:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Service\\Deployment\\ProcessRunnerInterface:',
+            $servicesConfig,
+        );
     }
 }

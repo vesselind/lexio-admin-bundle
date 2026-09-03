@@ -12,7 +12,7 @@ those templates by extending a namespaced bundle parent:
 The following blocks are semver-protected extension points on
 `@LexioAdmin/admin_base.html.twig`:
 
-- `title`, `title_suffix`, `favicon`, `seo`, `stylesheets`, `javascripts`, `responsive_elements`,
+- `title`, `title_suffix`, `favicon`, `stylesheets`, `javascripts`, `responsive_elements`,
   and `jsonld` for document head customization;
 - `sidebar`, `header`, `header_logo`, `header_search`, `header_notifications`, `user_avatar`,
   and `user_menu_items` for the admin shell;
@@ -20,14 +20,14 @@ The following blocks are semver-protected extension points on
   `below_content` for page composition.
 
 Applications must override these blocks instead of copying the parent template. The bundle layout
-renders the configured `lexio_admin.ui.seo_template` and asset paths when present.
+renders the configured asset paths when present.
 
 ## Configuration global
 
 Bundle templates may use the read-only `lexio_admin_ui` Twig global:
 
 - `translation_domain` — reusable admin message domain, default `LexioAdminBundle`;
-- `seo_template`, `favicon_asset`, `admin_logo_asset`, and `admin_logo_alt`;
+- `favicon_asset`, `admin_logo_asset`, and `admin_logo_alt`;
 - `title_translation_key` and `title_translation_domain`;
 - `routes.*` for shell, notification, flash, modal, upload, image, and file route contracts.
 
@@ -38,11 +38,12 @@ the host's `build/images` directory or use an unnamespaced include for admin UI.
 
 Twig component props are public contracts. Existing component names and props remain stable, including
 `Admin:OpenBaseModalBtn`, `Admin:BaseModal`, `Admin:NotificationBell`, `Admin:BulkActions`,
-`Admin:SideMenu`, and `Admin:Img`. `ConfirmationModal` is the generic bundle-owned component
+`Admin:SideMenu`, `Admin:Img`, and `Admin:InputImageSelector`. `ConfirmationModal` is the generic bundle-owned component
 outside the `Admin:` namespace. It supports `confirmUrl` for session-backed redirects and the
 optional `dispatchEventName` prop for a host live component that handles confirmation locally.
 
-Custom form block prefixes are stable: `association_modal_widget` and `ck_editor_label`.
+Custom form block prefixes are stable: `association_modal_widget`, `input_image_selector_widget`, and
+`ck_editor_label`.
 Applications may override those blocks through their form theme; ordinary Symfony form blocks remain
 owned by the host's selected base form theme.
 

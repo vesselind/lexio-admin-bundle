@@ -33,3 +33,12 @@ test('generated CSS exposes the documented runtime theme properties', () => {
         assert.match(css, new RegExp(property));
     }
 });
+
+test('generated CSS exposes the image selector card component', () => {
+    const source = readFileSync(join(assetsDirectory, 'styles', 'admin', 'components', '_components.scss'), 'utf8');
+    const css = readFileSync(join(assetsDirectory, 'dist', 'components.css'), 'utf8');
+
+    assert.match(source, /@import "input-image-selector"/);
+    assert.match(css, /\.input-image-selector/);
+    assert.match(css, /border:2px dashed/);
+});

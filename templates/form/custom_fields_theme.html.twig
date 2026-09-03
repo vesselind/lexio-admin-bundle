@@ -13,6 +13,33 @@
     </div>
 {%- endblock association_modal_widget %}
 
+{% block input_image_selector_widget -%}
+    {% set imageValue = value|default('') %}
+    {% set imageFileName = imageValue is not empty
+        ? imageValue|split('/')|last|split('?')|first|split('#')|first
+        : null
+    %}
+
+    {% set inputAttributes = imageSelectorInputAttr|default({}) %}
+    {% set inputAttributes = inputAttributes|merge({
+        class: (inputAttributes.class|default('') ~ ' visually-hidden')|trim,
+        'data-input-image-selector-target': 'input',
+    }) %}
+
+    <twig:Admin:InputImageSelector
+        :value="imageValue"
+        :fileName="imageFileName"
+        :galleryUrl="imageGalleryUrl|default('')"
+        :galleryTitle="imageGalleryModalTitle|default('')"
+        :buttonLabel="'button.choose_from_gallery'|trans({}, lexio_admin_ui.translation_domain)"
+        :disabled="disabled"
+    >
+        <twig:block name="input">
+            {{ form_widget(form, {attr: inputAttributes, type: 'text'}) }}
+        </twig:block>
+    </twig:Admin:InputImageSelector>
+{%- endblock input_image_selector_widget %}
+
 {% block ck_editor_label %}
 
     <div class="d-flex align-items-center" {% if linksSearch %}{{ stimulus_controller('links-search-field', {addedBadgeText: 'badge.link_added'|trans({}, lexio_admin_ui.translation_domain)}) }}{% endif %}>

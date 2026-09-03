@@ -121,9 +121,10 @@ For styles, choose exactly one of `@lexio/admin-bundle/styles/admin`,
 configuration variables and generates matching `--lexio-admin-*` CSS custom
 properties. See [Admin asset package](docs/admin-ui-assets.md).
 
-The bundle prepends `@LexioAdmin/form/custom_fields_theme.html.twig`, which provides only the
-`association_modal_widget` and `ck_editor_label` blocks. It does not select a global form layout;
-form themes configured by the host application load later and can override either block. The
+The bundle prepends `@LexioAdmin/form/custom_fields_theme.html.twig`, which provides the
+`association_modal_widget`, `input_image_selector_widget`, and `ck_editor_label` blocks. It does not
+select a global form layout; form themes configured by the host application load later and can
+override these blocks. The
 blocks retain their existing dependencies on the host's `association-modal-type`,
 `open-base-modal`, `links-search-field`, `navigate-turbo`, `tooltip`, and `modal` Stimulus
 controllers, as well as Bootstrap, Turbo, admin routes, and the `admin` translation catalogue.

@@ -94,4 +94,4 @@ button.save: "Запази"
 The bundle should support English and Bulgarian locales by default, and the translation files should be located in the `translations` directory of the bundle - but only for the translations needed by the bundle itself.
 
 ## Commiting and managing the version tag
-You should manage this bundle's version tag when git committing and/or pushing changes within the bundle. You should update the revision version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9 should become 0.1.10, etc..
+You should manage this bundle's version tag when git committing and/or git pushing changes within the bundle. You should update the revision version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9 should become 0.1.10, etc..

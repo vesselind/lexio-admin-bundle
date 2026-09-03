@@ -28,6 +28,9 @@ services:
             - '../src/Command/MakeAdminSectionCommand.php'
             - '../src/Command/UploadTranslationsCommand.php'
             - '../src/Command/DownloadTranslationsCommand.php'
+            - '../src/Command/ProdDeployCommand.php'
+            - '../src/Contract/Deployment/'
+            - '../src/Service/Deployment/'
             # Abstract component base classes — excluded so autoconfigure tags are not applied
             - '../src/Component/Admin/AbstractExportExcel.php'
             - '../src/Component/AbstractImageSelector.php'
@@ -98,6 +101,11 @@ services:
         arguments:
             $translationDomain: '%lexio_admin.ui.translation_domain%'
 
+    Lexio\AdminBundle\Component\Admin\InputImageSelector:
+        autoconfigure: false
+        tags:
+            - { name: twig.component, key: 'Admin:InputImageSelector', template: '@LexioAdmin/components/Admin/InputImageSelector.html.twig' }
+
     Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver:
         tags:
             - { name: kernel.event_subscriber }
@@ -142,6 +150,32 @@ services:
     Lexio\AdminBundle\Contract\Translation\TranslationPackageSynchronizerInterface:
         alias: Lexio\AdminBundle\Service\Translation\TranslationPackageSynchronizer
 
+    # SSH deployment
+    Lexio\AdminBundle\Service\Deployment\DeploymentOptions:
+        arguments:
+            $enabled: '%lexio_admin.deployment.enabled%'
+            $host: '%lexio_admin.deployment.host%'
+            $user: '%lexio_admin.deployment.user%'
+            $port: '%lexio_admin.deployment.port%'
+            $remotePath: '%lexio_admin.deployment.remote_path%'
+            $deployScript: '%lexio_admin.deployment.deploy_script%'
+            $identityFile: '%lexio_admin.deployment.identity_file%'
+            $timeout: '%lexio_admin.deployment.timeout%'
+
+    Lexio\AdminBundle\Service\Deployment\DeploymentConfigurationValidator: ~
+
+    Lexio\AdminBundle\Service\Deployment\SshCommandBuilder: ~
+
+    Lexio\AdminBundle\Service\Deployment\SymfonyProcessRunner: ~
+
+    Lexio\AdminBundle\Service\Deployment\SshDeploymentRunner: ~
+
+    Lexio\AdminBundle\Contract\Deployment\DeploymentRunnerInterface:
+        alias: Lexio\AdminBundle\Service\Deployment\SshDeploymentRunner
+
+    Lexio\AdminBundle\Service\Deployment\ProcessRunnerInterface:
+        alias: Lexio\AdminBundle\Service\Deployment\SymfonyProcessRunner
+
     Lexio\AdminBundle\Command\UploadTranslationsCommand:
         autoconfigure: false
         tags:
@@ -151,6 +185,11 @@ services:
         autoconfigure: false
         tags:
             - { name: console.command, command: lexio:translations:download }
+
+    Lexio\AdminBundle\Command\ProdDeployCommand:
+        autoconfigure: false
+        tags:
+            - { name: console.command, command: prod:deploy }
 
     # Twig extensions
     Lexio\AdminBundle\Twig\AdminExtension:
