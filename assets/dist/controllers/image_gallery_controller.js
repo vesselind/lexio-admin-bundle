@@ -28,10 +28,12 @@ var image_gallery_controller_default = class extends Controller {
   selectImage(event) {
     const imageId = event.params.imageId;
     const imagePath = event.params.imagePath;
+    const imageName = event.params.imageName;
     this.dispatch("image-selected", {
       detail: {
         imageId,
-        imagePath
+        imagePath,
+        imageName
       }
     });
     window.dispatchEvent(new CustomEvent("base-modal:close"));

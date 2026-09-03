@@ -91,10 +91,6 @@ final class LexioAdminBundle extends AbstractBundle
                 ->arrayNode('ui')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('seo_template')
-                            ->defaultNull()
-                            ->info('Optional host template rendered by the admin layout SEO extension point.')
-                        ->end()
                         ->scalarNode('favicon_asset')
                             ->defaultNull()
                             ->info('Optional public asset path for the admin favicon.')
@@ -209,6 +205,47 @@ final class LexioAdminBundle extends AbstractBundle
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('deployment')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultFalse()
+                            ->info('Enable the SSH production deployment command.')
+                        ->end()
+                        ->scalarNode('host')
+                            ->defaultNull()
+                            ->info('SSH host for production deployment. Required when deployment is enabled.')
+                        ->end()
+                        ->scalarNode('user')
+                            ->defaultNull()
+                            ->info('SSH user for production deployment. Required when deployment is enabled.')
+                        ->end()
+                        ->integerNode('port')
+                            ->defaultValue(22)
+                            ->min(1)
+                            ->max(65535)
+                            ->info('SSH port for production deployment.')
+                        ->end()
+                        ->scalarNode('remote_path')
+                            ->defaultNull()
+                            ->info('Remote application path. Required when deployment is enabled.')
+                        ->end()
+                        ->scalarNode('deploy_script')
+                            ->defaultValue('scripts/dev_next_deploy.sh')
+                            ->cannotBeEmpty()
+                            ->info('Remote deployment script path.')
+                        ->end()
+                        ->scalarNode('identity_file')
+                            ->defaultNull()
+                            ->info('Optional local SSH identity file path.')
+                        ->end()
+                        ->integerNode('timeout')
+                            ->defaultNull()
+                            ->min(1)
+                            ->info('Optional deployment timeout in seconds.')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
     }
 
@@ -227,7 +264,6 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.front_home_page_route', $config['front_home_page_route']);
 
         /** @var array{
-         *     seo_template: string|null,
          *     favicon_asset: string|null,
          *     admin_logo_asset: string|null,
          *     admin_logo_alt: string,
@@ -292,6 +328,27 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.translation_synchronization_max_files', $synchronization['max_files']);
         $container->setParameter('lexio_admin.translation_synchronization_basic_auth_username', $synchronization['basic_auth_username']);
         $container->setParameter('lexio_admin.translation_synchronization_basic_auth_password', $synchronization['basic_auth_password']);
+
+        /** @var array{
+         *     enabled: bool,
+         *     host: string|null,
+         *     user: string|null,
+         *     port: int,
+         *     remote_path: string|null,
+         *     deploy_script: string,
+         *     identity_file: string|null,
+         *     timeout: int|null
+         * } $deployment
+         */
+        $deployment = $config['deployment'];
+        $container->setParameter('lexio_admin.deployment.enabled', $deployment['enabled']);
+        $container->setParameter('lexio_admin.deployment.host', $deployment['host']);
+        $container->setParameter('lexio_admin.deployment.user', $deployment['user']);
+        $container->setParameter('lexio_admin.deployment.port', $deployment['port']);
+        $container->setParameter('lexio_admin.deployment.remote_path', $deployment['remote_path']);
+        $container->setParameter('lexio_admin.deployment.deploy_script', $deployment['deploy_script']);
+        $container->setParameter('lexio_admin.deployment.identity_file', $deployment['identity_file']);
+        $container->setParameter('lexio_admin.deployment.timeout', $deployment['timeout']);
 
         // Conditionally register MakeAdminSectionCommand only when symfony/maker-bundle is installed
         if (class_exists(\Symfony\Bundle\MakerBundle\Str::class)) {

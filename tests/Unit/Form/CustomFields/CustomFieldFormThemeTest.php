@@ -33,6 +33,7 @@ final class CustomFieldFormThemeTest extends TestCase
             ->getBlocks();
 
         self::assertArrayHasKey('association_modal_widget', $blocks);
+        self::assertArrayHasKey('input_image_selector_widget', $blocks);
         self::assertArrayHasKey('ck_editor_label', $blocks);
     }
 
@@ -45,6 +46,12 @@ final class CustomFieldFormThemeTest extends TestCase
         self::assertStringContainsString("stimulus_controller('association-modal-type'", $theme);
         self::assertStringContainsString("stimulus_controller('open-base-modal'", $theme);
         self::assertStringContainsString("stimulus_controller('links-search-field'", $theme);
+        self::assertStringContainsString('<twig:Admin:InputImageSelector', $theme);
+        self::assertStringContainsString('visually-hidden', $theme);
+        $componentTemplate = file_get_contents(__DIR__ . '/../../../../templates/components/Admin/InputImageSelector.html.twig');
+
+        self::assertIsString($componentTemplate);
+        self::assertStringContainsString('input-image-selector__card', $componentTemplate);
         self::assertStringContainsString('path(lexio_admin_ui.routes.links_search', $theme);
         self::assertStringContainsString('{% if linksSearch %}', $theme);
         self::assertStringContainsString('aria-label="{{ modalTitle|trans({}, lexio_admin_ui.translation_domain) }}"', $theme);

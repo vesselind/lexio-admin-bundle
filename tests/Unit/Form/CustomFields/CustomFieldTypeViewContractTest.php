@@ -62,6 +62,10 @@ final class CustomFieldTypeViewContractTest extends TestCase
     public function test_custom_field_block_prefixes_match_their_theme_contracts(): void
     {
         self::assertSame('association_modal', (new AssociationModalType())->getBlockPrefix());
+        self::assertSame('input_image_selector', (new InputImageSelectorType(
+            $this->createStub(RouterInterface::class),
+            $this->createStub(TranslatorInterface::class),
+        ))->getBlockPrefix());
         self::assertSame(
             'ck_editor',
             (new CKEditorType($this->createStub(RouterInterface::class)))->getBlockPrefix(),
@@ -89,6 +93,30 @@ final class CustomFieldTypeViewContractTest extends TestCase
 
         self::assertSame('/media/gallery', $options['attr']['data-open-base-modal-visit-url-value']);
         self::assertSame('Gallery', $options['attr']['data-open-base-modal-modal-title-value']);
+    }
+
+    public function test_input_image_selector_exposes_the_component_view_contract(): void
+    {
+        $router = $this->createStub(RouterInterface::class);
+        $router->method('generate')->willReturn('/media/gallery');
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturn('Gallery');
+
+        $resolver = new OptionsResolver();
+        $type = new InputImageSelectorType($router, $translator);
+        $type->configureOptions($resolver);
+        $options = $resolver->resolve(['attr' => ['class' => 'custom-input']]);
+
+        $view = new FormView();
+        $view->vars['attr'] = $options['attr'];
+        $type->buildView($view, $this->createStub(FormInterface::class), $options);
+
+        self::assertSame('/media/gallery', $view->vars['imageGalleryUrl']);
+        self::assertSame('Gallery', $view->vars['imageGalleryModalTitle']);
+        self::assertSame('custom-input', $view->vars['imageSelectorInputAttr']['class']);
+        self::assertFalse($view->vars['imageSelectorInputAttr']['data-controller']);
+        self::assertFalse($view->vars['imageSelectorInputAttr']['data-action']);
     }
 
     public function test_turnstile_exposes_its_provider_specific_stimulus_contract(): void

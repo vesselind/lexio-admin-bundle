@@ -28,7 +28,6 @@ final class LexioAdminBundleTest extends TestCase
         $processed = (new Processor())->processConfiguration($configuration, [[]]);
 
         self::assertSame('LexioAdminBundle', $processed['ui']['translation_domain']);
-        self::assertNull($processed['ui']['seo_template']);
         self::assertNull($processed['ui']['favicon_asset']);
         self::assertNull($processed['ui']['admin_logo_asset']);
         self::assertSame('admin.header_search', $processed['ui']['routes']['header_search']);
@@ -51,7 +50,6 @@ final class LexioAdminBundleTest extends TestCase
         $processed = (new Processor())->processConfiguration($configuration, [[
             'front_home_page_route' => 'app.home',
             'ui' => [
-                'seo_template' => 'seo/admin.html.twig',
                 'favicon_asset' => 'build/favicon.svg',
                 'admin_logo_asset' => 'build/admin-logo.svg',
                 'routes' => [
@@ -62,7 +60,6 @@ final class LexioAdminBundleTest extends TestCase
             ],
         ]]);
 
-        self::assertSame('seo/admin.html.twig', $processed['ui']['seo_template']);
         self::assertSame('build/favicon.svg', $processed['ui']['favicon_asset']);
         self::assertSame('build/admin-logo.svg', $processed['ui']['admin_logo_asset']);
         self::assertSame('app.admin_search', $processed['ui']['routes']['header_search']);

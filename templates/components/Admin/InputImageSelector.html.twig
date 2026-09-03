@@ -1,0 +1,50 @@
+{% set hasImage = value is not empty %}
+
+<div
+    {{ attributes.defaults({class: 'input-image-selector'}) }}
+    {{ stimulus_controller('input-image-selector')|stimulus_controller('open-base-modal', {
+        visitUrl: galleryUrl,
+        modalTitle: galleryTitle,
+        modalSize: 'modal-xl',
+        closeOnSuccess: false,
+    }) }}
+    {{ stimulus_action('input-image-selector', 'selectImage', 'image-gallery:image-selected@window') }}
+>
+    {% block input %}{% endblock %}
+
+    <button
+        type="button"
+        class="card input-image-selector__card {{ hasImage ? 'input-image-selector__card--has-image' : 'input-image-selector__card--empty' }}"
+        data-input-image-selector-target="card"
+        aria-label="{{ buttonLabel }}"
+        {% if disabled %}disabled{% endif %}
+    >
+        <span
+            class="input-image-selector__preview"
+            data-input-image-selector-target="previewContainer"
+            {% if not hasImage %}hidden{% endif %}
+        >
+            <img
+                class="input-image-selector__preview-image"
+                data-input-image-selector-target="preview"
+                {% if hasImage %}src="{{ value }}"{% endif %}
+                alt="{{ fileName|default('') }}"
+            >
+        </span>
+
+        <span
+            class="input-image-selector__empty"
+            data-input-image-selector-target="emptyState"
+            {% if hasImage %}hidden{% endif %}
+        >
+            <i class="fa fa-image input-image-selector__empty-icon" aria-hidden="true"></i>
+            <span>{{ buttonLabel }}</span>
+        </span>
+
+        <span
+            class="input-image-selector__file-name"
+            data-input-image-selector-target="fileName"
+            {% if not hasImage or fileName is empty %}hidden{% endif %}
+        >{{ fileName }}</span>
+    </button>
+</div>

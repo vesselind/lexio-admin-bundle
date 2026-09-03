@@ -26,12 +26,6 @@
         <meta name="turbo-cache-control" content="no-cache">
     {% endblock %}
 
-    {% block seo %}
-        {% if lexio_admin_ui.seo_template %}
-            {% include lexio_admin_ui.seo_template %}
-        {% endif %}
-    {% endblock %}
-
     {% block stylesheets %}
         {{ encore_entry_link_tags('admin') }}
     {% endblock %}

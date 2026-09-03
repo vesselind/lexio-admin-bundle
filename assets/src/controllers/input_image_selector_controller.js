@@ -1,11 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
-import { getComponent } from '@symfony/ux-live-component';
 export default class extends Controller {
+    static targets = ['input', 'card', 'previewContainer', 'preview', 'emptyState', 'fileName'];
 
     connect() {
         this.listenForImageSelection = false;
 
         this.enableImageSelection = () => {
+            if (!this.hasInputTarget || this.inputTarget.disabled) {
+                return;
+            }
+
             this.listenForImageSelection = true;
         };
 
@@ -13,13 +17,55 @@ export default class extends Controller {
     }
 
     selectImage(event) {
-        if (!this.listenForImageSelection) {
+        const imagePath = event.detail?.imagePath;
+
+        if (!this.listenForImageSelection || !imagePath) {
             return;
         }
 
-        this.element.value = event.detail.imagePath;
+        const imageName = event.detail?.imageName || this.fileNameFromPath(imagePath);
+
+        this.inputTarget.value = imagePath;
+
+        if (this.hasPreviewTarget) {
+            this.previewTarget.src = imagePath;
+            this.previewTarget.alt = imageName;
+        }
+
+        if (this.hasPreviewContainerTarget) {
+            this.previewContainerTarget.hidden = false;
+        }
+
+        if (this.hasEmptyStateTarget) {
+            this.emptyStateTarget.hidden = true;
+        }
+
+        if (this.hasFileNameTarget) {
+            this.fileNameTarget.textContent = imageName;
+            this.fileNameTarget.hidden = !imageName;
+        }
+
+        if (this.hasCardTarget) {
+            this.cardTarget.classList.remove('input-image-selector__card--empty');
+            this.cardTarget.classList.add('input-image-selector__card--has-image');
+        }
+
+        // Keep native forms, autosubmit and LiveComponent bindings in sync.
+        this.inputTarget.dispatchEvent(new Event('input', {bubbles: true}));
+        this.inputTarget.dispatchEvent(new Event('change', {bubbles: true}));
 
         this.listenForImageSelection = false;
+    }
+
+    fileNameFromPath(path) {
+        const pathWithoutQuery = path.split(/[?#]/, 1)[0];
+        const pathSegment = pathWithoutQuery.substring(pathWithoutQuery.lastIndexOf('/') + 1);
+
+        try {
+            return decodeURIComponent(pathSegment);
+        } catch {
+            return pathSegment;
+        }
     }
 
     disconnect() {

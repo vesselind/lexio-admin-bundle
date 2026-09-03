@@ -139,7 +139,6 @@ before the Phase 2/3 visual migration is accepted.
 
 - Generic admin layouts, CRUD templates, form themes, admin components, and maker templates belong
   to the bundle.
-- Host SEO is now configured through `lexio_admin.ui.seo_template`.
 - Host favicon, admin logo, title suffix, and generic UI routes are configured through
   `lexio_admin.ui`.
 - Public-site layout and flash rendering are host-owned; public components are host-owned, while
