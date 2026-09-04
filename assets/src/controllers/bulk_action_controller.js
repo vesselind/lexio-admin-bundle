@@ -2,7 +2,6 @@ import {Controller} from '@hotwired/stimulus';
 
 export default class extends Controller {
     static values = {
-        entityFqcn: String,
         csrfToken: String,
     }
 
@@ -39,8 +38,6 @@ export default class extends Controller {
         event.preventDefault();
 
         const searchParams = new URLSearchParams();
-
-        searchParams.set('entityFqcn', this.entityFqcnValue);
 
         this.checkedItemsIds.forEach(id => searchParams.append('ids[]', id));
 

@@ -8,6 +8,8 @@ PHPSTAN := vendor/bin/phpstan
 PHPUNIT := vendor/bin/phpunit
 endif
 
+ASSETS_YARN ?= corepack yarn
+
 # ─── Install ──────────────────────────────────────────────────────────────────
 install:
 	composer install
@@ -25,7 +27,7 @@ tests:
 
 # ─── Frontend package ───────────────────────────────────────────────────────
 assets-install:
-	yarn --cwd assets install --ignore-scripts
+	$(ASSETS_YARN) --cwd assets install --ignore-scripts
 
 assets-build: assets-styles-build
 	node assets/build.mjs

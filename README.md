@@ -103,8 +103,9 @@ Run this during local development:
 
 ```bash
 # From lexio-admin-bundle:
-yarn --cwd assets install --ignore-scripts
-yarn --cwd assets build
+make assets-install
+make assets-build
+make assets-test
 
 # From the host application:
 yarn dev       # or: yarn build

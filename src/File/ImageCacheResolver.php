@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\File;
 
 use Intervention\Image\Interfaces\ImageInterface;
+use Lexio\AdminBundle\Contract\File\FileEntityInterface;
 use Lexio\AdminBundle\Contract\File\FileRepositoryInterface;
 use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Psr\Log\LoggerInterface;
@@ -36,9 +37,9 @@ final class ImageCacheResolver
      *
      * SVG files are returned as-is.
      *
-     * @param string|ImageEntityInterface $pathOrImage Web path or image entity.
+     * @param string|FileEntityInterface $pathOrImage Web path or image entity.
      */
-    public function resolveImage(string|ImageEntityInterface $pathOrImage, ImageCacheConfig $config): string
+    public function resolveImage(string|FileEntityInterface $pathOrImage, ImageCacheConfig $config): string
     {
         $imageObject = $this->resolveImageObject($pathOrImage);
 
@@ -73,10 +74,14 @@ final class ImageCacheResolver
         return file_exists($cachedSystemPath);
     }
 
-    private function resolveImageObject(string|ImageEntityInterface $pathOrImage): ImageEntityInterface
+    private function resolveImageObject(string|FileEntityInterface $pathOrImage): ImageEntityInterface
     {
         if ($pathOrImage instanceof ImageEntityInterface) {
             return $pathOrImage;
+        }
+
+        if ($pathOrImage instanceof FileEntityInterface) {
+            throw new \InvalidArgumentException('A file entity was provided where an image entity is required.');
         }
 
         $imageObject = $this->fileRepository->searchByPath($pathOrImage);

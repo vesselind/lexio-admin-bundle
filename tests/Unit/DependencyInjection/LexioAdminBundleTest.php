@@ -34,6 +34,16 @@ final class LexioAdminBundleTest extends TestCase
         self::assertSame('admin.system_notification.index', $processed['ui']['routes']['notification_index']);
         self::assertSame('flash.create', $processed['ui']['routes']['flash']);
         self::assertSame('admin.ckeditor.upload', $processed['ui']['routes']['ckeditor_upload']);
+        self::assertArrayNotHasKey('image_index', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('image_upload', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('image_download', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('image_delete', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('image_modal_gallery', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('image_modal_upload', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('file_index', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('file_upload', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('file_download', $processed['ui']['routes']);
+        self::assertArrayNotHasKey('file_delete', $processed['ui']['routes']);
     }
 
     public function test_ui_configuration_accepts_host_route_and_asset_overrides(): void

@@ -18,6 +18,7 @@ use Lexio\AdminBundle\Event\AdminLifecycle\AfterEntityUpdated;
 use Lexio\AdminBundle\Event\AdminLifecycle\BeforeEntityPersisted;
 use Lexio\AdminBundle\Event\AdminLifecycle\BeforeEntityUpdated;
 use Lexio\AdminBundle\Form\SeoType;
+use Lexio\AdminBundle\Filter\BaseFilter;
 use Lexio\AdminBundle\Service\EntityFilterer;
 use Lexio\AdminBundle\Utils\AdminUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,6 +78,7 @@ abstract class BaseCrudController extends AbstractController
             );
 
             $filtersForm->handleRequest($request);
+            $this->enforceListingFilter($listingContext->getFilter());
         }
 
         $itemsQuery = $this->filterService()->search(
@@ -323,6 +325,14 @@ abstract class BaseCrudController extends AbstractController
     protected function getIndexTitle(): string
     {
         return $this->translator()->trans('admin.' . $this->getSnakeEntityName() . '.index', [], $this->translationDomain());
+    }
+
+    /**
+     * Gives specialized controllers a chance to restore server-controlled
+     * filter values after the request form has been bound.
+     */
+    protected function enforceListingFilter(BaseFilter $filter): void
+    {
     }
 
     // ─── Service accessors (ServiceSubscriber pattern) ────────────────────────

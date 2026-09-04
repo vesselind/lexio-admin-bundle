@@ -17,7 +17,8 @@ class FileManager
         private readonly Filesystem $fileSystem,
         private readonly string     $projectDir,
         private readonly string     $siteBaseUrl,
-    ) {
+    )
+    {
     }
 
     /**
@@ -39,21 +40,22 @@ class FileManager
     /**
      * Creates an UploadedFile from raw binary content.
      */
-    public function createFileFromBinary(string $content, string $originalFileName): UploadedFile
+    public function createFileFromBinary(string $originalFileName, string $content): UploadedFile
     {
-        $tempPath = (string) tempnam(sys_get_temp_dir(), 'upload_');
+        $tempPath = (string)tempnam(sys_get_temp_dir(), 'upload_');
         file_put_contents($tempPath, $content);
 
         return new UploadedFile($tempPath, $originalFileName);
     }
 
     public function uploadFile(
-        UploadedFile       $uploadedFile,
-        FileEntityInterface $fileEntity,
-    ): FileEntityInterface|ImageEntityInterface {
-        $slugger          = new AsciiSlugger();
+        UploadedFile                             $uploadedFile,
+        FileEntityInterface|ImageEntityInterface $fileEntity,
+    ): FileEntityInterface|ImageEntityInterface
+    {
+        $slugger = new AsciiSlugger();
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-        $newFilename      = $slugger->slug($originalFilename)
+        $newFilename = $slugger->slug($originalFilename)
             . '-' . AdminUtils::randomString(11)
             . '.' . $uploadedFile->guessExtension();
 

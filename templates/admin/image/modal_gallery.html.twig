@@ -1,13 +1,13 @@
 <twig:Admin:BaseModalBody>
 
     <div class="modal-gallery" {{ stimulus_controller('image-gallery', {
-        uploadUrl: path(lexio_admin_ui.routes.image_modal_upload),
-        currentUrl: path(lexio_admin_ui.routes.image_modal_gallery),
+        uploadUrl: path('admin.image.modal_upload'),
+        currentUrl: path('admin.image.modal_gallery'),
         currentFrame: 'base-modal-body',
         flashUrl: path(lexio_admin_ui.routes.flash),
     }) }}>
         <div class="row">
-            <form method="GET" class="input-group" action="{{ path(lexio_admin_ui.routes.image_modal_gallery) }}"
+            <form method="GET" class="input-group" action="{{ path('admin.image.modal_gallery') }}"
                     {{ stimulus_controller('autosubmit') }}
                   data-turbo-frame="images-container"
             >
@@ -29,7 +29,7 @@
             <turbo-frame id="images-container">
                 <section class="row">
                     {% for image in images %}
-                        {# @var image \Lexio\AdminBundle\Contract\File\ImageEntityInterface #}
+                        {# @var image \Lexio\AdminBundle\Contract\File\FileEntityInterface #}
                         <div class="col-auto">
                             <div class="card mb-3 border-0">
                                 <img class="image-gallery-item rounded m-2" data-id="{{ image.id }}"

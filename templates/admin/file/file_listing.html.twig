@@ -8,7 +8,7 @@
 
 {% block page_actions %}
     <div class="d-inline">
-        <form action="{{ path(lexio_admin_ui.routes.file_upload) }}" method="post" enctype="multipart/form-data"
+        <form action="{{ path('admin.file.upload') }}" method="post" enctype="multipart/form-data"
                 {{ stimulus_controller('file-upload-form') }}>
             <input type="file" name="file" hidden
                     {{ stimulus_target('file-upload-form', 'input') }}
@@ -27,7 +27,7 @@
         </form>
     </div>
 
-    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions, entityFqcn: entityFqcn}) }}
+    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions}) }}
 {% endblock %}
 
 {% block table %}
@@ -46,29 +46,29 @@
                 {% set sort = app.request.query.get('sort') %}
                 {% set order = app.request.query.get('order') %}
 
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'id', 'order': 'desc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'desc'}) }}"
                    class="btn btn-primary {{ sort == 'id' and order == 'desc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'id', 'order': 'asc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'asc'}) }}"
                    class="btn btn-primary {{ sort == 'id' and order == 'asc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'name', 'order': 'asc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'name', 'order': 'asc'}) }}"
                    class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
                     {{ ux_icon('lsicon:sort-a-to-z-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
                 </a>
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'name', 'order': 'desc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'name', 'order': 'desc'}) }}"
                    class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
                     {{ ux_icon('lsicon:sort-z-to-a-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
                 </a>
 
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'size', 'order': 'asc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'asc'}) }}"
                    class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
                     {{ 'filter.size'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
-                <a href="{{ path(lexio_admin_ui.routes.file_index, {'sort': 'size', 'order': 'desc'}) }}"
+                <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'desc'}) }}"
                    class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
                     {{ 'filter.size'|trans({}, lexio_admin_ui.translation_domain) }}
@@ -112,7 +112,7 @@
                                         <input type="hidden"
                                                value="{{ item.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
                                     </button>
-                                    <a data-turbo="false" class="dropdown-item" href="{{ path(lexio_admin_ui.routes.file_download, {'id': item.id}) }}">
+                                    <a data-turbo="false" class="dropdown-item" href="{{ path('admin.file.download', {'id': item.id}) }}">
                                         <i class="fa fa-download"></i> {{ 'button.download'|trans({}, lexio_admin_ui.translation_domain) }}
                                     </a>
 
@@ -130,7 +130,7 @@
                     </div>
                     {% component 'ConfirmationModal' with {
                         subjectId: item.id,
-                        confirmUrl: path(lexio_admin_ui.routes.file_delete, {'id': item.id})
+                        confirmUrl: path('admin.file.delete', {'id': item.id})
                     } %}
                         {% block modal_body %}
                             {{ 'delete_file.confirmation_text'|trans({}, lexio_admin_ui.translation_domain) }}

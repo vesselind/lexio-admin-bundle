@@ -7,7 +7,7 @@ namespace Lexio\AdminBundle\Enum;
 enum FileAccessType: string
 {
     case PUBLIC  = 'public';
-    case PRIVATE = 'private';
+    case PRIVATE = 'var/private';
 
     /** Returns the filesystem directory prefix for this access type (no trailing slash). */
     public function directory(): string
