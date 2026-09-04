@@ -67,10 +67,10 @@ abstract class SecurityLogController extends BaseCrudController
         return $this->renderDelete($securityLog, $request);
     }
 
-    #[Route('/bulk-delete', name: 'admin.security_log.bulk_delete')]
+    #[Route('/bulk-delete', name: 'admin.security_log.bulk_delete', methods: ['POST'])]
     public function bulkDelete(BulkContext $bulkContext, Request $request): Response
     {
-        foreach ($bulkContext->getEntities() as $entity) {
+        foreach ($bulkContext->getEntities($this->getEntityFqcn()) as $entity) {
             $this->manager()->remove($entity);
         }
 

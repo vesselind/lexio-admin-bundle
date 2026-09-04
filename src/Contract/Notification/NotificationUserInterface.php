@@ -22,5 +22,6 @@ interface NotificationUserInterface
 
     /** @return list<string> */
     public function getRoles(): array;
+
 }
 

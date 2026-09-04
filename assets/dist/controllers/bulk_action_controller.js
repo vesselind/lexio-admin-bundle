@@ -27,7 +27,6 @@ var bulk_action_controller_default = class extends Controller {
   confirm(event) {
     event.preventDefault();
     const searchParams = new URLSearchParams();
-    searchParams.set("entityFqcn", this.entityFqcnValue);
     this.checkedItemsIds.forEach((id) => searchParams.append("ids[]", id));
     const url = `${this.url}?${searchParams.toString()}`;
     fetch(url, {
@@ -42,7 +41,6 @@ var bulk_action_controller_default = class extends Controller {
   }
 };
 __publicField(bulk_action_controller_default, "values", {
-  entityFqcn: String,
   csrfToken: String
 });
 __publicField(bulk_action_controller_default, "targets", ["button", "modalBody"]);

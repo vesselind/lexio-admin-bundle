@@ -63,7 +63,7 @@
 
 ## 4. Entities
 
-- **4.1** File & Image contracts (`FileEntityInterface`, `ImageEntityInterface`)
+- **4.1** File & Image contracts (`FileEntityInterface`, `FileEntityInterface`)
   - Concrete entities and repositories are owned by the host application.
 - **4.2** Page & Content Items (`Page`, `ContentItem`, `PageManager`)
   - Translation (Gedmo Translatable)
@@ -181,7 +181,7 @@ contracts and notification-bell component:
 - **13.4** `InterventionImageManager` — image processing
 - **13.5** `FileEventListener` — physical file cleanup on entity removal
 - **13.6** `FileAccessType` enum
-- **13.7** `FileEntityInterface` / `ImageEntityInterface`
+- **13.7** `FileEntityInterface` / `FileEntityInterface`
 
 ---
 
@@ -299,7 +299,7 @@ their own domain model.
 
 ## 23. Contract Interfaces
 
-- **23.1** `FileEntityInterface` / `ImageEntityInterface`
+- **23.1** `FileEntityInterface` / `FileEntityInterface`
 - **23.2** `BaseFilterInterface`
 - **23.3** `AutoTranslatorInterface` / `EntityAutoTranslatorInterface`
 - **23.4** `NotificationBellProviderInterface`

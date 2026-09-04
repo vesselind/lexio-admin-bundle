@@ -78,6 +78,7 @@ test('runtime dependencies are peers and controller source has no starter-app en
         '@hotwired/stimulus',
         '@hotwired/turbo',
         '@symfony/ux-live-component',
+        '@popperjs/core',
         'bootstrap',
         'ckeditor5',
         'debounce',

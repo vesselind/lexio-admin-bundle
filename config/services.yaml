@@ -50,6 +50,12 @@ services:
     Lexio\AdminBundle\Contract\Page\PageAdministrationInterface:
         alias: Lexio\AdminBundle\Page\PageManager
 
+    Lexio\AdminBundle\Contract\Mail\MailSenderInterface:
+        alias: Lexio\AdminBundle\Mail\MailSender
+
+    Lexio\AdminBundle\Contract\Mail\MailTemplateRepositoryInterface:
+        alias: Lexio\AdminBundle\Repository\MailTemplateRepository
+
     # Core services bound to bundle parameters
     Lexio\AdminBundle\AdminCore\AdminUrlGenerator:
         arguments:
@@ -88,7 +94,6 @@ services:
 
     Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType:
         arguments:
-            $imageGalleryRouteName: '%lexio_admin.ui.routes.image_modal_gallery%'
             $translationDomain: '%lexio_admin.ui.translation_domain%'
         tags: ['form.type']
 

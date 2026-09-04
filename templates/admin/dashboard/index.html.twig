@@ -22,7 +22,7 @@
                     {{ ux_icon('solar:user-bold-duotone', {height: '14px', width: '14px', class: 'me-1', 'aria-hidden': true}) }}
                     {{ 'admin.user.index'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
-                <a href="{{ path('admin.file.upload') }}" class="btn btn-secondary btn-sm">
+                <a href="{{ path('admin.file.index') }}" class="btn btn-secondary btn-sm">
                     {{ ux_icon('fa6-solid:upload', {height: '12px', width: '12px', class: 'me-1', 'aria-hidden': true}) }}
                     {{ 'admin.file.upload'|trans({}, lexio_admin_ui.translation_domain) }}
                 </a>
@@ -256,7 +256,7 @@
                 {% endif %}
 
                 <div class="dashboard-widget__footer">
-                    <a href="{{ path('admin.file.upload') }}" class="dashboard-widget__footer-link">
+                    <a href="{{ path('admin.file.index') }}" class="dashboard-widget__footer-link">
                         {{ ux_icon('fa6-solid:upload', {height: '11px', width: '11px', 'aria-hidden': true}) }}
                         {{ 'admin.file.upload'|trans({}, lexio_admin_ui.translation_domain) }}
                     </a>

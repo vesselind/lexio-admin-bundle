@@ -5,11 +5,11 @@
 {# @var adminUrlGenerator \Lexio\AdminBundle\AdminCore\AdminUrlGenerator #}
 {# @var filtersForm null|App\Form\Filter\BaseFilterType #}
 
-{# @var items \Lexio\AdminBundle\Contract\File\ImageEntityInterface[] #}
+{# @var items \Lexio\AdminBundle\Contract\File\FileEntityInterface[] #}
 
 {% block page_actions %}
     <div class="d-inline">
-        <form action="{{ path(lexio_admin_ui.routes.image_upload) }}" method="post" enctype="multipart/form-data"
+        <form action="{{ path('admin.image.upload') }}" method="post" enctype="multipart/form-data"
                 {{ stimulus_controller('file-upload-form') }}>
             <input type="file" name="file" hidden
                     {{ stimulus_target('file-upload-form', 'input') }}
@@ -36,19 +36,19 @@
             {% set sort = app.request.query.get('sort') %}
             {% set order = app.request.query.get('order') %}
 
-            <a href="{{ path(lexio_admin_ui.routes.image_index, {'sort': 'id', 'order': 'desc'}) }}"
+            <a href="{{ path('admin.image.index', {'sort': 'id', 'order': 'desc'}) }}"
                class="btn btn-primary {{ sort == 'id' and order == 'desc' ? 'active' }}">
                 {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, lexio_admin_ui.translation_domain) }}
             </a>
-            <a href="{{ path(lexio_admin_ui.routes.image_index, {'sort': 'id', 'order': 'asc'}) }}"
+            <a href="{{ path('admin.image.index', {'sort': 'id', 'order': 'asc'}) }}"
                class="btn btn-primary {{ sort == 'id' and order == 'asc' ? 'active' }}">
                 {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, lexio_admin_ui.translation_domain) }}
             </a>
-            <a href="{{ path(lexio_admin_ui.routes.image_index, {'sort': 'name', 'order': 'asc'}) }}"
+            <a href="{{ path('admin.image.index', {'sort': 'name', 'order': 'asc'}) }}"
                class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
                 {{ ux_icon('lsicon:sort-a-to-z-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
             </a>
-            <a href="{{ path(lexio_admin_ui.routes.image_index, {'sort': 'name', 'order': 'desc'}) }}"
+            <a href="{{ path('admin.image.index', {'sort': 'name', 'order': 'desc'}) }}"
                class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
                 {{ ux_icon('lsicon:sort-z-to-a-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
             </a>
@@ -81,7 +81,7 @@
                                     <input type="hidden"
                                            value="{{ item.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
                                 </button>
-                                <a class="dropdown-item" data-turbo="false" href="{{ path(lexio_admin_ui.routes.image_download, {'id': item.id}) }}">
+                                <a class="dropdown-item" data-turbo="false" href="{{ path('admin.image.download', {'id': item.id}) }}">
                                     <i class="fa fa-download"></i> {{ 'button.download'|trans({}, lexio_admin_ui.translation_domain) }}
                                 </a>
 
@@ -95,7 +95,7 @@
                 </div>
                 {% component 'ConfirmationModal' with {
                     subjectId: item.id,
-                    confirmUrl: path(lexio_admin_ui.routes.image_delete, {'id': item.id})
+                    confirmUrl: path('admin.image.delete', {'id': item.id})
                 } %}
                     {% block modal_body %}
                         {{ 'delete_image.confirmation_text'|trans({}, lexio_admin_ui.translation_domain) }}

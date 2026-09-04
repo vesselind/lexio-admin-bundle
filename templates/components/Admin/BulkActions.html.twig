@@ -1,5 +1,4 @@
 <div {{ attributes.defaults(stimulus_controller('bulk-action', {
-    entityFqcn: entityFqcn,
     csrfToken: csrf_token('bulk_action')
 })) }}>
     {% for bulkAction in bulkActions %}

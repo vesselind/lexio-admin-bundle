@@ -20,7 +20,7 @@
         </a>
     {% endif %}
 
-    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions, entityFqcn: entityFqcn}) }}
+    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions}) }}
 {% endblock %}
 
 {% block content %}

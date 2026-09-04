@@ -19,6 +19,24 @@ test('publishes the full and components-only Sass entry points', () => {
     }
 });
 
+test('declares Bootstrap and Popper for both host consumption and local Sass builds', () => {
+    const packageJson = JSON.parse(readFileSync(join(assetsDirectory, 'package.json'), 'utf8'));
+
+    assert.equal(packageJson.peerDependencies.bootstrap, '^5.3.0');
+    assert.equal(packageJson.devDependencies.bootstrap, '^5.3.0');
+    assert.equal(packageJson.peerDependencies['@popperjs/core'], '^2.11.8');
+    assert.equal(packageJson.devDependencies['@popperjs/core'], '^2.11.8');
+});
+
+test('keeps the standalone asset toolchain compatible with the supported Node baseline', () => {
+    const packageJson = JSON.parse(readFileSync(join(assetsDirectory, 'package.json'), 'utf8'));
+
+    assert.equal(packageJson.engines.node, '>=18');
+    assert.equal(packageJson.devDependencies.sass, '~1.94.2');
+    assert.equal(packageJson.devDependencies.vitest, undefined);
+    assert.equal(packageJson.scripts.test, 'node --test tests/controllers-contract.test.mjs tests/styles-contract.test.mjs');
+});
+
 test('generated CSS exposes the documented runtime theme properties', () => {
     const css = readFileSync(join(assetsDirectory, 'dist', 'admin.css'), 'utf8');
 
