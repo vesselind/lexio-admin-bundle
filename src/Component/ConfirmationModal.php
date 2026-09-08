@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -42,13 +43,20 @@ final class ConfirmationModal
      */
     public const string CONFIRMED_SESSION_KEY = '_confirmation_modal_id';
 
-    /** Must match the `data-bs-target="#confirmationModal_{{ subjectId }}"` button. */
-    public int|string $subjectId = '';
+    /** Entity identifier stored in the session and emitted with confirmation events. */
+    #[LiveProp]
+    public string $subjectId = '';
+
+    /** Unique DOM identifier suffix. Defaults to the subject ID for single-action modals. */
+    #[LiveProp]
+    public string $modalId = '';
 
     /** URL to redirect to after the user confirms. */
+    #[LiveProp]
     public string $confirmUrl = '';
 
     /** Optional live event emitted to the parent component after confirmation. */
+    #[LiveProp]
     public ?string $dispatchEventName = null;
 
     public function __construct(private readonly RequestStack $requestStack)
@@ -56,12 +64,14 @@ final class ConfirmationModal
     }
 
     public function mount(
-        int|string $subjectId,
+        string $subjectId,
         string $confirmUrl = '',
         ?string $dispatchEventName = null,
+        string $modalId = '',
     ): void
     {
         $this->subjectId = $subjectId;
+        $this->modalId = '' === $modalId ? $subjectId : $modalId;
         $this->confirmUrl = $confirmUrl;
         $this->dispatchEventName = $dispatchEventName;
     }

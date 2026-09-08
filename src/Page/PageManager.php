@@ -3,10 +3,11 @@
 namespace Lexio\AdminBundle\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\Translatable\Entity\Translation;
 use Lexio\AdminBundle\Contract\AutoTranslator\EntityAutoTranslatorInterface;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Lexio\AdminBundle\Contract\Page\PageAdministrationInterface;
 use Lexio\AdminBundle\Contract\Page\PageManagerInterface;
+use Lexio\AdminBundle\Attributes\FieldType;
 use Lexio\AdminBundle\Entity\ContentItem;
 use Lexio\AdminBundle\Entity\Page;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -22,8 +23,6 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
 
     public function createOrUpdatePage(BasePage $page, ?string $locale = null): void
     {
-        $translationRepository = $this->manager->getRepository(Translation::class);
-
         $pageEntity = $this->manager->getRepository(Page::class)->findOneBy(['name' => get_class($page)]);
 
 
@@ -60,7 +59,17 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
             $attribute = $attributes[0];
 
             $propertyName = $pageProperty->getName();
-            $type = $attribute->getArguments()[0];
+            $type = $attribute->getArguments()[0] ?? null;
+
+            if (!$type instanceof ContentItemTypes) {
+                throw new \LogicException(sprintf(
+                    'The %s attribute on %s::$%s must contain a %s value.',
+                    FieldType::class,
+                    $page::class,
+                    $propertyName,
+                    ContentItemTypes::class,
+                ));
+            }
 
             $contentItem = $this->manager->getRepository(ContentItem::class)->findOneBy(['page' => $pageEntity, 'name' => $propertyName]);
 
@@ -75,15 +84,52 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
                 ->setType($type);
 
 
-            if ($locale === $this->defaultLocale) {
-                $contentItem->setValue($this->accessor()->getValue($page, $propertyName));
+            if ($type === ContentItemTypes::IMAGE) {
+                if ($locale === $this->defaultLocale) {
+                    $image = $this->accessor()->getValue($page, $propertyName);
+
+                    if ($image !== null && !$image instanceof ImageEntityInterface) {
+                        throw new \LogicException(sprintf(
+                            'The image field %s::$%s must contain an %s or null.',
+                            $page::class,
+                            $propertyName,
+                            ImageEntityInterface::class,
+                        ));
+                    }
+
+                    $contentItem
+                        ->setImage($image)
+                        ->setValue(null);
+                }
+            } elseif ($locale === $this->defaultLocale) {
+                $value = $this->accessor()->getValue($page, $propertyName);
+
+                if ($value !== null && !is_string($value)) {
+                    throw new \LogicException(sprintf(
+                        'The content field %s::$%s must contain a string or null.',
+                        $page::class,
+                        $propertyName,
+                    ));
+                }
+
+                $contentItem->setValue($value);
                 $this->manager->flush();
 
                 $this->autoTranslator->translateField($contentItem, 'value', $locale);
             } else {
                 $contentItem->setTranslatableLocale($locale);
                 $this->manager->refresh($contentItem);
-                $contentItem->setValue($this->accessor()->getValue($page, $propertyName));
+                $value = $this->accessor()->getValue($page, $propertyName);
+
+                if ($value !== null && !is_string($value)) {
+                    throw new \LogicException(sprintf(
+                        'The content field %s::$%s must contain a string or null.',
+                        $page::class,
+                        $propertyName,
+                    ));
+                }
+
+                $contentItem->setValue($value);
             }
 
             $this->manager->flush();
@@ -125,9 +171,14 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
 
             $propertyName = $contentItem->getName();
             $value = $contentItem->getValue();
+            $type = $contentItem->getType();
 
             if ($propertyName === null) {
                 throw new \LogicException('A content item must have a property name.');
+            }
+
+            if ($type === ContentItemTypes::IMAGE) {
+                $value = $contentItem->getImage();
             }
 
             $this->accessor()->setValue($pageInstance, $propertyName, $value);

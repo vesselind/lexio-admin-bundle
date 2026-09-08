@@ -220,7 +220,7 @@ abstract class BaseCrudController extends AbstractController
     {
         $subjectId = $request->getSession()->get(ConfirmationModal::CONFIRMED_SESSION_KEY);
 
-        if ($subjectId !== $entity->getId()) {
+        if ($subjectId !== (string) $entity->getId()) {
             throw new \RuntimeException(
                 'Confirmation modal session key does not match entity ID. Deletion aborted.'
             );

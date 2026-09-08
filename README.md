@@ -1,6 +1,6 @@
 # Lexio Admin Bundle
 
-A Symfony 7+ bundle that provides a rich admin CRUD layer with:
+A Symfony 8+ bundle that provides a rich admin CRUD layer with:
 
 - **Listing** — sortable / filterable paginated tables (`ListingContext`, `Column`, `BaseField` subtypes)
 - **Forms** — multi-tab form context with locale switching, modal support, and Turbo integration (`FormContext`, `TabInterface`)
@@ -19,7 +19,7 @@ A Symfony 7+ bundle that provides a rich admin CRUD layer with:
 | Dependency | Version |
 |---|---|
 | PHP | ≥ 8.4 |
-| Symfony | ^7.2 \|\| ^8.0 |
+| Symfony | ^8.0 |
 | Doctrine ORM | ^3.0 |
 | Doctrine Bundle | ^3.0 |
 | KnpPaginatorBundle | ^6.0 |
@@ -92,6 +92,13 @@ dependencies, and register the package through their chosen asset pipeline.
 The host continues to own the final build entry, product branding, and
 application-specific styles.
 
+The package metadata follows the Symfony UX conventions, so Vite/Rsbuild hosts
+using [Symfony Reprise](https://symfony.com/bundles/reprise/current/index.html)
+consume it exactly like any UX package: list the identifiers under
+`@lexio/admin-bundle` in `assets/controllers.json`, point the Reprise plugin at
+that file, and the controllers (including lazy ones) resolve from
+`node_modules`. AssetMapper hosts keep using the same metadata.
+
 ### Build workflow
 
 The bundle and the host application use two build stages:
@@ -107,28 +114,13 @@ make assets-install
 make assets-build
 make assets-test
 
-# From the host application:
-yarn dev       # or: yarn build
+# From the host application (a Reprise/Vite host):
+yarn dev-server   # dev server with HMR, or: yarn dev / yarn build
 ```
 
 The bundle uses esbuild for controllers and Sass for styles. Runtime libraries
-remain peer dependencies and are supplied by the host. Encore then combines
-the selected bundle controllers with the host assets; lazy controllers become
-separate chunks.
+remain peer dependencies and are supplied by the host.
 
-For styles, choose exactly one of `@lexio/admin-bundle/styles/admin`,
-`@lexio/admin-bundle/styles/components`, or the precompiled
-`assets/dist/admin.css`. The Sass entry exposes curated `$lexio-admin-*`
-configuration variables and generates matching `--lexio-admin-*` CSS custom
-properties. See [Admin asset package](docs/admin-ui-assets.md).
-
-The bundle prepends `@LexioAdmin/form/custom_fields_theme.html.twig`, which provides the
-`association_modal_widget`, `input_image_selector_widget`, and `ck_editor_label` blocks. It does not
-select a global form layout; form themes configured by the host application load later and can
-override these blocks. The
-blocks retain their existing dependencies on the host's `association-modal-type`,
-`open-base-modal`, `links-search-field`, `navigate-turbo`, `tooltip`, and `modal` Stimulus
-controllers, as well as Bootstrap, Turbo, admin routes, and the `admin` translation catalogue.
 
 ## Configuration
 
@@ -140,7 +132,35 @@ lexio_admin:
     admin_route_prefix: /admin
     listing_items_per_page: 20
     user_entity_class: App\Entity\User   # required only for HasRegisteredField
+    image_entity_class: App\Entity\Image # required for relation-backed image fields
+    sitemap:
+        enabled: true
 ```
+
+Managed image selectors persist the selected image entity through a
+ManyToOne relation. Configure image_entity_class with a class implementing
+ImageEntityInterface; the bundle resolves its Doctrine interface mapping at
+compile time. The host file repository must implement
+FileRepositoryInterface::findById().
+
+### Sitemaps
+
+Import the bundle-owned sitemap controller with the locale prefixes required by the host:
+
+```yaml
+# config/routes.yaml
+sitemap_controller:
+    resource: '@LexioAdminBundle/config/routes/sitemap.yaml'
+    prefix:
+        en: ''
+        bg: 'bg'
+```
+
+Host applications provide their sitemap collections by implementing
+`Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface`. Autoconfigured
+providers are registered automatically and appear at `/sitemap_{name}.xml`.
+The index is available at `/sitemap.xml`. Set `lexio_admin.sitemap.enabled` to
+`false` to make both endpoints return 404 without removing the route import.
 
 ## Usage Highlights
 
@@ -221,7 +241,8 @@ Please review and adapt templates for your application.
 | `App\Entity\ImageEntityInterface` | `Lexio\AdminBundle\Contract\File\ImageEntityInterface` |
 
 Concrete file and image entities and their repositories belong to the host application. Implement
-the bundle contracts and alias `FileRepositoryInterface` to the host file repository service.
+the bundle contracts, alias FileRepositoryInterface to the host file repository service, and set
+image_entity_class when using the bundle's relation-backed page or SEO image fields.
 
 Contact submissions, including the entity, repository, filter, form, and admin details template,
 are also owned by the host application.

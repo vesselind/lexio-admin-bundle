@@ -16,14 +16,15 @@ var input_image_selector_controller_default = class extends Controller {
     this.element.addEventListener("click", this.enableImageSelection);
   }
   selectImage(event) {
-    const imagePath = event.detail?.imagePath;
-    if (!this.listenForImageSelection || !imagePath) {
+    const imageId = event.detail?.imageId;
+    const imageUrl = event.detail?.imageUrl;
+    if (!this.listenForImageSelection || !imageId || !imageUrl) {
       return;
     }
-    const imageName = event.detail?.imageName || this.fileNameFromPath(imagePath);
-    this.inputTarget.value = imagePath;
+    const imageName = event.detail?.imageName || this.fileNameFromPath(imageUrl);
+    this.inputTarget.value = imageId;
     if (this.hasPreviewTarget) {
-      this.previewTarget.src = imagePath;
+      this.previewTarget.src = imageUrl;
       this.previewTarget.alt = imageName;
     }
     if (this.hasPreviewContainerTarget) {

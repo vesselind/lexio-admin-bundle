@@ -12,7 +12,9 @@
   - `listing_items_per_page`
   - `deepl_translation_api_key`, `google_translation_api_key`
   - `user_entity_class`
+  - `image_entity_class`
   - `front_home_page_route`
+  - `sitemap.enabled`
 - **1.3** Overriding Templates & Styles
 - **1.4** Admin Asset Package (`assets/package.json`, Stimulus controller metadata, and build contract)
 
@@ -22,9 +24,10 @@
 
 - **2.1** Namespace & Directory Map
 - **2.2** Service Wiring (`config/services.yaml`)
-- **2.3** Dependency Injection & Compiler Passes (`ResolveNotificationUserPass`)
+- **2.3** Dependency Injection & Compiler Passes (`ResolveNotificationUserPass`, `ResolveImageEntityPass`)
 - **2.4** Twig Namespaces & UX Components Default Directory Mapping
 - **2.5** Key Third-Party Integrations (Gedmo, KNP Paginator, Intervention, PhpSpreadsheet, DeepL, Symfony UX)
+- **2.6** Sitemap controller, provider contract, registry, URL factory, and host route import
 
 ---
 
@@ -63,11 +66,12 @@
 
 ## 4. Entities
 
-- **4.1** File & Image contracts (`FileEntityInterface`, `FileEntityInterface`)
+- **4.1** File & Image contracts (`FileEntityInterface`, `ImageEntityInterface`)
   - Concrete entities and repositories are owned by the host application.
 - **4.2** Page & Content Items (`Page`, `ContentItem`, `PageManager`)
   - Translation (Gedmo Translatable)
   - SEO data trait (`HasSeoData`)
+  - Managed image fields use `image_id`/`og_image_id` relations.
 - **4.3** Menus (`HeaderMenu`, `FooterMenu`, `SortableMenu`)
 - **4.4** Mail Templates — host-application entities and repositories
 - **4.5** System Notification contracts (`NotificationUserInterface`, `NotificationBellProviderInterface`)
@@ -130,7 +134,7 @@ Public-site components such as `BlogRatingWidget`, `BlogSearchWidget`, `Featured
 ## 9. Custom Form Types
 
 - **9.1** `CKEditorType` — CKEditor 5 integration
-- **9.2** `InputImageSelectorType` — image selection field
+- **9.2** `InputImageSelectorType` — relation-backed image selection field (hidden image ID + derived preview URL)
 - **9.3** `AssociationModalType` — entity association picker via modal
 - **9.4** `VanillaDatepickerType` — date picker
 - **9.5** `TurnstileType` — Cloudflare Turnstile CAPTCHA
@@ -175,13 +179,14 @@ contracts and notification-bell component:
 
 ## 13. File & Image Management
 
-- **13.1** `FileManager` — upload, storage, URL generation
+- **13.1** `FileManager` — upload, storage, URL generation from file entities
 - **13.2** `FileValidator` — file validation
 - **13.3** `ImageCacheConfig` / `ImageCacheResolver` — Intervention-based caching
 - **13.4** `InterventionImageManager` — image processing
 - **13.5** `FileEventListener` — physical file cleanup on entity removal
 - **13.6** `FileAccessType` enum
-- **13.7** `FileEntityInterface` / `FileEntityInterface`
+- **13.7** `FileEntityInterface` / `ImageEntityInterface`
+- **13.8** `ImageEntityTransformer` — maps the managed image relation to the hidden form ID and back
 
 ---
 
@@ -203,7 +208,6 @@ contracts and notification-bell component:
   - `AdminLifecycleSubscriber` — auto-translation trigger
   - `ModalContextSubscriber` — Turbo Stream responses for modals
   - `SecurityLogSubscriber` — security logging
-  - `SitemapSubscriber` — sitemap generation
 - **15.4** Event Listeners
   - `FileEventListener` — cleanup physical files
   - `PageAttributeListener` — `#[Page]` attribute to Twig global
@@ -257,7 +261,6 @@ their own domain model.
 - **19.4** SCSS Architecture
   - `@lexio/admin-bundle/styles/admin` full entry point
   - `@lexio/admin-bundle/styles/components` components-only entry point
-  - `assets/dist/admin.css` precompiled entry point
   - `$lexio-admin-*` Sass configuration and `--lexio-admin-*` runtime properties
   - Components (sidebar, tables, tabs, cards, breadcrumbs, notifications, etc.)
   - Layout (`header-navbar.scss`)

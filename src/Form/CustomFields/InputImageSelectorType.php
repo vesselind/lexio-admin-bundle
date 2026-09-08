@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\Form\CustomFields;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
+use Lexio\AdminBundle\Form\Transformer\ImageEntityTransformer;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -14,14 +16,14 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * A text-backed image selector that opens an image-gallery modal.
+ * A relation-backed image selector that opens an image-gallery modal.
  *
  * Requires:
  *   - A Stimulus controller named `input-image-selector`
  *   - A Stimulus controller named `open-base-modal`
  *   - Route `admin.image.modal_gallery`
  */
-class InputImageSelectorType extends AbstractType
+final class InputImageSelectorType extends AbstractType
 {
     private const array CONTROLLER_ATTRIBUTE_NAMES = [
         'data-controller',
@@ -38,6 +40,7 @@ class InputImageSelectorType extends AbstractType
     public function __construct(
         private readonly RouterInterface      $router,
         private readonly TranslatorInterface $translator,
+        private readonly ImageEntityTransformer $imageTransformer,
         private readonly string              $imageGalleryRouteName = 'admin.image.modal_gallery',
         private readonly string              $translationDomain = 'LexioAdminBundle',
     ) {
@@ -45,7 +48,12 @@ class InputImageSelectorType extends AbstractType
 
     public function getParent(): string
     {
-        return TextType::class;
+        return \Symfony\Component\Form\Extension\Core\Type\HiddenType::class;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->addModelTransformer($this->imageTransformer);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -69,6 +77,17 @@ class InputImageSelectorType extends AbstractType
 
         $view->vars['imageGalleryUrl'] = (string) ($attributes[self::GALLERY_URL_ATTRIBUTE] ?? '');
         $view->vars['imageGalleryModalTitle'] = (string) ($attributes[self::GALLERY_TITLE_ATTRIBUTE] ?? '');
+
+        $image = $form->getData();
+        if ($image !== null && !$image instanceof ImageEntityInterface) {
+            throw new \UnexpectedValueException(sprintf(
+                'The image selector must be bound to an %s or null.',
+                ImageEntityInterface::class,
+            ));
+        }
+
+        $view->vars['imageUrl'] = $image?->getFilePath();
+        $view->vars['imageFileName'] = $image?->getOriginalName() ?: $image?->getName();
 
         // The form value stays on the form control, while the selector's
         // Stimulus attributes are rendered on the visual component root.
@@ -104,5 +123,6 @@ class InputImageSelectorType extends AbstractType
             'data-action' => 'image-gallery:image-selected@window->input-image-selector#selectImage',
         ];
     }
+
 }
 

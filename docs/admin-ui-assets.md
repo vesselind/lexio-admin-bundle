@@ -6,12 +6,10 @@ Stimulus identifiers. `assets/src/controllers/` is the customizable source;
 `assets/dist/controllers/` contains the committed distributable entry points.
 
 The bundle also owns reusable admin Sass under `assets/styles/`. Consumers must
-select one base mode: `@lexio/admin-bundle/styles/admin` for Bootstrap plus
-bundle styles, `@lexio/admin-bundle/styles/components` when the host compiles
-Bootstrap separately, or `assets/dist/admin.css` for precompiled CSS. The
-datepicker also has a precompiled `assets/dist/styles/vanilla_datepicker.css`
-entry for CSS-only consumers. Loading the full Sass entry and the precompiled
-CSS together is unsupported.
+compile either `@lexio/admin-bundle/styles/admin` for Bootstrap plus bundle
+styles or `@lexio/admin-bundle/styles/components` when the host compiles
+Bootstrap separately. The bundle does not publish precompiled CSS because it
+cannot provide complete Bootstrap theme customization.
 
 Lexio-specific Sass variables use the public `$lexio-admin-*` namespace. The
 full `styles/admin` entry also accepts native Bootstrap Sass variables such as
@@ -20,7 +18,8 @@ compile-time host control. Bootstrap variable compatibility follows the
 bundle's supported Bootstrap peer range. The same Lexio defaults are emitted
 as `--lexio-admin-*` custom properties on `:root` and
 `[data-lexio-admin-theme]`, allowing runtime overrides for the documented
-properties.
+properties consumed by bundle-owned rules. Bootstrap components must be
+configured through Sass before compilation.
 
 The starter compiles the public Sass entry from its
 `assets/styles/admin-theme.scss` brand entry and registers all 26 package

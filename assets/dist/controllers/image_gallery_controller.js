@@ -27,12 +27,12 @@ import { visit } from "@hotwired/turbo";
 var image_gallery_controller_default = class extends Controller {
   selectImage(event) {
     const imageId = event.params.imageId;
-    const imagePath = event.params.imagePath;
+    const imageUrl = event.params.imageUrl;
     const imageName = event.params.imageName;
     this.dispatch("image-selected", {
       detail: {
         imageId,
-        imagePath,
+        imageUrl,
         imageName
       }
     });

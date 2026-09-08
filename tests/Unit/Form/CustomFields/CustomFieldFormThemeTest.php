@@ -20,7 +20,7 @@ final class CustomFieldFormThemeTest extends TestCase
         $loader->addPath(__DIR__ . '/../../../../templates', 'LexioAdmin');
 
         $twig = new Environment($loader);
-        foreach (['form_label', 'form_widget', 'path', 'stimulus_controller'] as $function) {
+        foreach (['form_errors', 'form_help', 'form_label', 'form_widget', 'path', 'stimulus_controller'] as $function) {
             $twig->addFunction(new TwigFunction($function, static fn (mixed ...$arguments): string => ''));
         }
         foreach (['stimulus_controller', 'trans'] as $filter) {
@@ -48,6 +48,8 @@ final class CustomFieldFormThemeTest extends TestCase
         self::assertStringContainsString("stimulus_controller('links-search-field'", $theme);
         self::assertStringContainsString('<twig:Admin:InputImageSelector', $theme);
         self::assertStringContainsString('visually-hidden', $theme);
+        self::assertStringContainsString('type: \'hidden\'', $theme);
+        self::assertStringNotContainsString('valueMode', $theme);
         $componentTemplate = file_get_contents(__DIR__ . '/../../../../templates/components/Admin/InputImageSelector.html.twig');
 
         self::assertIsString($componentTemplate);

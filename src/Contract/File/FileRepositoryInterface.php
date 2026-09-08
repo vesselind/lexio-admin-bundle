@@ -6,5 +6,5 @@ namespace Lexio\AdminBundle\Contract\File;
 
 interface FileRepositoryInterface
 {
-    public function searchByPath(string $path): ?FileEntityInterface;
+    public function findById(int $id): ?FileEntityInterface;
 }

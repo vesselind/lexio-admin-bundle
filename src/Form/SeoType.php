@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Form;
 
+use Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,6 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *   - metaKeywords (string, nullable)
  *   - ogTitle      (string, nullable)
  *   - ogDescription (string, nullable)
+ *   - ogImage      (ImageEntityInterface, nullable)
  *
  * Override this type in your application to add or remove fields.
  */
@@ -44,6 +46,10 @@ class SeoType extends AbstractType
                 'label'    => 'label.og_description',
                 'required' => false,
                 'attr'     => ['rows' => 3],
+            ])
+            ->add('ogImage', InputImageSelectorType::class, [
+                'label'    => 'label.og_image',
+                'required' => false,
             ]);
     }
 

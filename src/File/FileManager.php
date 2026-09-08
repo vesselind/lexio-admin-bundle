@@ -48,10 +48,7 @@ class FileManager
         return new UploadedFile($tempPath, $originalFileName);
     }
 
-    public function uploadFile(
-        UploadedFile                             $uploadedFile,
-        FileEntityInterface|ImageEntityInterface $fileEntity,
-    ): FileEntityInterface|ImageEntityInterface
+    public function uploadFile(UploadedFile $uploadedFile, FileEntityInterface $fileEntity): FileEntityInterface
     {
         $slugger = new AsciiSlugger();
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);

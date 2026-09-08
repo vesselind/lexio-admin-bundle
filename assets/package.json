@@ -17,12 +17,10 @@
         "styles",
         "package.json",
         "README.md",
-        "build.mjs",
-        "build-styles.mjs"
+        "build.mjs"
     ],
     "scripts": {
-        "build": "node build.mjs && node build-styles.mjs",
-        "build:styles": "node build-styles.mjs",
+        "build": "node build.mjs",
         "test": "node --test tests/controllers-contract.test.mjs tests/styles-contract.test.mjs"
     },
     "symfony": {

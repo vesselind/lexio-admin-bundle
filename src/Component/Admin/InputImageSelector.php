@@ -12,7 +12,7 @@ namespace Lexio\AdminBundle\Component\Admin;
  */
 final class InputImageSelector
 {
-    public ?string $value = null;
+    public ?string $imageUrl = null;
     public ?string $fileName = null;
     public string $galleryUrl = '';
     public string $galleryTitle = '';

@@ -1,6 +1,7 @@
 // ============================================================
 // Buttons — shadcn/ui-inspired minimal style
 // ============================================================
+@use "sass:color";
 
 // Global button hover — subtle shift instead of heavy shadow
 .btn {
@@ -25,7 +26,7 @@
   border-color: $border-color;
 
   &:hover {
-    background-color: darken($secondary, 4%) !important;
+    background-color: color.adjust($secondary, $lightness: -4%) !important;
     color: $gray-900 !important;
   }
 }

@@ -14,10 +14,9 @@
     "distribution_directory": "bundle/assets/dist/controllers",
     "style_entries": {
       "full": "@lexio/admin-bundle/styles/admin",
-      "components_only": "@lexio/admin-bundle/styles/components",
-      "precompiled": "bundle/assets/dist/admin.css"
+      "components_only": "@lexio/admin-bundle/styles/components"
     },
-    "host_compatibility": "The starter compiles the full Sass entry with admin-theme.scss and registers all 26 bundle package controllers; Phase 7 keeps the public-site-only onscroll and rating controllers in the host."
+    "host_compatibility": "The starter compiles the full Sass entry with admin-theme.scss, registers its public bundle controllers through Reprise, and uses the generated registrar for the complete admin controller set. Phase 7 keeps the public-site-only onscroll and rating controllers in the host."
   },
   "templates": [
     {"path": "templates/admin_base.html.twig", "proposed_owner": "bundle"},
@@ -137,13 +136,9 @@
       "assets/styles/flash-messages.scss",
       "assets/styles/vanilla_datepicker.scss"
     ],
-    "bundle_distribution": [
-      "assets/dist/admin.css",
-      "assets/dist/components.css",
-      "assets/dist/styles/vanilla_datepicker.css"
-    ],
+    "bundle_distribution": [],
     "host_admin_theme": [
-      "assets/styles/admin-theme.scss"
+      "assets/styles/admin/admin-theme.scss"
     ],
     "host_transitional_admin_copies": [],
     "host_only": [

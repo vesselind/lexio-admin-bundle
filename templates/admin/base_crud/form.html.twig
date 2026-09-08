@@ -18,6 +18,9 @@
 
 {% block content %}
 
+    {% set requested_frame = app.request.headers.get('Turbo-Frame') %}
+    {% set content_frame = requested_frame and requested_frame != 'main-form' ? requested_frame : 'main-form-content' %}
+
     <div class="{{ formContext.containerClass|default('col-xl-10 col-lg-12') }}">
         <turbo-frame id="main-tabs">
             {% if formContext.tabs is not empty %}
@@ -34,8 +37,8 @@
             {% endif %}
         </turbo-frame>
 
-        <turbo-frame id="main-form-content">
-            {% block main_form_content %}
+        <turbo-frame id="main-form">
+            {% block main_form %}
 
                 {% if formContext.showLocalesTab and formContext.entityInstance.id %}
                     <ul class="tabs">
@@ -47,8 +50,8 @@
                     </ul>
                 {% endif %}
 
-                <turbo-frame id="{{ app.request.headers.get('Turbo-Frame', 'main-form') }}">
-                    {% block main_form %}
+                <turbo-frame id="{{ content_frame }}">
+                    {% block main_form_content %}
 
                         {{ form_start(form) }}
 

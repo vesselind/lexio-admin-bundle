@@ -2,7 +2,8 @@
 
 This package owns the reusable Stimulus controllers and structural styles used
 by the bundle's admin templates. It follows Symfony UX metadata conventions so
-Encore and AssetMapper consumers can discover the same controller identifiers.
+Reprise (Vite/Rsbuild), Encore, and AssetMapper consumers can discover the same
+controller identifiers.
 
 The identifiers and Stimulus value names are compatibility contracts. Existing
 hosts may keep their current `data-controller` attributes while switching the
@@ -25,32 +26,41 @@ Stimulus values; the host validates both providers' tokens on the server.
 The public-site-only `onscroll` and `rating` controllers belong to the host
 application and are intentionally not included in this package.
 
-Build the distributable files with `yarn build` and `yarn build:styles` from
-this directory. The committed files under `dist/controllers/` and
-`dist/admin.css` are the package entry points; `src/` and `styles/` remain
-available for Encore consumers that intentionally customize the build.
+Build the distributable JavaScript with `yarn build` from this directory. The
+committed files under `dist/controllers/` are the JavaScript package entry
+points. Styles are published only as Sass source under `styles/` so every host
+compiles Bootstrap and the admin theme from the same configuration.
+
+The package also publishes `dist/bootstrap.js` as the admin JavaScript runtime
+entry. It initializes the Bootstrap peer dependency once for admin pages;
+consumers should import this entry instead of importing Bootstrap separately in
+their admin assembly entrypoint.
+
+`dist/register_controllers.js` is generated from the `symfony.controllers`
+metadata by `build.mjs`. Call `registerLexioAdminControllers(application)` from
+the admin entry to register eager controllers immediately and lazy controllers
+only when their identifier appears in the DOM. Reprise hosts can therefore keep
+only public-site bundle controllers in `assets/controllers.json` without
+maintaining a second admin controller manifest.
 
 ## Styles
 
-Consumers must select one base mode:
+Consumers must select one Sass entry:
 
 - `@lexio/admin-bundle/styles/admin` compiles Bootstrap 5 and all reusable
   admin styles in one entry;
 - `@lexio/admin-bundle/styles/components` compiles only the bundle's
-  components for a host that owns Bootstrap configuration; or
-- `dist/admin.css` can be loaded directly by consumers without Sass; the
-  datepicker's `dist/styles/vanilla_datepicker.css` is available separately.
+  components for a host that owns Bootstrap configuration.
 
-Do not load the full Sass entry and `dist/admin.css` together. Lexio-specific
-Sass inputs use the stable `$lexio-admin-*` prefix. The full `styles/admin`
-entry also accepts native Bootstrap Sass variables for hosts that need
-compile-time control over Bootstrap's theme and component maps. The generated
-CSS exposes the documented Lexio values as `--lexio-admin-*` properties on
-`:root` and `[data-lexio-admin-theme]`, so those runtime overrides do not
-require recompiling.
+A Sass-capable host build is required. Lexio-specific Sass inputs use the
+stable `$lexio-admin-*` prefix. The full `styles/admin` entry also accepts
+native Bootstrap Sass variables for hosts that need compile-time control over
+Bootstrap's theme and component maps. Compiling the entry exposes the
+documented Lexio values as `--lexio-admin-*` properties on `:root` and
+`[data-lexio-admin-theme]` for bundle rules that consume runtime properties.
 
-An Encore host may customize the compiled source and load application
-overrides after it:
+A Reprise host (Vite or Rsbuild) may customize the compiled source and load
+application overrides after it:
 
 ```scss
 @use '@lexio/admin-bundle/styles/admin' with (
@@ -67,9 +77,11 @@ The host owns product logos, favicons, marketing fonts, public-site styles,
 and product-specific icon choices. Font Awesome CDN usage remains a separate
 compatibility task until the admin templates have been migrated to UX Icons.
 
-For an Encore host, install the package as `@lexio/admin-bundle` and register
-the identifiers from this package in `assets/controllers.json`. The package
-registration must use the same explicit `name` values, and the package should
-be the only owner of reusable admin controller and structural style source.
-Keep only host brand tokens, public-site styles, and product locale helpers in
-the application.
+For a Reprise host, install the package as `@lexio/admin-bundle`, list only the
+bundle controllers required by public pages in `assets/controllers.json`, and
+call the generated registrar from the admin entry. The package should be the
+only owner of reusable admin controller and structural style source. Keep only
+host brand tokens, public-site styles, and product locale helpers in the
+application. Local controllers live in `assets/controllers/` and are
+auto-discovered by Reprise; the controllers directory must not re-declare the
+bundle-owned identifiers.

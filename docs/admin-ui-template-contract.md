@@ -42,10 +42,15 @@ Twig component props are public contracts. Existing component names and props re
 outside the `Admin:` namespace. It supports `confirmUrl` for session-backed redirects and the
 optional `dispatchEventName` prop for a host live component that handles confirmation locally.
 
-Custom form block prefixes are stable: `association_modal_widget`, `input_image_selector_widget`, and
-`ck_editor_label`.
+Custom form block prefixes are stable: `association_modal_widget`, `input_image_selector_widget`,
+and `ck_editor_label`.
 Applications may override those blocks through their form theme; ordinary Symfony form blocks remain
 owned by the host's selected base form theme.
+
+The CRUD form template exposes `main_form` for the complete form region (including locale controls)
+and `main_form_content` for the nested form body. Their default Turbo frame IDs are `main-form` and
+`main-form-content`, respectively. Tab responses continue to target the nested `main-form-content`
+frame, while modal requests preserve their requested frame ID.
 
 `CKEditorType` and `InputImageSelectorType` consume the configured upload/gallery routes. Association
 forms provide their create URL through the existing `visit_url` option, so the bundle does not need

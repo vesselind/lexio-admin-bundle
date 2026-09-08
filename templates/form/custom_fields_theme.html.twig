@@ -14,11 +14,8 @@
 {%- endblock association_modal_widget %}
 
 {% block input_image_selector_widget -%}
-    {% set imageValue = value|default('') %}
-    {% set imageFileName = imageValue is not empty
-        ? imageValue|split('/')|last|split('?')|first|split('#')|first
-        : null
-    %}
+    {% set imageUrl = imageUrl|default(null) %}
+    {% set imageFileName = imageFileName|default(null) %}
 
     {% set inputAttributes = imageSelectorInputAttr|default({}) %}
     {% set inputAttributes = inputAttributes|merge({
@@ -27,7 +24,7 @@
     }) %}
 
     <twig:Admin:InputImageSelector
-        :value="imageValue"
+        :imageUrl="imageUrl"
         :fileName="imageFileName"
         :galleryUrl="imageGalleryUrl|default('')"
         :galleryTitle="imageGalleryModalTitle|default('')"
@@ -35,10 +32,24 @@
         :disabled="disabled"
     >
         <twig:block name="input">
-            {{ form_widget(form, {attr: inputAttributes, type: 'text'}) }}
+            {{ form_widget(form, {attr: inputAttributes, type: 'hidden'}) }}
         </twig:block>
     </twig:Admin:InputImageSelector>
 {%- endblock input_image_selector_widget %}
+
+{% block input_image_selector_label %}
+    {{ block('form_label') }}
+{% endblock input_image_selector_label %}
+
+{% block input_image_selector_row %}
+    {% set row_class = row_class|default(row_attr.class|default('mb-3')|trim) %}
+    <div{% with {attr: row_attr|merge({class: row_class})} %}{{ block('attributes') }}{% endwith %}>
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock input_image_selector_row %}
 
 {% block ck_editor_label %}
 

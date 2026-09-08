@@ -1,5 +1,7 @@
 // Public theme inputs are declared by the entry points in this directory.
 // Keep this file private: component partials should not be imported directly.
+@use "sass:string";
+
 $web-font-path: $lexio-admin-web-font-path !default;
 @if $web-font-path {
   @import url($web-font-path);
@@ -265,7 +267,7 @@ $list-group-border-color:           $border-color !default;
 
 // Breadcrumbs
 $breadcrumb-padding-x:              0rem !default;
-$breadcrumb-divider:                quote("/") !default;
+$breadcrumb-divider:                string.quote("/") !default;
 $breadcrumb-font-size:              $font-size-sm;
 $breadcrumb-active-color:           $gray-500;
 

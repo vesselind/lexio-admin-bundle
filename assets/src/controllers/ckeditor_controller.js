@@ -1,5 +1,7 @@
 import {Controller} from "@hotwired/stimulus";
 
+/* stimulusFetch: 'lazy' */
+
 import {
     ClassicEditor,
     AccessibilityHelp,

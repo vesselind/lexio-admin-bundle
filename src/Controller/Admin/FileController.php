@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Controller\Admin;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkAction;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkContext;
 use Lexio\AdminBundle\AdminCore\Fields\DateTimeField;
@@ -12,6 +13,7 @@ use Lexio\AdminBundle\AdminCore\Fields\TitleField;
 use Lexio\AdminBundle\AdminCore\Listing\ListingContext;
 use Lexio\AdminBundle\Contract\File\FileEntityInterface;
 use Lexio\AdminBundle\Controller\BaseCrudController;
+use Lexio\AdminBundle\Enum\FileAccessType;
 use Lexio\AdminBundle\Enum\FileTypes;
 use Lexio\AdminBundle\Enum\Flash;
 use Lexio\AdminBundle\File\FileManager;
@@ -115,5 +117,76 @@ abstract class FileController extends BaseCrudController
         }
 
         return $this->renderDelete($fileEntity, $request);
+    }
+
+    #[Route('/modal-gallery', name: 'admin.file.modal_gallery', priority: 3)]
+    public function modalGallery(PaginatorInterface $paginator, Request $request): Response
+    {
+        $filter = new FileFilter();
+        $name = $request->query->get('name');
+        $search = \is_string($name) ? $name : '';
+
+        if ($search !== '') {
+            $filter->name = $search;
+        }
+
+        $accessType = $this->resolveModalAccessType($request);
+        $files = $this->filterService()->search(
+            $this->getEntityFqcn(),
+            $search,
+            $request->query->get('sort'),
+            $request->query->get('order'),
+            $filter,
+        )->getQuery()->getResult();
+
+        $files = array_values(array_filter(
+            $files,
+            static fn (mixed $file): bool => $file instanceof FileEntityInterface
+                && $file->accessType() === $accessType,
+        ));
+
+        $files = $paginator->paginate(
+            $files,
+            $request->query->getInt('page', 1),
+            9,
+        );
+
+        return $this->render('@LexioAdmin/admin/file/modal_gallery.html.twig', [
+            'files' => $files,
+            'accessTypes' => $this->getModalAccessTypes(),
+            'activeAccessType' => $accessType,
+            'privateAccessType' => FileAccessType::PRIVATE,
+        ]);
+    }
+
+    /**
+     * @return list<FileAccessType>
+     */
+    private function getModalAccessTypes(): array
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return [FileAccessType::PUBLIC];
+        }
+
+        return FileAccessType::cases();
+    }
+
+    private function resolveModalAccessType(Request $request): FileAccessType
+    {
+        $requestedValue = $request->query->get('access');
+
+        foreach (FileAccessType::cases() as $accessType) {
+            if ($accessType->value !== $requestedValue && $accessType->directory() !== $requestedValue) {
+                continue;
+            }
+
+            if ($accessType === FileAccessType::PRIVATE) {
+                $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            }
+
+            return $accessType;
+        }
+
+        return FileAccessType::PUBLIC;
     }
 }
