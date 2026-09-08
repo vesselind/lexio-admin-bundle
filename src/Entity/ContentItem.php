@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Translatable;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Lexio\AdminBundle\Entity\Traits\TranslatableEntity;
 use Lexio\AdminBundle\Page\ContentItemTypes;
 use Lexio\AdminBundle\Repository\ContentItemRepository;
@@ -31,6 +32,10 @@ class ContentItem
     #[ORM\Column(length: 255, enumType: ContentItemTypes::class)]
     protected ?ContentItemTypes $type = null;
 
+    #[ORM\ManyToOne(targetEntity: ImageEntityInterface::class)]
+    #[ORM\JoinColumn(name: 'image_id', nullable: true, onDelete: 'RESTRICT')]
+    protected ?ImageEntityInterface $image = null;
+
     #[ORM\ManyToOne(inversedBy: 'contentItems')]
     #[ORM\JoinColumn(nullable: false)]
     protected ?Page $page = null;
@@ -49,6 +54,18 @@ class ContentItem
     public function setValue(?string $value): static
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getImage(): ?ImageEntityInterface
+    {
+        return $this->image;
+    }
+
+    public function setImage(?ImageEntityInterface $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }

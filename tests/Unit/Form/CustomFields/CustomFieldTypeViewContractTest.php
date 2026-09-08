@@ -7,8 +7,11 @@ namespace Lexio\AdminBundle\Tests\Unit\Form\CustomFields;
 use Lexio\AdminBundle\Form\CustomFields\AssociationModalType;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\CKEditorType;
+use Lexio\AdminBundle\Contract\File\FileRepositoryInterface;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
+use Lexio\AdminBundle\Form\Transformer\ImageEntityTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
@@ -65,6 +68,7 @@ final class CustomFieldTypeViewContractTest extends TestCase
         self::assertSame('input_image_selector', (new InputImageSelectorType(
             $this->createStub(RouterInterface::class),
             $this->createStub(TranslatorInterface::class),
+            $this->imageTransformer(),
         ))->getBlockPrefix());
         self::assertSame(
             'ck_editor',
@@ -87,7 +91,13 @@ final class CustomFieldTypeViewContractTest extends TestCase
             ->willReturn('Gallery');
 
         $resolver = new OptionsResolver();
-        $type = new InputImageSelectorType($router, $translator, 'app.image_gallery', 'AppAdmin');
+        $type = new InputImageSelectorType(
+            $router,
+            $translator,
+            $this->imageTransformer(),
+            'app.image_gallery',
+            'AppAdmin',
+        );
         $type->configureOptions($resolver);
         $options = $resolver->resolve();
 
@@ -104,7 +114,7 @@ final class CustomFieldTypeViewContractTest extends TestCase
         $translator->method('trans')->willReturn('Gallery');
 
         $resolver = new OptionsResolver();
-        $type = new InputImageSelectorType($router, $translator);
+        $type = new InputImageSelectorType($router, $translator, $this->imageTransformer());
         $type->configureOptions($resolver);
         $options = $resolver->resolve(['attr' => ['class' => 'custom-input']]);
 
@@ -117,6 +127,35 @@ final class CustomFieldTypeViewContractTest extends TestCase
         self::assertSame('custom-input', $view->vars['imageSelectorInputAttr']['class']);
         self::assertFalse($view->vars['imageSelectorInputAttr']['data-controller']);
         self::assertFalse($view->vars['imageSelectorInputAttr']['data-action']);
+    }
+
+    public function test_input_image_selector_exposes_relation_preview_data_separately_from_its_value(): void
+    {
+        $router = $this->createStub(RouterInterface::class);
+        $router->method('generate')->willReturn('/media/gallery');
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturn('Gallery');
+
+        $image = $this->createStub(ImageEntityInterface::class);
+        $image->method('getFilePath')->willReturn('/uploads/images/photo.jpg');
+        $image->method('getOriginalName')->willReturn('photo');
+        $image->method('getName')->willReturn('photo-random.jpg');
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('getData')->willReturn($image);
+
+        $resolver = new OptionsResolver();
+        $type = new InputImageSelectorType($router, $translator, $this->imageTransformer());
+        $type->configureOptions($resolver);
+        $options = $resolver->resolve();
+
+        $view = new FormView();
+        $view->vars['attr'] = $options['attr'];
+        $type->buildView($view, $form, $options);
+
+        self::assertSame('/uploads/images/photo.jpg', $view->vars['imageUrl']);
+        self::assertSame('photo', $view->vars['imageFileName']);
     }
 
     public function test_turnstile_exposes_its_provider_specific_stimulus_contract(): void
@@ -176,5 +215,10 @@ final class CustomFieldTypeViewContractTest extends TestCase
 
         $this->expectException(InvalidOptionsException::class);
         $resolver->resolve(['captcha_action' => ' ']);
+    }
+
+    private function imageTransformer(): ImageEntityTransformer
+    {
+        return new ImageEntityTransformer($this->createStub(FileRepositoryInterface::class));
     }
 }

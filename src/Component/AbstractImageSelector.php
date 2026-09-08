@@ -28,18 +28,27 @@ abstract class AbstractImageSelector
 {
     use DefaultActionTrait;
 
-    /** Current image path (null when no image is attached). */
-    #[LiveProp(writable: true)]
-    public ?string $imagePath = null;
+    /** Derived public URL for the current image; never persisted. */
+    #[LiveProp]
+    public ?string $imageUrl = null;
+
+    /** Current managed image ID, when one is attached. */
+    #[LiveProp]
+    public int|string|null $imageId = null;
 
     /** Entity primary key — used in the confirmation modal target ID. */
     #[LiveProp]
     public int|string|null $entityId = null;
 
-    public function mount(int|string|null $entityId = null, ?string $imagePath = null): void
+    public function mount(
+        int|string|null $entityId = null,
+        ?string $imageUrl = null,
+        int|string|null $imageId = null,
+    ): void
     {
         $this->entityId = $entityId;
-        $this->imagePath = $imagePath;
+        $this->imageUrl = $imageUrl;
+        $this->imageId = $imageId;
     }
 
     /**
@@ -51,7 +60,8 @@ abstract class AbstractImageSelector
     public function confirm(): void
     {
         $this->handleDetach();
-        $this->imagePath = null;
+        $this->imageUrl = null;
+        $this->imageId = null;
     }
 }
 

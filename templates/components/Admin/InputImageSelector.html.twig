@@ -1,4 +1,4 @@
-{% set hasImage = value is not empty %}
+{% set hasImage = imageUrl is not empty %}
 
 <div
     {{ attributes.defaults({class: 'input-image-selector'}) }}
@@ -27,7 +27,7 @@
             <img
                 class="input-image-selector__preview-image"
                 data-input-image-selector-target="preview"
-                {% if hasImage %}src="{{ value }}"{% endif %}
+                {% if hasImage %}src="{{ imageUrl }}"{% endif %}
                 alt="{{ fileName|default('') }}"
             >
         </span>

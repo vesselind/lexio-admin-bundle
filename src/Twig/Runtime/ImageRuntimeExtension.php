@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Twig\Runtime;
 
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Lexio\AdminBundle\File\ImageCacheConfig;
 use Lexio\AdminBundle\File\ImageCacheResolver;
 use Twig\Attribute\AsTwigFilter;
@@ -14,7 +15,6 @@ use Twig\Extension\RuntimeExtensionInterface;
  *
  * Usage:
  *   {{ entity.image|image('cover', '400', '300') }}
- *   {{ '/media/uploads/photo.jpg'|image('scale', '800', '600', 90) }}
  */
 final class ImageRuntimeExtension implements RuntimeExtensionInterface
 {
@@ -24,14 +24,14 @@ final class ImageRuntimeExtension implements RuntimeExtensionInterface
 
     #[AsTwigFilter('image')]
     public function image(
-        string $path,
+        ImageEntityInterface $image,
         string $filter,
         string $width,
         string $height,
         ?int   $quality = null,
     ): string {
         return $this->imageCacheResolver->resolveImage(
-            $path,
+            $image,
             new ImageCacheConfig($width, $height, $filter, $quality ?? 82)
         );
     }

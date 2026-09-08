@@ -1,0 +1,113 @@
+<twig:Admin:BaseModalBody>
+    <div class="modal-gallery">
+        <turbo-frame id="files-container">
+            <form method="GET" class="input-group mb-4" action="{{ path('admin.file.modal_gallery') }}"
+                    {{ stimulus_controller('autosubmit') }}>
+                <input type="hidden" name="access" value="{{ activeAccessType.directory() }}">
+                <input type="search" id="file-gallery-search" value="{{ app.request.query.get('name') }}"
+                       class="form-control" name="name"
+                       aria-label="{{ 'placeholder.search_by_filename'|trans({}, lexio_admin_ui.translation_domain) }}"
+                        {{ stimulus_action('autosubmit', 'debouncedSubmit') }}
+                       placeholder="{{ 'placeholder.search_by_filename'|trans({}, lexio_admin_ui.translation_domain) }}">
+            </form>
+
+            <nav aria-label="{{ 'file_access_type.tabs'|trans({}, lexio_admin_ui.translation_domain) }}" class="mb-4">
+                <ul class="nav nav-tabs" role="tablist">
+                    {% for accessType in accessTypes %}
+                        {% if accessType != privateAccessType or is_granted('ROLE_ADMIN') %}
+                            {% set tabQuery = app.request.query.all|merge({access: accessType.directory(), page: 1}) %}
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link {{ activeAccessType == accessType ? 'active' }}"
+                                   href="{{ path('admin.file.modal_gallery', tabQuery) }}"
+                                   role="tab"
+                                   aria-selected="{{ activeAccessType == accessType ? 'true' : 'false' }}">
+                                    {{ ('file_access_type.' ~ accessType.directory())|trans({}, lexio_admin_ui.translation_domain) }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <div class="list-group" aria-label="{{ 'file.gallery'|trans({}, lexio_admin_ui.translation_domain) }}">
+                {% for file in files %}
+                    {# @var file \Lexio\AdminBundle\Contract\File\FileEntityInterface #}
+                    {% set icon = file.iconColors() %}
+                    <div class="list-group-item d-flex align-items-center gap-3">
+                        <div class="bg-{{ icon.color }}-subtle rounded border d-flex align-items-center justify-content-center flex-shrink-0 text-{{ icon.color }}"
+                             style="height: 52px; width: 52px;">
+                            {{ ux_icon(icon.icon, {height: '34px', width: '34px', 'aria-hidden': true}) }}
+                        </div>
+
+                        <div class="flex-grow-1 min-width-0">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="fw-semibold text-break">{{ file.name }}</span>
+                                <span class="badge bg-light text-secondary border">
+                                    <span class="visually-hidden">{{ 'file.mime_type'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    {{ file.mime ?? '—' }}
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 flex-wrap small text-muted mt-1">
+                                <span title="{{ 'file.original_name'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                    <i class="fa fa-file me-1" aria-hidden="true"></i>
+                                    <span class="visually-hidden">{{ 'file.original_name'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    {{ file.originalName ?? file.name }}
+                                </span>
+                                <span title="{{ 'file.uploaded_at'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                    <i class="fa fa-calendar-alt me-1" aria-hidden="true"></i>
+                                    <span class="visually-hidden">{{ 'file.uploaded_at'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    {{ file.createdAt|formatted_datetime }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 ms-auto flex-shrink-0">
+                            <span class="badge bg-secondary text-primary" title="{{ 'file.size'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                <i class="fa fa-database me-1" aria-hidden="true"></i>
+                                <span class="visually-hidden">{{ 'file.size'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                {{ file.size|format_bytes }}
+                            </span>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                    {{ 'button.select'|trans({}, lexio_admin_ui.translation_domain) }}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end" {{ stimulus_controller('clipboard') }}>
+                                    <button class="dropdown-item" {{ stimulus_action('clipboard', 'copy') }}>
+                                        <i class="fa fa-copy me-1" aria-hidden="true"></i>
+                                        {{ 'button.copy_url'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        <input type="hidden" value="{{ file.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
+                                    </button>
+                                    <a data-turbo="false" class="dropdown-item" href="{{ path('admin.file.download', {'id': file.id}) }}">
+                                        <i class="fa fa-download me-1" aria-hidden="true"></i>
+                                        {{ 'button.download'|trans({}, lexio_admin_ui.translation_domain) }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="list-group-item text-center text-muted">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        {{ 'no_records_found'|trans({}, lexio_admin_ui.translation_domain) }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="row">
+                <ul class="pagination mt-4 d-flex justify-content-end">
+                    {{ knp_pagination_render(files) }}
+                </ul>
+            </div>
+        </turbo-frame>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            {{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}
+        </button>
+    </div>
+</twig:Admin:BaseModalBody>

@@ -150,6 +150,47 @@ final class BundleTwigTemplateContractTest extends TestCase
         }
     }
 
+    public function test_form_templates_expose_consistent_blocks_and_turbo_frames(): void
+    {
+        foreach ([
+            'admin/base_crud/form.html.twig',
+            'admin/page/form.html.twig',
+        ] as $template) {
+            $source = file_get_contents(dirname(__DIR__, 3) . '/templates/' . $template);
+
+            self::assertIsString($source);
+            self::assertMatchesRegularExpression(
+                '/<turbo-frame id="main-form"[^>]*>\s*\{% block main_form %\}/',
+                $source,
+                sprintf('%s must expose the complete form region through main_form.', $template),
+            );
+            self::assertMatchesRegularExpression(
+                '/<turbo-frame id="\{\{ content_frame \}\}">\s*\{% block main_form_content %\}/',
+                $source,
+                sprintf('%s must expose the nested form body through main_form_content.', $template),
+            );
+            self::assertStringContainsString(
+                "requested_frame != 'main-form'",
+                $source,
+                sprintf('%s must prevent duplicate nested main-form frame IDs.', $template),
+            );
+        }
+
+        $baseForm = file_get_contents(dirname(__DIR__, 3) . '/templates/admin/base_crud/form.html.twig');
+        self::assertIsString($baseForm);
+        self::assertStringContainsString('data-turbo-frame="main-form-content"', $baseForm);
+
+        foreach ([
+            'admin/base_crud/form_tab.html.twig',
+            'admin/base_crud/seo.html.twig',
+        ] as $template) {
+            $source = file_get_contents(dirname(__DIR__, 3) . '/templates/' . $template);
+
+            self::assertIsString($source);
+            self::assertStringStartsWith('<turbo-frame id="main-form-content">', $source);
+        }
+    }
+
     /** @return list<string> */
     private function templateFiles(): array
     {
@@ -216,9 +257,11 @@ final class BundleTwigTemplateContractTest extends TestCase
         foreach ([
             'asset',
             'csrf_token',
-            'encore_entry_link_tags',
-            'encore_entry_script_tags',
+            'reprise_entry_link_tags',
+            'reprise_entry_script_tags',
             'form_end',
+            'form_errors',
+            'form_help',
             'form_label',
             'form_row',
             'form_start',

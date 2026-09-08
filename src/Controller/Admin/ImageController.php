@@ -6,7 +6,7 @@ namespace Lexio\AdminBundle\Controller\Admin;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkContext;
 use Lexio\AdminBundle\AdminCore\Listing\ListingContext;
-use Lexio\AdminBundle\Contract\File\FileEntityInterface;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Lexio\AdminBundle\Controller\BaseCrudController;
 use Lexio\AdminBundle\Enum\FileTypes;
 use Lexio\AdminBundle\Enum\Flash;
@@ -33,7 +33,7 @@ abstract class ImageController extends BaseCrudController
         return new ImageFilter();
     }
 
-    abstract public function imageEntity(): FileEntityInterface;
+    abstract public function imageEntity(): ImageEntityInterface;
 
 
     #[Route('', name: 'admin.image.index')]
@@ -74,7 +74,7 @@ abstract class ImageController extends BaseCrudController
     #[Route('/{id}/download', name: 'admin.image.download')]
     public function download(int $id, FileManager $fileManager, Request $request): Response
     {
-        /** @var ?FileEntityInterface $imageEntity */
+        /** @var ?ImageEntityInterface $imageEntity */
         $imageEntity = $this->manager()->getRepository(get_class($this->imageEntity()))->find($id);
 
         if ($imageEntity === null) {

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle;
 
+use Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface;
 use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveNotificationUserPass;
+use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveImageEntityPass;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -49,6 +51,10 @@ final class LexioAdminBundle extends AbstractBundle
 
         // Compiler pass runs after all extensions are loaded — safe to reference Doctrine services
         $container->addCompilerPass(new ResolveNotificationUserPass());
+        $container->addCompilerPass(new ResolveImageEntityPass());
+        $container
+            ->registerForAutoconfiguration(SitemapProviderInterface::class)
+            ->addTag('lexio_admin.sitemap_provider');
     }
 
     public function configure(DefinitionConfigurator $definition): void
@@ -84,9 +90,22 @@ final class LexioAdminBundle extends AbstractBundle
                     ->defaultNull()
                     ->info('FQCN of the User entity. Required when using HasRegisteredField.')
                 ->end()
+                ->scalarNode('image_entity_class')
+                    ->defaultNull()
+                    ->info('FQCN of the host image entity. Required for relation-backed image fields.')
+                ->end()
                 ->scalarNode('front_home_page_route')
                     ->defaultValue('static_pages.home_page')
                     ->info('Route name for the front home page. Used by the breadcrumbs and others.')
+                ->end()
+                ->arrayNode('sitemap')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultTrue()
+                            ->info('Enable bundle sitemap responses for imported sitemap routes.')
+                        ->end()
+                    ->end()
                 ->end()
                 ->arrayNode('ui')
                     ->addDefaultsIfNotSet()
@@ -251,7 +270,9 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.deepl_translation_api_key', $config['deepl_translation_api_key']);
         $container->setParameter('lexio_admin.google_translation_api_key', $config['google_translation_api_key']);
         $container->setParameter('lexio_admin.user_entity_class', $config['user_entity_class']);
+        $container->setParameter('lexio_admin.image_entity_class', $config['image_entity_class']);
         $container->setParameter('lexio_admin.front_home_page_route', $config['front_home_page_route']);
+        $container->setParameter('lexio_admin.sitemap.enabled', $config['sitemap']['enabled']);
 
         /** @var array{
          *     favicon_asset: string|null,

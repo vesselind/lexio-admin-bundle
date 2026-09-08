@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\AdminCore\Fields;
 
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -51,7 +52,7 @@ class TitleField extends BaseField
         return $this->class;
     }
 
-    public function getImage(): ?string
+    public function getImage(): ?ImageEntityInterface
     {
         if ($this->imageProperty === null || $this->getEntityInstance() === null) {
             return null;
@@ -59,7 +60,17 @@ class TitleField extends BaseField
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        return $accessor->getValue($this->getEntityInstance(), $this->imageProperty);
+        $image = $accessor->getValue($this->getEntityInstance(), $this->imageProperty);
+
+        if ($image === null || $image instanceof ImageEntityInterface) {
+            return $image;
+        }
+
+        throw new \UnexpectedValueException(sprintf(
+            'The image property "%s" must contain an %s or null.',
+            $this->imageProperty,
+            ImageEntityInterface::class,
+        ));
     }
 }
 

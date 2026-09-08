@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lexio\AdminBundle\Page;
 
 use Lexio\AdminBundle\Attributes\FieldType;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 
 class BasePage
 {
@@ -20,11 +23,11 @@ class BasePage
     #[FieldType(ContentItemTypes::TEXTAREA)]
     protected ?string $seoOgDescription = null;
 
-    #[FieldType(ContentItemTypes::IMAGE_PATH)]
-    protected ?string $seoOgImage = null;
+    #[FieldType(ContentItemTypes::IMAGE)]
+    protected ?ImageEntityInterface $seoOgImage = null;
 
-    #[FieldType(ContentItemTypes::IMAGE_PATH)]
-    protected ?string $coverImage = null;
+    #[FieldType(ContentItemTypes::IMAGE)]
+    protected ?ImageEntityInterface $coverImage = null;
 
     /**
      * Page Entity ID
@@ -94,27 +97,37 @@ class BasePage
         return $this;
     }
 
-    public function getSeoOgImage(): ?string
+    public function getSeoOgImage(): ?ImageEntityInterface
     {
         return $this->seoOgImage;
     }
 
-    public function setSeoOgImage(?string $seoOgImage): static
+    public function setSeoOgImage(?ImageEntityInterface $seoOgImage): static
     {
         $this->seoOgImage = $seoOgImage;
 
         return $this;
     }
 
-    public function getCoverImage(): ?string
+    public function getCoverImage(): ?ImageEntityInterface
     {
         return $this->coverImage;
     }
 
-    public function setCoverImage(?string $coverImage): static
+    public function setCoverImage(?ImageEntityInterface $coverImage): static
     {
         $this->coverImage = $coverImage;
 
         return $this;
+    }
+
+    public function getSeoOgImagePath(): ?string
+    {
+        return $this->seoOgImage?->getFilePath();
+    }
+
+    public function getCoverImagePath(): ?string
+    {
+        return $this->coverImage?->getFilePath();
     }
 }

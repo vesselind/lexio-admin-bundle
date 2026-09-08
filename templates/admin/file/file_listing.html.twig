@@ -129,7 +129,7 @@
                         {{ (item.size / 1000)|number_format }} KB
                     </div>
                     {% component 'ConfirmationModal' with {
-                        subjectId: item.id,
+                        subjectId: item.id ~ '',
                         confirmUrl: path('admin.file.delete', {'id': item.id})
                     } %}
                         {% block modal_body %}

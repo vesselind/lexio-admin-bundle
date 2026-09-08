@@ -63,7 +63,8 @@
 
     {% for action in field.actionsWithConfirmationModal %}
         <twig:ConfirmationModal
-                subjectId="{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}"
+                subjectId="{{ field.entityInstance.id }}"
+                modalId="{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}"
                 confirmUrl="{{ path(action.getConfirmationRoute, action.getConfirmationRouteParams) }}"
         >
             {{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain) }}

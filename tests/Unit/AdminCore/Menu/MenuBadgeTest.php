@@ -102,4 +102,15 @@ final class MenuBadgeTest extends TestCase
         self::assertStringContainsString('badge.color', $template);
         self::assertStringContainsString('linkBadgeCaption', $template);
     }
+
+    public function test_submenu_headers_delegate_toggling_to_the_sidebar_controller(): void
+    {
+        $template = file_get_contents(__DIR__ . '/../../../../templates/components/Admin/SideMenu.html.twig');
+
+        self::assertIsString($template);
+        self::assertStringContainsString(
+            "stimulus_action('collapsable-sidebar', 'toggle', 'click')",
+            $template,
+        );
+    }
 }

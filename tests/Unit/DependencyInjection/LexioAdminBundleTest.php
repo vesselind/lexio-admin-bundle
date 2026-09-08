@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Tests\Unit\DependencyInjection;
 
+use Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface;
 use Lexio\AdminBundle\LexioAdminBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\TwigBundle\DependencyInjection\Configuration as TwigConfiguration;
@@ -27,6 +28,8 @@ final class LexioAdminBundleTest extends TestCase
 
         $processed = (new Processor())->processConfiguration($configuration, [[]]);
 
+        self::assertNull($processed['image_entity_class']);
+        self::assertTrue($processed['sitemap']['enabled']);
         self::assertSame('LexioAdminBundle', $processed['ui']['translation_domain']);
         self::assertNull($processed['ui']['favicon_asset']);
         self::assertNull($processed['ui']['admin_logo_asset']);
@@ -44,6 +47,54 @@ final class LexioAdminBundleTest extends TestCase
         self::assertArrayNotHasKey('file_upload', $processed['ui']['routes']);
         self::assertArrayNotHasKey('file_download', $processed['ui']['routes']);
         self::assertArrayNotHasKey('file_delete', $processed['ui']['routes']);
+    }
+
+    public function test_sitemap_can_be_disabled(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = (new LexioAdminBundle())->getContainerExtension();
+
+        self::assertNotNull($extension);
+        $configuration = $extension->getConfiguration([], $container);
+        self::assertNotNull($configuration);
+
+        $processed = (new Processor())->processConfiguration($configuration, [[
+            'sitemap' => ['enabled' => false],
+        ]]);
+
+        self::assertFalse($processed['sitemap']['enabled']);
+    }
+
+    public function test_sitemap_providers_are_autoconfigured_with_the_bundle_tag(): void
+    {
+        $container = new ContainerBuilder();
+
+        (new LexioAdminBundle())->build($container);
+
+        $autoconfiguration = $container->getAutoconfiguredInstanceof();
+
+        self::assertArrayHasKey(SitemapProviderInterface::class, $autoconfiguration);
+        self::assertArrayHasKey(
+            'lexio_admin.sitemap_provider',
+            $autoconfiguration[SitemapProviderInterface::class]->getTags(),
+        );
+    }
+
+    public function test_image_entity_class_is_configurable_for_doctrine_relation_resolution(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = (new LexioAdminBundle())->getContainerExtension();
+
+        self::assertNotNull($extension);
+
+        $configuration = $extension->getConfiguration([], $container);
+        self::assertNotNull($configuration);
+
+        $processed = (new Processor())->processConfiguration($configuration, [[
+            'image_entity_class' => 'App\\Entity\\Image',
+        ]]);
+
+        self::assertSame('App\\Entity\\Image', $processed['image_entity_class']);
     }
 
     public function test_ui_configuration_accepts_host_route_and_asset_overrides(): void

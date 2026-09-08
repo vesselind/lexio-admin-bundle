@@ -35,9 +35,9 @@
                                 <img class="image-gallery-item rounded m-2" data-id="{{ image.id }}"
                                      data-filename="{{ image.name }}"
                                      width="300" height="200"
-                                    {{ stimulus_action('image-gallery', 'selectImage', 'click', {imageId: image.id, imagePath: image.filePath, imageName: image.name}) }}
+                                     {{ stimulus_action('image-gallery', 'selectImage', 'click', {imageId: image.id, imageUrl: image.filePath, imageName: image.name}) }}
                                      style="cursor: pointer;"
-                                     src="{{ image.mime == 'image/svg+xml' ? image.filePath : image.filePath|image('cover', 300, 200) }}">
+                                     src="{{ image.mime == 'image/svg+xml' ? image.filePath : image|image('cover', 300, 200) }}">
 
                                 <div class="card-body" style="height: 20px">
                                 <span class="small bg-white position-absolute bottom-0 text-wrap"

@@ -17,6 +17,7 @@ services:
             - '../src/Contract/Translation/TranslationPackageMergeResult.php'
             - '../src/Contract/Translation/TranslationPackageSynchronizerInterface.php'
             - '../src/Contract/Translation/TranslationSynchronizationException.php'
+            - '../src/Contract/Sitemap/SitemapUrl.php'
             - '../src/Service/Translation/InvalidTranslationDocumentException.php'
             - '../src/Service/Translation/TranslationCacheException.php'
             - '../src/Service/Translation/TranslationStorageException.php'
@@ -95,6 +96,7 @@ services:
     Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType:
         arguments:
             $translationDomain: '%lexio_admin.ui.translation_domain%'
+            $imageTransformer: '@Lexio\AdminBundle\Form\Transformer\ImageEntityTransformer'
         tags: ['form.type']
 
     Lexio\AdminBundle\Form\CustomFields\VanillaDatepickerType:
@@ -117,6 +119,14 @@ services:
 
     Lexio\AdminBundle\AdminCore\RouteLoader:
         public: true
+
+    Lexio\AdminBundle\Sitemap\SitemapProviderRegistry:
+        arguments:
+            $providers: !tagged_iterator lexio_admin.sitemap_provider
+
+    Lexio\AdminBundle\Controller\SitemapController:
+        arguments:
+            $enabled: '%lexio_admin.sitemap.enabled%'
 
     Lexio\AdminBundle\Service\EntityFilterer:
         public: true

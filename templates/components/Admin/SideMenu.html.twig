@@ -52,7 +52,8 @@
                         {% set badgeCaption = badge ? badge.caption : null %}
                         <li class="dropdown-panel mb-1">
                             <a href="#" class="nav-link btn-toggle" data-bs-toggle="collapse"
-                               data-bs-target="#{{ menuItem.id }}" aria-expanded="false">
+                               data-bs-target="#{{ menuItem.id }}" aria-expanded="false"
+                               {{ stimulus_action('collapsable-sidebar', 'toggle', 'click') }}>
                                 {% if menuItem.icon %}
                                     {{ ux_icon(menuItem.icon, {height: '21px', width: '21px', 'aria-hidden': true}) }}
                                 {% endif %}

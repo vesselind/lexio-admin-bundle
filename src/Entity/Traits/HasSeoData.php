@@ -3,20 +3,24 @@
 namespace Lexio\AdminBundle\Entity\Traits;
 
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
 
 trait HasSeoData
 {
     #[Column(type: 'string', length: 555, nullable: true)]
-    private ?string $metaDescription;
+    private ?string $metaDescription = null;
 
     #[Column(type: 'string', length: 555, nullable: true)]
-    private ?string $ogTitle;
+    private ?string $ogTitle = null;
 
     #[Column(type: 'string', length: 555, nullable: true)]
-    private ?string $ogDescription;
+    private ?string $ogDescription = null;
 
-    #[Column(type: 'string', length: 555, nullable: true)]
-    private ?string $ogImage;
+    #[ManyToOne(targetEntity: ImageEntityInterface::class)]
+    #[JoinColumn(name: 'og_image_id', nullable: true, onDelete: 'RESTRICT')]
+    private ?ImageEntityInterface $ogImage = null;
 
 
     public function getMetaDescription(): ?string
@@ -55,16 +59,21 @@ trait HasSeoData
         return $this;
     }
 
-    public function getOgImage(): ?string
+    public function getOgImage(): ?ImageEntityInterface
     {
         return $this->ogImage;
     }
 
-    public function setOgImage(?string $ogImage): self
+    public function setOgImage(?ImageEntityInterface $ogImage): self
     {
         $this->ogImage = $ogImage;
 
         return $this;
+    }
+
+    public function getOgImagePath(): ?string
+    {
+        return $this->ogImage?->getFilePath();
     }
 
 }

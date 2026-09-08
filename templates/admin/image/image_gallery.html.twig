@@ -60,7 +60,7 @@
             <div class="col-lg-3">
                 <div class="card mb-4">
                     <div class="card-img-top rounded-top d-flex align-items-center justify-content-center overflow-hidden bg-light" style="height: 200px;">
-                        <twig:Admin:Img src="{{ item.filePath }}" width="300" height="200" class="rounded-top" style="width: 100%; object-fit: contain;"></twig:Admin:Img>
+                        <twig:Admin:Img :src="item" width="300" height="200" class="rounded-top" style="width: 100%; object-fit: contain;"></twig:Admin:Img>
                     </div>
                     <div class="card-body">
                         <h6 class="card-title">{{ item.name }}</h6>
@@ -94,7 +94,7 @@
                     </div>
                 </div>
                 {% component 'ConfirmationModal' with {
-                    subjectId: item.id,
+                    subjectId: item.id ~ '',
                     confirmUrl: path('admin.image.delete', {'id': item.id})
                 } %}
                     {% block modal_body %}

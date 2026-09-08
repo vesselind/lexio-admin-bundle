@@ -1,0 +1,3 @@
+lexio_admin_sitemap_controller:
+    resource: '../../src/Controller/SitemapController.php'
+    type: attribute

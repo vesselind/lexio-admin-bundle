@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\File;
 
 use Intervention\Image\Interfaces\ImageInterface;
-use Lexio\AdminBundle\Contract\File\FileEntityInterface;
-use Lexio\AdminBundle\Contract\File\FileRepositoryInterface;
 use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
-use Psr\Log\LoggerInterface;
-use Webmozart\Assert\Assert;
 
 /**
  * Resolves an image entity to a cached WebP file, creating it on demand.
@@ -24,11 +20,9 @@ final class ImageCacheResolver
     private const MAX_SOURCE_DIMENSION = 2000;
 
     public function __construct(
-        private readonly FileRepositoryInterface $fileRepository,
-        private readonly FileManager             $fileManager,
-        private readonly LoggerInterface         $logger,
+        private readonly FileManager               $fileManager,
         private readonly InterventionImageManager $interventionImageManager,
-        private readonly string                  $projectDir,
+        private readonly string                    $projectDir,
     ) {
     }
 
@@ -37,17 +31,15 @@ final class ImageCacheResolver
      *
      * SVG files are returned as-is.
      *
-     * @param string|FileEntityInterface $pathOrImage Web path or image entity.
+     * @param ImageEntityInterface $image The image entity to cache.
      */
-    public function resolveImage(string|FileEntityInterface $pathOrImage, ImageCacheConfig $config): string
+    public function resolveImage(ImageEntityInterface $image, ImageCacheConfig $config): string
     {
-        $imageObject = $this->resolveImageObject($pathOrImage);
-
-        if ($this->getExtension($imageObject->getFilePath()) === 'svg') {
-            return $imageObject->getFilePath();
+        if ($this->getExtension($image->getFilePath()) === 'svg') {
+            return $image->getFilePath();
         }
 
-        $cachedImageName = $this->getNameWithoutExtension($imageObject->getName() ?? '')
+        $cachedImageName = $this->getNameWithoutExtension($image->getName() ?? '')
             . '_' . $config->getIdentifier() . '.' . self::CACHE_EXTENSION;
 
         $cachedWebPath = self::CACHE_WEB_DIR . '/' . $cachedImageName;
@@ -56,7 +48,7 @@ final class ImageCacheResolver
             return $cachedWebPath;
         }
 
-        $systemFilePath    = $this->fileManager->getSystemPath($imageObject);
+        $systemFilePath    = $this->fileManager->getSystemPath($image);
         $interventionImage = $this->interventionImageManager->getInstance()->read($systemFilePath);
         $interventionImage = $this->downscaleIfOversized($interventionImage);
         $interventionImage = $this->applyFilter($interventionImage, $config);
@@ -72,33 +64,6 @@ final class ImageCacheResolver
         $cachedSystemPath = $this->projectDir . '/' . self::CACHE_SYSTEM_DIR . '/' . basename($cachedWebPath);
 
         return file_exists($cachedSystemPath);
-    }
-
-    private function resolveImageObject(string|FileEntityInterface $pathOrImage): ImageEntityInterface
-    {
-        if ($pathOrImage instanceof ImageEntityInterface) {
-            return $pathOrImage;
-        }
-
-        if ($pathOrImage instanceof FileEntityInterface) {
-            throw new \InvalidArgumentException('A file entity was provided where an image entity is required.');
-        }
-
-        $imageObject = $this->fileRepository->searchByPath($pathOrImage);
-
-        Assert::notNull($imageObject, 'No Image entity found for the provided path: ' . $pathOrImage);
-
-        if (!$imageObject instanceof ImageEntityInterface) {
-            $this->logger->critical(
-                '[ImageCacheResolver] Found entity is not an ImageEntityInterface. Path: ' . $pathOrImage
-                . '. Entity class: ' . $imageObject::class
-            );
-            throw new \InvalidArgumentException(
-                'A file entity was found but is not an ImageEntityInterface. Path: ' . $pathOrImage
-            );
-        }
-
-        return $imageObject;
     }
 
     private function downscaleIfOversized(ImageInterface $image): ImageInterface
