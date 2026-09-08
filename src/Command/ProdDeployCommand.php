@@ -16,7 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProdDeployCommand extends Command
 {
-    private const string TRANSLATION_DOMAIN = 'LexioAdminBundle';
+    private const string TRANSLATION_DOMAIN = 'admin';
 
     public function __construct(
         private readonly DeploymentRunnerInterface $runner,

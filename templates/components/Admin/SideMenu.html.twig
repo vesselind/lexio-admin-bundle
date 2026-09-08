@@ -8,7 +8,7 @@
             <a href="{{ path(this.homeRoute) }}">
                 {% if lexio_admin_ui.admin_logo_asset %}
                     <img class="admin-sidebar-logo" src="{{ asset(lexio_admin_ui.admin_logo_asset) }}"
-                         alt="{{ lexio_admin_ui.admin_logo_alt|trans({}, lexio_admin_ui.translation_domain) }}">
+                         alt="{{ 'admin.logo_alt'|trans({}, 'admin') }}">
                 {% endif %}
             </a>
         </div>

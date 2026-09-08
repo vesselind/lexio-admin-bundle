@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <form action="{{ path(lexio_admin_ui.routes.links_search) }}" {{ stimulus_controller('autosubmit') }}
                   data-turbo-frame="search-results">
-                <input placeholder="{{ 'placeholder.search_by_title'|trans({}, lexio_admin_ui.translation_domain) }}" id="search" type="search"
+                <input placeholder="{{ 'placeholder.search_by_title'|trans({}, 'admin') }}" id="search" type="search"
                        class="form-control" name="query" {{ stimulus_action('autosubmit', 'debouncedSubmit') }}>
             </form>
         </div>

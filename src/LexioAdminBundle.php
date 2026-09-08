@@ -118,23 +118,6 @@ final class LexioAdminBundle extends AbstractBundle
                             ->defaultNull()
                             ->info('Optional public asset path for the admin logo.')
                         ->end()
-                        ->scalarNode('admin_logo_alt')
-                            ->defaultValue('admin.logo_alt')
-                            ->info('Translation key for the admin logo alt text.')
-                        ->end()
-                        ->scalarNode('title_translation_key')
-                            ->defaultNull()
-                            ->info('Optional translation key rendered after the admin page title.')
-                        ->end()
-                        ->scalarNode('title_translation_domain')
-                            ->defaultNull()
-                            ->info('Optional translation domain for the admin title suffix.')
-                        ->end()
-                        ->scalarNode('translation_domain')
-                            ->defaultValue('LexioAdminBundle')
-                            ->cannotBeEmpty()
-                            ->info('Translation domain for reusable admin UI messages.')
-                        ->end()
                         ->arrayNode('routes')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -277,18 +260,12 @@ final class LexioAdminBundle extends AbstractBundle
         /** @var array{
          *     favicon_asset: string|null,
          *     admin_logo_asset: string|null,
-         *     admin_logo_alt: string,
-         *     title_translation_key: string|null,
-         *     title_translation_domain: string|null,
-         *     translation_domain: string,
          *     routes: array<string, string|null>
          * } $ui
          */
         $ui = $config['ui'];
         $ui['routes']['home'] ??= $config['front_home_page_route'];
-        $ui['title_translation_domain'] ??= $ui['translation_domain'];
         $container->setParameter('lexio_admin.ui', $ui);
-        $container->setParameter('lexio_admin.ui.translation_domain', $ui['translation_domain']);
         foreach ($ui['routes'] as $routeName => $route) {
             if (!is_string($route)) {
                 throw new \LogicException(sprintf('The configured admin UI route "%s" must be a string.', $routeName));

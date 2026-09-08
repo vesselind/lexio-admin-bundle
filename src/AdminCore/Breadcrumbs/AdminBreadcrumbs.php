@@ -16,7 +16,7 @@ readonly class AdminBreadcrumbs
         private AdminUrlGenerator     $adminUrlGenerator,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface   $translator,
-        private string                $translationDomain,
+        private string                $translationDomain = 'admin',
     )
     {
     }

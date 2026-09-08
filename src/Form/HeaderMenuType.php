@@ -44,7 +44,7 @@ class HeaderMenuType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => HeaderMenu::class,
-            'translation_domain' => 'admin'
+            'translation_domain' => 'form'
         ]);
     }
 }

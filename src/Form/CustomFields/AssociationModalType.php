@@ -30,10 +30,11 @@ class AssociationModalType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'autocomplete' => true,
-            'multiple'     => false,
-            'visit_url'    => null,
-            'choice_label' => 'title',
+            'autocomplete'       => true,
+            'multiple'           => false,
+            'visit_url'          => null,
+            'choice_label'       => 'title',
+            'translation_domain' => 'form',
             'modal_title'  => 'modal.create',
         ]);
     }

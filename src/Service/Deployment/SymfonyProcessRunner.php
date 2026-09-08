@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final readonly class SymfonyProcessRunner implements ProcessRunnerInterface
 {
-    private const string TRANSLATION_DOMAIN = 'LexioAdminBundle';
+    private const string TRANSLATION_DOMAIN = 'admin';
 
     /**
      * @param list<string> $command

@@ -28,10 +28,11 @@ final class CaptchaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'mapped' => false,
-            'constraints' => [],
-            'site_key' => $this->defaultSiteKey ?? '',
-            'captcha_action' => 'submit',
+            'mapped'             => false,
+            'constraints'        => [],
+            'site_key'           => $this->defaultSiteKey ?? '',
+            'captcha_action'     => 'submit',
+            'translation_domain' => 'form',
         ]);
         $resolver->setAllowedTypes('site_key', 'string');
         $resolver->setAllowedTypes('captcha_action', 'string');

@@ -15,7 +15,7 @@
                 <input type="search" id="search" value="{{ app.request.query.get('q') }}"
                        class="form-control" name="name" aria-describedby="search"
                         {{ stimulus_action('autosubmit', 'debouncedSubmit') }}
-                        placeholder="{{ 'placeholder.search_by_title'|trans({}, lexio_admin_ui.translation_domain) }}">
+                        placeholder="{{ 'placeholder.search_by_title'|trans({}, 'admin') }}">
             </form>
 
             <div class="loading-indicator" aria-hidden="true">
@@ -58,7 +58,7 @@
 
         {# Image form #}
         <div class="card mb-2 p-3">
-            <h5>{{ 'button.upload_file'|trans({}, lexio_admin_ui.translation_domain) }}</h5>
+            <h5>{{ 'button.upload_file'|trans({}, 'admin') }}</h5>
             <div class="input-group mb-3">
                 <input type="file" class="form-control" name="" id="file" placeholder=""
                         {{ stimulus_target('image-gallery', 'file') }}
@@ -72,7 +72,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             <i class="fa-solid fa-xmark"></i>
-            {{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}
+            {{ 'button.close'|trans({}, 'admin') }}
         </button>
     </div>
 

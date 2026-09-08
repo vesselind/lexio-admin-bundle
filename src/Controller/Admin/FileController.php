@@ -86,7 +86,7 @@ abstract class FileController extends BaseCrudController
         $this->manager()->persist($file);
         $this->manager()->flush();
 
-        $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('file_was_uploaded', [], 'LexioAdminBundle'));
+        $this->addFlash(Flash::SUCCESS->value, $this->translator()->trans('file_was_uploaded', [], 'admin'));
 
         return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.file.index'));
     }
@@ -97,7 +97,7 @@ abstract class FileController extends BaseCrudController
         $fileEntity = $this->manager()->getRepository(get_class($this->fileEntity()))->find($id);
 
         if (!$fileEntity) {
-            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('file_not_found', [], 'LexioAdminBundle'));
+            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('file_not_found', [], 'admin'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.file.index'));
         }
@@ -111,7 +111,7 @@ abstract class FileController extends BaseCrudController
         $fileEntity = $this->manager()->getRepository(get_class($this->fileEntity()))->find($id);
 
         if (!$fileEntity) {
-            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('file_not_found', [], 'LexioAdminBundle'));
+            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('file_not_found', [], 'admin'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.file.index'));
         }

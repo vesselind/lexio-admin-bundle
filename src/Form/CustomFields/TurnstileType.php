@@ -34,10 +34,11 @@ final class TurnstileType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'mapped'      => false,
-            'constraints' => [],   // Provide app-specific constraint via this option.
-            'site_key' => $this->turnstileKey ?? '',
-            'attr'        => [
+            'mapped'             => false,
+            'constraints'        => [],   // Provide app-specific constraint via this option.
+            'site_key'            => $this->turnstileKey ?? '',
+            'translation_domain' => 'form',
+            'attr'               => [
                 'data-controller' => 'turnstile',
             ],
         ]);

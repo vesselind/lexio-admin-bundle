@@ -76,7 +76,7 @@ final class CustomFieldTypeViewContractTest extends TestCase
         );
     }
 
-    public function test_input_image_selector_uses_configured_route_and_translation_domain(): void
+    public function test_input_image_selector_uses_the_form_translation_domain(): void
     {
         $router = $this->createMock(RouterInterface::class);
         $router->expects(self::once())
@@ -87,7 +87,7 @@ final class CustomFieldTypeViewContractTest extends TestCase
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(self::once())
             ->method('trans')
-            ->with('modal.gallery', [], 'AppAdmin')
+            ->with('modal.gallery', [], 'form')
             ->willReturn('Gallery');
 
         $resolver = new OptionsResolver();
@@ -96,7 +96,6 @@ final class CustomFieldTypeViewContractTest extends TestCase
             $translator,
             $this->imageTransformer(),
             'app.image_gallery',
-            'AppAdmin',
         );
         $type->configureOptions($resolver);
         $options = $resolver->resolve();

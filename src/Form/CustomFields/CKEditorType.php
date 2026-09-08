@@ -44,8 +44,9 @@ class CKEditorType extends AbstractType
         }
 
         $resolver->setDefaults([
-            'links_search' => true,
-            'required'     => false,
+            'links_search'      => true,
+            'required'          => false,
+            'translation_domain' => 'form',
             'attr'         => function (Options $options) use ($defaultDataUploadUrl): array {
                 return [
                     'data-controller'                    => 'ckeditor',

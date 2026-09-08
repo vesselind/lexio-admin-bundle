@@ -30,9 +30,12 @@ final class LexioAdminBundleTest extends TestCase
 
         self::assertNull($processed['image_entity_class']);
         self::assertTrue($processed['sitemap']['enabled']);
-        self::assertSame('LexioAdminBundle', $processed['ui']['translation_domain']);
         self::assertNull($processed['ui']['favicon_asset']);
         self::assertNull($processed['ui']['admin_logo_asset']);
+        self::assertArrayNotHasKey('admin_logo_alt', $processed['ui']);
+        self::assertArrayNotHasKey('title_translation_key', $processed['ui']);
+        self::assertArrayNotHasKey('title_translation_domain', $processed['ui']);
+        self::assertArrayNotHasKey('translation_domain', $processed['ui']);
         self::assertSame('admin.header_search', $processed['ui']['routes']['header_search']);
         self::assertSame('admin.system_notification.index', $processed['ui']['routes']['notification_index']);
         self::assertSame('flash.create', $processed['ui']['routes']['flash']);

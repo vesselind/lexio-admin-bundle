@@ -119,7 +119,7 @@ abstract class SystemNotificationController extends BaseCrudController
         $notificationEntity = $this->manager()->getRepository($this->getEntityFqcn())->find($id);
 
         if (!$notificationEntity instanceof NotificationEntityInterface) {
-            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('notification_entity_not_found', [], 'LexioAdminBundle'));
+            $this->addFlash(Flash::ERROR->value, $this->translator()->trans('notification_entity_not_found', [], 'admin'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.system_notification.index'));
         }

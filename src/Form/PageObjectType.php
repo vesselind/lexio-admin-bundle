@@ -51,7 +51,7 @@ class PageObjectType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
-            'translation_domain' => 'admin',
+            'translation_domain' => 'form',
             'required' => false,
         ]);
     }

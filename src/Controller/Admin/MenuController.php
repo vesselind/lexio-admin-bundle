@@ -57,7 +57,7 @@ abstract class MenuController extends BaseController
     {
         $headerMenu = new HeaderMenu();
         $form = $this->createForm(HeaderMenuType::class, $headerMenu, [
-            'translation_domain' => $this->translationDomain(),
+            'translation_domain' => 'form',
         ]);
         $form->handleRequest($request);
 
@@ -104,7 +104,7 @@ abstract class MenuController extends BaseController
             $this->menuRepository->refresh($headerMenu);
 
             $form = $this->formFactory->createNamed($locale, HeaderMenuType::class, $headerMenu, [
-                'translation_domain' => $this->translationDomain(),
+                'translation_domain' => 'form',
             ]);
             $forms[$locale] = $form->createView();
             $form->handleRequest($request);
@@ -155,7 +155,7 @@ abstract class MenuController extends BaseController
     {
         $footerMenu = new FooterMenu();
         $form = $this->createForm(FooterMenuType::class, $footerMenu, [
-            'translation_domain' => $this->translationDomain(),
+            'translation_domain' => 'form',
         ]);
         $form->handleRequest($request);
 
@@ -202,7 +202,7 @@ abstract class MenuController extends BaseController
             $this->menuRepository->refresh($footerMenu);
 
             $form = $this->formFactory->createNamed($locale, FooterMenuType::class, $footerMenu, [
-                'translation_domain' => $this->translationDomain(),
+                'translation_domain' => 'form',
             ]);
             $forms[$locale] = $form->createView();
             $form->handleRequest($request);

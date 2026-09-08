@@ -3,10 +3,10 @@
         {{ form_widget(form, {attr: {'data-association-modal-type-target': 'selectItem'}}) }}
 
         <button class="btn btn-success" type="button"
-                aria-label="{{ modalTitle|trans({}, lexio_admin_ui.translation_domain) }}"
+                aria-label="{{ modalTitle|trans({}, 'form') }}"
                 {{ stimulus_controller('open-base-modal', {
                     visitUrl: visitUrl,
-                    modalTitle: modalTitle|trans({}, lexio_admin_ui.translation_domain),
+                    modalTitle: modalTitle|trans({}, 'form'),
                     closeOnSuccess: true,
                 }) }}
         ><i class="fa fa-plus" aria-hidden="true"></i></button>
@@ -28,7 +28,7 @@
         :fileName="imageFileName"
         :galleryUrl="imageGalleryUrl|default('')"
         :galleryTitle="imageGalleryModalTitle|default('')"
-        :buttonLabel="'button.choose_from_gallery'|trans({}, lexio_admin_ui.translation_domain)"
+        :buttonLabel="'button.choose_from_gallery'|trans({}, 'form')"
         :disabled="disabled"
     >
         <twig:block name="input">
@@ -53,7 +53,7 @@
 
 {% block ck_editor_label %}
 
-    <div class="d-flex align-items-center" {% if linksSearch %}{{ stimulus_controller('links-search-field', {addedBadgeText: 'badge.link_added'|trans({}, lexio_admin_ui.translation_domain)}) }}{% endif %}>
+    <div class="d-flex align-items-center" {% if linksSearch %}{{ stimulus_controller('links-search-field', {addedBadgeText: 'badge.link_added'|trans({}, 'form')}) }}{% endif %}>
         {{ form_label(form) }}
         <div class="ms-auto mb-2">
             {% if linksSearch %}
@@ -61,10 +61,10 @@
                 {% set modalBody = modalId ~ '_body' %}
                 {% set modalLabel = modalId ~ '_label' %}
                 <button type="button" class="btn btn-primary btn-sm"
-                        aria-label="{{ 'tooltip.add_internal_link'|trans({}, lexio_admin_ui.translation_domain) }}"
+                        aria-label="{{ 'tooltip.add_internal_link'|trans({}, 'form') }}"
                         data-bs-toggle="modal" data-bs-target="#{{ modalId }}"
                         {{ stimulus_controller('navigate-turbo', {url: path(lexio_admin_ui.routes.links_search, {frameId: modalBody}), frameId: modalBody })|
-                        stimulus_controller('tooltip', {title: 'tooltip.add_internal_link'|trans({}, lexio_admin_ui.translation_domain)})
+                        stimulus_controller('tooltip', {title: 'tooltip.add_internal_link'|trans({}, 'form')})
 
                         }}
                 >
@@ -79,15 +79,15 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5"
-                                    id="{{ modalLabel }}">{{ 'modal.search_links_title'|trans({}, lexio_admin_ui.translation_domain) }}</h1>
+                                    id="{{ modalLabel }}">{{ 'modal.search_links_title'|trans({}, 'form') }}</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="{{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}"></button>
+                                        aria-label="{{ 'button.close'|trans({}, 'form') }}"></button>
                             </div>
                             <div class="modal-body">
                                 <turbo-frame id="{{ modalBody }}"></turbo-frame>
                             </div>
                             <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'button.close'|trans({}, 'form') }}</button>
                             </div>
                         </div>
                     </div>

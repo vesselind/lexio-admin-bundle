@@ -27,7 +27,7 @@ services:
             - '../src/Controller/'
             - '../src/Message/'
             - '../src/Command/MakeAdminSectionCommand.php'
-            - '../src/Command/UploadTranslationsCommand.php'
+            - '../src/Command/Trasnlations/UploadTranslationsCommand.php'
             - '../src/Command/DownloadTranslationsCommand.php'
             - '../src/Command/ProdDeployCommand.php'
             - '../src/Contract/Deployment/'
@@ -67,12 +67,7 @@ services:
         arguments:
             $locales: '%lexio_admin.locales%'
             $defaultLocale: '%lexio_admin.default_locale%'
-            $translationDomain: '%lexio_admin.ui.translation_domain%'
         shared: false
-
-    Lexio\AdminBundle\AdminCore\Breadcrumbs\AdminBreadcrumbs:
-        arguments:
-            $translationDomain: '%lexio_admin.ui.translation_domain%'
 
     Lexio\AdminBundle\AdminCore\Fields\HasRegisteredField:
         arguments:
@@ -95,7 +90,6 @@ services:
 
     Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType:
         arguments:
-            $translationDomain: '%lexio_admin.ui.translation_domain%'
             $imageTransformer: '@Lexio\AdminBundle\Form\Transformer\ImageEntityTransformer'
         tags: ['form.type']
 
@@ -103,10 +97,6 @@ services:
         arguments:
             $defaultLocale: '%lexio_admin.default_locale%'
         tags: ['form.type']
-
-    Lexio\AdminBundle\Component\Admin\ToggleSwitcher:
-        arguments:
-            $translationDomain: '%lexio_admin.ui.translation_domain%'
 
     Lexio\AdminBundle\Component\Admin\InputImageSelector:
         autoconfigure: false
@@ -191,12 +181,12 @@ services:
     Lexio\AdminBundle\Service\Deployment\ProcessRunnerInterface:
         alias: Lexio\AdminBundle\Service\Deployment\SymfonyProcessRunner
 
-    Lexio\AdminBundle\Command\UploadTranslationsCommand:
+    Lexio\AdminBundle\Command\Translations\UploadTranslationsCommand:
         autoconfigure: false
         tags:
             - { name: console.command, command: lexio:translations:upload }
 
-    Lexio\AdminBundle\Command\DownloadTranslationsCommand:
+    Lexio\AdminBundle\Command\Translations\DownloadTranslationsCommand:
         autoconfigure: false
         tags:
             - { name: console.command, command: lexio:translations:download }

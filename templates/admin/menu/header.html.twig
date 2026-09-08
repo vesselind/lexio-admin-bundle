@@ -1,12 +1,12 @@
 {% extends '@LexioAdmin/admin_base.html.twig' %}
-{% block title %}{{ 'admin.menu.header'|trans({}, lexio_admin_ui.translation_domain) }}{% endblock %}
+{% block title %}{{ 'admin.menu.header'|trans({}, 'admin') }}{% endblock %}
 {% block heading %}
-    {{ 'admin.menu.header'|trans({}, lexio_admin_ui.translation_domain) }}
+    {{ 'admin.menu.header'|trans({}, 'admin') }}
 {% endblock %}
 
 {% block page_actions %}
     <a href="{{ path('admin.menu.header_create') }}" class="btn btn-success">
-        <i class="fa fa-plus"></i> {{ 'button.add'|trans({}, lexio_admin_ui.translation_domain) }}
+        <i class="fa fa-plus"></i> {{ 'button.add'|trans({}, 'admin') }}
     </a>
 {% endblock %}
 
@@ -30,15 +30,15 @@
                                     {{ menu.title }}
                                     <input type="hidden" name="sortedItems[]" value="{{ menu.id }}">
                                     <div class="ms-auto">
-                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, lexio_admin_ui.translation_domain) }}"
+                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, 'admin') }}"
                                            href="{{ path('admin.menu.header_update', {id: menu.id}) }}"><i class="fa fa-edit mx-2"></i></a>
                                     </div>
                                     <form
                                             action="{{ path('admin.menu.header_delete', {id: menu.id}) }}"
                                             method="post"
-                                            onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain)|e('js') }}')"
+                                            onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, 'admin')|e('js') }}')"
                                     >
-                                        <button type="submit" class="btn btn-danger btn-sm" title="{{ 'button.delete'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="{{ 'button.delete'|trans({}, 'admin') }}">
                                             <i class="fa fa-trash mx-2"></i>
                                         </button>
                                     </form>
@@ -52,15 +52,15 @@
                                             <i class="fa fa-arrows-v me-2"></i>
                                             {{ item.title }}
                                             <div class="ms-auto">
-                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, lexio_admin_ui.translation_domain) }}"
+                                            <a class="me-3 btn btn-secondary btn-sm" title="{{ 'button.update'|trans({}, 'admin') }}"
                                                    href="{{ path('admin.menu.header_update', {id: item.id}) }}"><i class="fa fa-edit mx-2"></i></a>
                                             </div>
                                             <form
                                                     action="{{ path('admin.menu.header_delete', {id: item.id}) }}"
                                                     method="post"
-                                                    onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain)|e('js') }}')"
+                                                    onsubmit="return window.confirm('{{ 'delete_record.confirmation_text'|trans({}, 'admin')|e('js') }}')"
                                             >
-                                                <button type="submit" class="btn btn-danger btn-sm " title="{{ 'button.delete'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                                <button type="submit" class="btn btn-danger btn-sm " title="{{ 'button.delete'|trans({}, 'admin') }}">
                                                     <i class="fa fa-trash mx-2"></i>
                                                 </button>
                                             </form>
@@ -72,7 +72,7 @@
                         </div>
 
                     {% else %}
-                        <div>{{ 'menu.no_items'|trans({}, lexio_admin_ui.translation_domain) }}</div>
+                        <div>{{ 'menu.no_items'|trans({}, 'admin') }}</div>
                     {% endfor %}
                 </div>
             </form>

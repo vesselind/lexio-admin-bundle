@@ -42,7 +42,7 @@ final class InputImageSelectorType extends AbstractType
         private readonly TranslatorInterface $translator,
         private readonly ImageEntityTransformer $imageTransformer,
         private readonly string              $imageGalleryRouteName = 'admin.image.modal_gallery',
-        private readonly string              $translationDomain = 'LexioAdminBundle',
+        private readonly string              $translationDomain = 'form',
     ) {
     }
 
@@ -61,7 +61,8 @@ final class InputImageSelectorType extends AbstractType
         $controllerAttributes = $this->getControllerAttributes();
 
         $resolver->setDefaults([
-            'attr' => $controllerAttributes,
+            'attr'               => $controllerAttributes,
+            'translation_domain' => 'form',
         ]);
 
         // Keep the Stimulus contract when a consumer adds ordinary form attributes.

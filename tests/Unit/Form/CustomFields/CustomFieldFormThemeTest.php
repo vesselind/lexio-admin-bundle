@@ -56,8 +56,8 @@ final class CustomFieldFormThemeTest extends TestCase
         self::assertStringContainsString('input-image-selector__card', $componentTemplate);
         self::assertStringContainsString('path(lexio_admin_ui.routes.links_search', $theme);
         self::assertStringContainsString('{% if linksSearch %}', $theme);
-        self::assertStringContainsString('aria-label="{{ modalTitle|trans({}, lexio_admin_ui.translation_domain) }}"', $theme);
-        self::assertStringContainsString('aria-label="{{ \'button.close\'|trans({}, lexio_admin_ui.translation_domain) }}"', $theme);
+        self::assertStringContainsString('aria-label="{{ modalTitle|trans({}, \'form\') }}"', $theme);
+        self::assertStringContainsString('aria-label="{{ \'button.close\'|trans({}, \'form\') }}"', $theme);
         self::assertStringNotContainsString('aria-label="Close"', $theme);
         self::assertStringNotContainsString('id="exampleModalLabel"', $theme);
     }

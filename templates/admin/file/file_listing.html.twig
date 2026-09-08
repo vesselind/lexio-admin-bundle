@@ -22,7 +22,7 @@
                 <i class="fa fa-upload" {{ stimulus_target('file-upload-form', 'icon') }}></i>
                 <span class="spinner-border spinner-border-sm d-none"
                       aria-hidden="true" {{ stimulus_target('file-upload-form', 'spinner') }}></span>
-                {{ 'button.upload_file'|trans({}, lexio_admin_ui.translation_domain) }}
+                {{ 'button.upload_file'|trans({}, 'admin') }}
             </button>
         </form>
     </div>
@@ -36,7 +36,7 @@
         <div class="d-flex mt-1 mb-3 align-items-center">
             <div class="form-check ms-1">
                 <label for="selectAll">
-                    {{ 'label.select_all'|trans({}, lexio_admin_ui.translation_domain) }}
+                    {{ 'label.select_all'|trans({}, 'admin') }}
                 </label>
                 <input id="selectAll" class="form-check-input"
                        type="checkbox" {{ stimulus_action('check-selection', 'selectAll', 'change') }}>
@@ -48,11 +48,11 @@
 
                 <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'desc'}) }}"
                    class="btn btn-primary {{ sort == 'id' and order == 'desc' ? 'active' }}">
-                    {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, lexio_admin_ui.translation_domain) }}
+                    {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, 'admin') }}
                 </a>
                 <a href="{{ path('admin.file.index', {'sort': 'id', 'order': 'asc'}) }}"
                    class="btn btn-primary {{ sort == 'id' and order == 'asc' ? 'active' }}">
-                    {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, lexio_admin_ui.translation_domain) }}
+                    {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, 'admin') }}
                 </a>
                 <a href="{{ path('admin.file.index', {'sort': 'name', 'order': 'asc'}) }}"
                    class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
@@ -66,12 +66,12 @@
                 <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'asc'}) }}"
                    class="btn btn-primary  {{ sort == 'name' and order == 'asc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
-                    {{ 'filter.size'|trans({}, lexio_admin_ui.translation_domain) }}
+                    {{ 'filter.size'|trans({}, 'admin') }}
                 </a>
                 <a href="{{ path('admin.file.index', {'sort': 'size', 'order': 'desc'}) }}"
                    class="btn btn-primary {{ sort == 'name' and order == 'desc' ? 'active' }}">
                     {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }}
-                    {{ 'filter.size'|trans({}, lexio_admin_ui.translation_domain) }}
+                    {{ 'filter.size'|trans({}, 'admin') }}
                 </a>
             </div>
         </div>
@@ -104,21 +104,21 @@
                                 <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-expanded="true">
                                     <i class="fa fa-cog"></i>
-                                    {{ 'button.select'|trans({}, lexio_admin_ui.translation_domain) }}
+                                    {{ 'button.select'|trans({}, 'admin') }}
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end" {{ stimulus_controller('clipboard') }}>
                                     <button class="dropdown-item" {{ stimulus_action('clipboard', 'copy') }}>
-                                        <i class="fa fa-copy me-1"></i> {{ 'button.copy_url'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        <i class="fa fa-copy me-1"></i> {{ 'button.copy_url'|trans({}, 'admin') }}
                                         <input type="hidden"
                                                value="{{ item.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
                                     </button>
                                     <a data-turbo="false" class="dropdown-item" href="{{ path('admin.file.download', {'id': item.id}) }}">
-                                        <i class="fa fa-download"></i> {{ 'button.download'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        <i class="fa fa-download"></i> {{ 'button.download'|trans({}, 'admin') }}
                                     </a>
 
                                     <button class="dropdown-item text-danger" data-bs-toggle="modal"
                                             data-bs-target="#confirmationModal_{{ item.id }}">
-                                        <i class="fa fa-remove me-1"></i> {{ 'button.delete'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        <i class="fa fa-remove me-1"></i> {{ 'button.delete'|trans({}, 'admin') }}
                                     </button>
                                 </div>
                             </div>
@@ -133,7 +133,7 @@
                         confirmUrl: path('admin.file.delete', {'id': item.id})
                     } %}
                         {% block modal_body %}
-                            {{ 'delete_file.confirmation_text'|trans({}, lexio_admin_ui.translation_domain) }}
+                            {{ 'delete_file.confirmation_text'|trans({}, 'admin') }}
                         {% endblock %}
                     {% endcomponent %}
                 </div>

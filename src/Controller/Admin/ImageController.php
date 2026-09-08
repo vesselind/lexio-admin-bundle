@@ -65,7 +65,7 @@ abstract class ImageController extends BaseCrudController
         $this->manager()->persist($file);
         $this->manager()->flush();
 
-        $this->addFlash(Flash::SUCCESS->value, $this->translator->trans('image_was_uploaded', [], 'LexioAdminBundle'));
+        $this->addFlash(Flash::SUCCESS->value, $this->translator->trans('image_was_uploaded', [], 'admin'));
 
         return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.image.index'));
     }
@@ -78,7 +78,7 @@ abstract class ImageController extends BaseCrudController
         $imageEntity = $this->manager()->getRepository(get_class($this->imageEntity()))->find($id);
 
         if ($imageEntity === null) {
-            $this->addFlash(Flash::ERROR->value, $this->translator->trans('image_not_found', [], 'LexioAdminBundle'));
+            $this->addFlash(Flash::ERROR->value, $this->translator->trans('image_not_found', [], 'admin'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.image.index'));
         }
@@ -104,7 +104,7 @@ abstract class ImageController extends BaseCrudController
         $imageEntity = $this->manager()->getRepository(get_class($this->imageEntity()))->find($id);
 
         if (!$imageEntity) {
-            $this->addFlash(Flash::ERROR->value, $this->translator->trans('image_not_found', [], 'LexioAdminBundle'));
+            $this->addFlash(Flash::ERROR->value, $this->translator->trans('image_not_found', [], 'admin'));
 
             return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('admin.image.index'));
         }

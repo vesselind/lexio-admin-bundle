@@ -36,7 +36,7 @@ class ToggleSwitcher extends AbstractController
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly string $translationDomain,
+        private readonly string $translationDomain = 'admin',
     )
     {
     }
