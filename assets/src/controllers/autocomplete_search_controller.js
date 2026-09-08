@@ -1,6 +1,7 @@
 import {Controller} from '@hotwired/stimulus';
 import TomSelect from 'tom-select';
 import {visit} from "@hotwired/turbo";
+
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
 

@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 @import '../../styles/config';
 @import '../../styles/admin/variables';
 @import 'bootstrap/scss/functions';
@@ -241,7 +243,7 @@
 }
 
 .datepicker-cell.today.focused:not(.selected) {
-  background-color: darken($success, 5%);
+  background-color: color.adjust($success, $lightness: -5%);
 }
 
 .datepicker-cell.range-end:not(.selected), .datepicker-cell.range-start:not(.selected) {
@@ -250,7 +252,7 @@
 }
 
 .datepicker-cell.range-end.focused:not(.selected), .datepicker-cell.range-start.focused:not(.selected) {
-  background-color: darken($gray-600, 5%);
+  background-color: color.adjust($gray-600, $lightness: -5%);
 }
 
 .datepicker-cell.range-start:not(.range-end) {
@@ -279,9 +281,9 @@
 }
 
 .datepicker-input.in-edit {
-  border-color: lighten($primary, 20%);
+  border-color: color.adjust($primary, $lightness: 20%);
 }
 
 .datepicker-input.in-edit:active, .datepicker-input.in-edit:focus {
-  box-shadow: 0 0 $spacer * 0.25 $spacer * 0.25 rgba(lighten($primary, 20%), 0.2);
+  box-shadow: 0 0 $spacer * 0.25 $spacer * 0.25 rgba(color.adjust($primary, $lightness: 20%), 0.2);
 }

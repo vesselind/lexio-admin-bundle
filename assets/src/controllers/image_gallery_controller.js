@@ -15,13 +15,13 @@ export default class extends Controller {
     selectImage(event) {
 
         const imageId = event.params.imageId;
-        const imagePath = event.params.imagePath;
+        const imageUrl = event.params.imageUrl;
         const imageName = event.params.imageName;
 
         this.dispatch('image-selected', {
             detail: {
                 imageId: imageId,
-                imagePath: imagePath,
+                imageUrl: imageUrl,
                 imageName: imageName,
             }
         });

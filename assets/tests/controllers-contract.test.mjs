@@ -10,6 +10,94 @@ const packageJson = JSON.parse(readFileSync(join(assetsDirectory, 'package.json'
 const sourceDirectory = join(assetsDirectory, 'src', 'controllers');
 const distDirectory = join(assetsDirectory, 'dist', 'controllers');
 
+test('publishes a generated registrar for every packaged controller', () => {
+    const registrar = readFileSync(join(assetsDirectory, 'dist', 'register_controllers.js'), 'utf8');
+
+    assert.match(registrar, /export function registerLexioAdminControllers\(application\)/);
+
+    for (const [identifier, metadata] of Object.entries(packageJson.symfony.controllers)) {
+        assert.match(registrar, new RegExp(`${JSON.stringify(identifier).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}:`), identifier);
+
+        const controllerImport = `./${metadata.main.replace(/^dist\//, '')}`;
+
+        if (metadata.fetch === 'lazy') {
+            assert.match(registrar, new RegExp(`import\\(${JSON.stringify(controllerImport).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\)`), identifier);
+        } else {
+            assert.match(registrar, new RegExp(`from ${JSON.stringify(controllerImport).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`), identifier);
+        }
+
+        for (const [autoimport, enabled] of Object.entries(metadata.autoimport ?? {})) {
+            if (enabled) {
+                assert.match(registrar, new RegExp(JSON.stringify(autoimport).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${identifier}: ${autoimport}`);
+            }
+        }
+    }
+});
+
+test('controller registrar registers eager controllers and discovers lazy controllers', async () => {
+    const originalDocument = globalThis.document;
+    const originalMutationObserver = globalThis.MutationObserver;
+    const observedElement = {
+        getAttribute: () => 'lazy-controller',
+    };
+    let observerDisconnected = false;
+
+    globalThis.document = {
+        documentElement: {
+            getAttribute: () => null,
+            querySelectorAll: () => [observedElement],
+        },
+    };
+    globalThis.MutationObserver = class {
+        observe() {}
+
+        disconnect() {
+            observerDisconnected = true;
+        }
+    };
+
+    try {
+        const {registerControllers} = await import('../src/controller_registrar.js');
+        const registered = new Map();
+        const application = {
+            register(identifier, controller) {
+                registered.set(identifier, controller);
+                this.router.modulesByIdentifier.set(identifier, controller);
+            },
+            router: {
+                modulesByIdentifier: new Map(),
+            },
+        };
+        class EagerController {}
+        class LazyController {}
+
+        const registration = registerControllers(
+            application,
+            {'eager-controller': EagerController},
+            {'lazy-controller': async () => LazyController},
+        );
+
+        await new Promise((resolve) => setImmediate(resolve));
+
+        assert.equal(registered.get('eager-controller'), EagerController);
+        assert.equal(registered.get('lazy-controller'), LazyController);
+        assert.equal(observerDisconnected, true);
+
+        registration.disconnect();
+    } finally {
+        globalThis.document = originalDocument;
+        globalThis.MutationObserver = originalMutationObserver;
+    }
+});
+
+test('publishes an explicit Bootstrap runtime entry for admin consumers', () => {
+    const source = readFileSync(join(assetsDirectory, 'src', 'bootstrap.js'), 'utf8');
+    const dist = readFileSync(join(assetsDirectory, 'dist', 'bootstrap.js'), 'utf8');
+
+    assert.match(source, /import ['"]bootstrap['"]/);
+    assert.match(dist, /import ['"]bootstrap['"]/);
+});
+
 test('every packaged controller has explicit Symfony UX metadata and builds', () => {
     const sourceFiles = readdirSync(sourceDirectory)
         .filter((file) => file.endsWith('_controller.js'))
@@ -61,16 +149,32 @@ test('Google reCAPTCHA Enterprise uses a generic captcha identifier and refreshe
     assert.match(source, /this\.form\.requestSubmit\(event\.submitter\)/);
 });
 
-test('image selection keeps the form value and visual preview in sync', () => {
+test('image selection keeps the relation ID and visual preview in sync', () => {
     const selectorSource = readFileSync(join(sourceDirectory, 'input_image_selector_controller.js'), 'utf8');
     const gallerySource = readFileSync(join(sourceDirectory, 'image_gallery_controller.js'), 'utf8');
 
     assert.match(selectorSource, /static targets = \['input', 'card', 'previewContainer'/);
-    assert.match(selectorSource, /this\.inputTarget\.value = imagePath/);
-    assert.match(selectorSource, /this\.previewTarget\.src = imagePath/);
+    assert.match(selectorSource, /const imageId = event\.detail\?\.imageId/);
+    assert.match(selectorSource, /const imageUrl = event\.detail\?\.imageUrl/);
+    assert.match(selectorSource, /this\.inputTarget\.value = imageId/);
+    assert.match(selectorSource, /this\.previewTarget\.src = imageUrl/);
+    assert.doesNotMatch(selectorSource, /this\.inputTarget\.value = imagePath/);
+    assert.doesNotMatch(selectorSource, /valueMode/);
+    assert.doesNotMatch(selectorSource, /imagePath/);
     assert.match(selectorSource, /new Event\('input', \{bubbles: true\}\)/);
     assert.match(selectorSource, /new Event\('change', \{bubbles: true\}\)/);
     assert.match(gallerySource, /imageName: imageName/);
+    assert.match(gallerySource, /imageUrl: imageUrl/);
+    assert.doesNotMatch(gallerySource, /imagePath/);
+});
+
+test('sidebar submenu headers toggle their targeted Bootstrap collapse instance', () => {
+    const source = readFileSync(join(sourceDirectory, 'collapsable_sidebar_controller.js'), 'utf8');
+
+    assert.match(source, /toggle\(event\)/);
+    assert.match(source, /event\.stopPropagation\(\)/);
+    assert.match(source, /getAttribute\('data-bs-target'\)/);
+    assert.match(source, /this\.bsCollapse\[targetId\]\.toggle\(\)/);
 });
 
 test('runtime dependencies are peers and controller source has no starter-app endpoints', () => {

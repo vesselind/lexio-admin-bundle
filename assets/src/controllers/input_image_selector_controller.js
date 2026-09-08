@@ -17,18 +17,19 @@ export default class extends Controller {
     }
 
     selectImage(event) {
-        const imagePath = event.detail?.imagePath;
+        const imageId = event.detail?.imageId;
+        const imageUrl = event.detail?.imageUrl;
 
-        if (!this.listenForImageSelection || !imagePath) {
+        if (!this.listenForImageSelection || !imageId || !imageUrl) {
             return;
         }
 
-        const imageName = event.detail?.imageName || this.fileNameFromPath(imagePath);
+        const imageName = event.detail?.imageName || this.fileNameFromPath(imageUrl);
 
-        this.inputTarget.value = imagePath;
+        this.inputTarget.value = imageId;
 
         if (this.hasPreviewTarget) {
-            this.previewTarget.src = imagePath;
+            this.previewTarget.src = imageUrl;
             this.previewTarget.alt = imageName;
         }
 

@@ -2,6 +2,7 @@ import {Controller} from '@hotwired/stimulus';
 import Sortable from "sortablejs"
 import flash from "../flash";
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
 
     static values = {

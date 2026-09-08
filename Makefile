@@ -1,4 +1,4 @@
-.PHONY: ci tests quality install assets-install assets-build assets-styles-build assets-test
+.PHONY: ci tests quality install assets-install assets-build assets-test
 
 ifeq ($(OS),Windows_NT)
 PHPSTAN := vendor\\bin\\phpstan.bat
@@ -29,11 +29,8 @@ tests:
 assets-install:
 	$(ASSETS_YARN) --cwd assets install --ignore-scripts
 
-assets-build: assets-styles-build
+assets-build:
 	node assets/build.mjs
-
-assets-styles-build:
-	node assets/build-styles.mjs
 
 assets-test:
 	node --test assets/tests/controllers-contract.test.mjs assets/tests/styles-contract.test.mjs

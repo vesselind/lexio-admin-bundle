@@ -6,9 +6,13 @@ export default class extends Controller {
         this.component = await getComponent(this.element);
     }
 
-    selectImage(event) {
-        const imageId = event.params.imageId;
+    async selectImage(event) {
+        const imageId = event.detail?.imageId;
 
-        this.component.action('setImagePath', { imageId: event.detail.imageId });
+        if (!imageId || !this.component) {
+            return;
+        }
+
+        await this.component.action('setImage', { imageId });
     }
 }
