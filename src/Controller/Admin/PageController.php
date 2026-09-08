@@ -97,7 +97,6 @@ abstract class PageController extends BaseCrudController
 
         $form = $this->createForm(PageObjectType::class, $pageObject, [
             'data_class' => $pageObject::class,
-            'translation_domain' => $this->translationDomain(),
             'action' => $formContext->getRequest()->getUri(),
             'attr' => ['data-turbo-frame' => $formContext->isModalRequest() ? '_self' : '_top'],
         ]);

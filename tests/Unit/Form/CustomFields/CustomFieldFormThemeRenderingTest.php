@@ -188,7 +188,6 @@ final class CustomFieldThemeTwigExtension extends AbstractExtension implements G
     {
         return [
             'lexio_admin_ui' => [
-                'translation_domain' => 'admin',
                 'routes' => [
                     'links_search' => 'admin._modals.links_search',
                 ],

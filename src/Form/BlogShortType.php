@@ -22,7 +22,8 @@ class BlogShortType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => null,
+            'data_class'         => null,
+            'translation_domain' => 'form',
         ]);
     }
 }

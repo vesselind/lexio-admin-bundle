@@ -48,7 +48,7 @@ class FormContext
         private readonly AdminUrlGenerator   $adminUrlGenerator,
         private readonly array               $locales,
         private readonly string              $defaultLocale,
-        private readonly string              $translationDomain,
+        private readonly string              $translationDomain = 'admin',
     ) {
         $this->tabs                = new ArrayCollection();
         $this->dropdownActionsField = new DropdownActionsField();

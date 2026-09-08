@@ -26,10 +26,11 @@ renders the configured asset paths when present.
 
 Bundle templates may use the read-only `lexio_admin_ui` Twig global:
 
-- `translation_domain` — reusable admin message domain, default `LexioAdminBundle`;
-- `favicon_asset`, `admin_logo_asset`, and `admin_logo_alt`;
-- `title_translation_key` and `title_translation_domain`;
+- `favicon_asset` and `admin_logo_asset` for optional branding assets;
 - `routes.*` for shell, notification, flash, modal, upload, image, and file route contracts.
+
+Admin Twig messages use the fixed `admin` translation domain. Form rendering and form types use
+the fixed `form` translation domain; applications own both catalogs.
 
 Route names and asset paths are application configuration. No reusable bundle template may assume
 the host's `build/images` directory or use an unnamespaced include for admin UI.

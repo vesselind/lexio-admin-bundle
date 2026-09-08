@@ -21,17 +21,17 @@
                         redirectOnSuccessToFrame: 'listing-results',
                         modalSize: action.modalSize,
                     }) }}>
-                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
                     </button>
                 {% elseif action.hasConfirmationModal %}
                     <button class="dropdown-item {{ action.textClass }}" data-bs-toggle="modal"
                             data-bs-target="#confirmationModal_{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}">
-                        <i class="fa fa-remove me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                        <i class="fa fa-remove me-1"></i> {{ action.label|trans({}, 'admin') }}
                     </button>
                 {% else %}
                     <a class="dropdown-item {{ action.textClass }}"
                        href="{{ path(action.route, action.getRouteParams(field.entityInstance)) }}">
-                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                        <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
                     </a>
                 {% endif %}
             {% endfor %}
@@ -46,17 +46,17 @@
                 redirectOnSuccessToFrame: 'listing-results',
                 modalSize: action.modalSize,
             }) }}>
-                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
             </button>
         {% elseif action.hasConfirmationModal %}
             <button class="btn btn-gray btn-sm {{ action.textClass }}" data-bs-toggle="modal"
                     data-bs-target="#confirmationModal_{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}">
-                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
             </button>
         {% else %}
             <a class="btn btn-gray btn-sm {{ action.textClass }}"
                href="{{ path(action.route, action.getRouteParams(field.entityInstance)) }}">
-                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, lexio_admin_ui.translation_domain) }}
+                <i class="{{ action.icon }} me-1"></i> {{ action.label|trans({}, 'admin') }}
             </a>
         {% endif %}
     {% endif %}
@@ -67,7 +67,7 @@
                 modalId="{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}"
                 confirmUrl="{{ path(action.getConfirmationRoute, action.getConfirmationRouteParams) }}"
         >
-            {{ 'delete_record.confirmation_text'|trans({}, lexio_admin_ui.translation_domain) }}
+            {{ 'delete_record.confirmation_text'|trans({}, 'admin') }}
         </twig:ConfirmationModal>
     {% endfor %}
 </div>

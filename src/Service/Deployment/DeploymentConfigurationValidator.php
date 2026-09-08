@@ -8,7 +8,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final readonly class DeploymentConfigurationValidator
 {
-    private const string TRANSLATION_DOMAIN = 'LexioAdminBundle';
+    private const string TRANSLATION_DOMAIN = 'admin';
 
     public function validate(DeploymentOptions $options): void
     {

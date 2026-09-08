@@ -41,7 +41,7 @@ final class ProdDeployCommandTest extends TestCase
     {
         $runner = $this->createStub(DeploymentRunnerInterface::class);
         $runner->method('deploy')->willThrowException(new DeploymentConfigurationException(
-            new TranslatableMessage(DeploymentTranslationKeys::DISABLED, [], 'LexioAdminBundle'),
+            new TranslatableMessage(DeploymentTranslationKeys::DISABLED, [], 'admin'),
         ));
 
         $tester = new CommandTester(new ProdDeployCommand($runner, $this->translator()));

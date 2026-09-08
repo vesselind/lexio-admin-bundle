@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lexio\AdminBundle\Command;
+namespace Lexio\AdminBundle\Command\Translations;
 
 use Lexio\AdminBundle\Contract\Translation\TranslationPackageMergeResult;
 use Lexio\AdminBundle\Contract\Translation\TranslationPackageSynchronizerInterface;
@@ -12,24 +12,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class UploadTranslationsCommand extends Command
+final class DownloadTranslationsCommand extends Command
 {
     public function __construct(
         private readonly TranslationPackageSynchronizerInterface $synchronizer,
     ) {
-        parent::__construct('lexio:translations:upload');
-        $this->setDescription('Send the local translation package to the configured deployed application.');
+        parent::__construct('lexio:translations:download');
+        $this->setDescription('Receive and merge the translation package from the configured deployed application.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Upload translations');
+        $io->title('Download translations');
 
         try {
-            $result = $this->synchronizer->upload();
+            $result = $this->synchronizer->download();
         } catch (TranslationSynchronizationException) {
-            $io->error('The translations could not be sent.');
+            $io->error('The translations could not be received.');
 
             return self::FAILURE;
         }
@@ -42,7 +42,7 @@ final class UploadTranslationsCommand extends Command
     private function summary(TranslationPackageMergeResult $result): string
     {
         return sprintf(
-            'Translations sent. Files created: %d, files updated: %d, keys inserted: %d, keys updated: %d, unchanged keys: %d.',
+            'Translations received. Files created: %d, files updated: %d, keys inserted: %d, keys updated: %d, unchanged keys: %d.',
             $result->filesCreated,
             $result->filesUpdated,
             $result->keysInserted,

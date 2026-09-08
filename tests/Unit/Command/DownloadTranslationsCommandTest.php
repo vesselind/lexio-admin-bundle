@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Tests\Unit\Command;
 
-use Lexio\AdminBundle\Command\DownloadTranslationsCommand;
+use Lexio\AdminBundle\Command\Translations\DownloadTranslationsCommand;
 use Lexio\AdminBundle\Contract\Translation\TranslationPackageSynchronizerInterface;
 use Lexio\AdminBundle\Contract\Translation\TranslationSynchronizationException;
 use PHPUnit\Framework\TestCase;

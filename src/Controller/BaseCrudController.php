@@ -22,7 +22,6 @@ use Lexio\AdminBundle\Filter\BaseFilter;
 use Lexio\AdminBundle\Service\EntityFilterer;
 use Lexio\AdminBundle\Utils\AdminUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -354,12 +353,7 @@ abstract class BaseCrudController extends AbstractController
 
     protected function translationDomain(): string
     {
-        $domain = $this->container->get('parameter_bag')->get('lexio_admin.ui.translation_domain');
-        if (!is_string($domain) || '' === $domain) {
-            throw new \LogicException('The admin UI translation domain must be a non-empty string.');
-        }
-
-        return $domain;
+        return 'admin';
     }
 
     public function breadcrumbs(): AdminBreadcrumbs
@@ -390,7 +384,6 @@ abstract class BaseCrudController extends AbstractController
             'form.factory' => '?' . FormFactoryInterface::class,
             'security.token_storage' => '?' . TokenStorageInterface::class,
             'security.csrf.token_manager' => '?' . CsrfTokenManagerInterface::class,
-            'parameter_bag' => '?' . ContainerBagInterface::class,
         ]);
     }
 }

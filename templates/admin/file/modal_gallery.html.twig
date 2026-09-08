@@ -6,12 +6,12 @@
                 <input type="hidden" name="access" value="{{ activeAccessType.directory() }}">
                 <input type="search" id="file-gallery-search" value="{{ app.request.query.get('name') }}"
                        class="form-control" name="name"
-                       aria-label="{{ 'placeholder.search_by_filename'|trans({}, lexio_admin_ui.translation_domain) }}"
+                       aria-label="{{ 'placeholder.search_by_filename'|trans({}, 'admin') }}"
                         {{ stimulus_action('autosubmit', 'debouncedSubmit') }}
-                       placeholder="{{ 'placeholder.search_by_filename'|trans({}, lexio_admin_ui.translation_domain) }}">
+                       placeholder="{{ 'placeholder.search_by_filename'|trans({}, 'admin') }}">
             </form>
 
-            <nav aria-label="{{ 'file_access_type.tabs'|trans({}, lexio_admin_ui.translation_domain) }}" class="mb-4">
+            <nav aria-label="{{ 'file_access_type.tabs'|trans({}, 'admin') }}" class="mb-4">
                 <ul class="nav nav-tabs" role="tablist">
                     {% for accessType in accessTypes %}
                         {% if accessType != privateAccessType or is_granted('ROLE_ADMIN') %}
@@ -21,7 +21,7 @@
                                    href="{{ path('admin.file.modal_gallery', tabQuery) }}"
                                    role="tab"
                                    aria-selected="{{ activeAccessType == accessType ? 'true' : 'false' }}">
-                                    {{ ('file_access_type.' ~ accessType.directory())|trans({}, lexio_admin_ui.translation_domain) }}
+                                    {{ ('file_access_type.' ~ accessType.directory())|trans({}, 'admin') }}
                                 </a>
                             </li>
                         {% endif %}
@@ -29,7 +29,7 @@
                 </ul>
             </nav>
 
-            <div class="list-group" aria-label="{{ 'file.gallery'|trans({}, lexio_admin_ui.translation_domain) }}">
+            <div class="list-group" aria-label="{{ 'file.gallery'|trans({}, 'admin') }}">
                 {% for file in files %}
                     {# @var file \Lexio\AdminBundle\Contract\File\FileEntityInterface #}
                     {% set icon = file.iconColors() %}
@@ -43,28 +43,28 @@
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <span class="fw-semibold text-break">{{ file.name }}</span>
                                 <span class="badge bg-light text-secondary border">
-                                    <span class="visually-hidden">{{ 'file.mime_type'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    <span class="visually-hidden">{{ 'file.mime_type'|trans({}, 'admin') }}: </span>
                                     {{ file.mime ?? '—' }}
                                 </span>
                             </div>
                             <div class="d-flex align-items-center gap-3 flex-wrap small text-muted mt-1">
-                                <span title="{{ 'file.original_name'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                <span title="{{ 'file.original_name'|trans({}, 'admin') }}">
                                     <i class="fa fa-file me-1" aria-hidden="true"></i>
-                                    <span class="visually-hidden">{{ 'file.original_name'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    <span class="visually-hidden">{{ 'file.original_name'|trans({}, 'admin') }}: </span>
                                     {{ file.originalName ?? file.name }}
                                 </span>
-                                <span title="{{ 'file.uploaded_at'|trans({}, lexio_admin_ui.translation_domain) }}">
+                                <span title="{{ 'file.uploaded_at'|trans({}, 'admin') }}">
                                     <i class="fa fa-calendar-alt me-1" aria-hidden="true"></i>
-                                    <span class="visually-hidden">{{ 'file.uploaded_at'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                    <span class="visually-hidden">{{ 'file.uploaded_at'|trans({}, 'admin') }}: </span>
                                     {{ file.createdAt|formatted_datetime }}
                                 </span>
                             </div>
                         </div>
 
                         <div class="d-flex align-items-center gap-3 ms-auto flex-shrink-0">
-                            <span class="badge bg-secondary text-primary" title="{{ 'file.size'|trans({}, lexio_admin_ui.translation_domain) }}">
+                            <span class="badge bg-secondary text-primary" title="{{ 'file.size'|trans({}, 'admin') }}">
                                 <i class="fa fa-database me-1" aria-hidden="true"></i>
-                                <span class="visually-hidden">{{ 'file.size'|trans({}, lexio_admin_ui.translation_domain) }}: </span>
+                                <span class="visually-hidden">{{ 'file.size'|trans({}, 'admin') }}: </span>
                                 {{ file.size|format_bytes }}
                             </span>
 
@@ -72,17 +72,17 @@
                                 <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
                                         aria-expanded="false">
                                     <i class="fa fa-cog" aria-hidden="true"></i>
-                                    {{ 'button.select'|trans({}, lexio_admin_ui.translation_domain) }}
+                                    {{ 'button.select'|trans({}, 'admin') }}
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end" {{ stimulus_controller('clipboard') }}>
                                     <button class="dropdown-item" {{ stimulus_action('clipboard', 'copy') }}>
                                         <i class="fa fa-copy me-1" aria-hidden="true"></i>
-                                        {{ 'button.copy_url'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        {{ 'button.copy_url'|trans({}, 'admin') }}
                                         <input type="hidden" value="{{ file.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
                                     </button>
                                     <a data-turbo="false" class="dropdown-item" href="{{ path('admin.file.download', {'id': file.id}) }}">
                                         <i class="fa fa-download me-1" aria-hidden="true"></i>
-                                        {{ 'button.download'|trans({}, lexio_admin_ui.translation_domain) }}
+                                        {{ 'button.download'|trans({}, 'admin') }}
                                     </a>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                 {% else %}
                     <div class="list-group-item text-center text-muted">
                         <i class="fa fa-info-circle" aria-hidden="true"></i>
-                        {{ 'no_records_found'|trans({}, lexio_admin_ui.translation_domain) }}
+                        {{ 'no_records_found'|trans({}, 'admin') }}
                     </div>
                 {% endfor %}
             </div>
@@ -107,7 +107,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            {{ 'button.close'|trans({}, lexio_admin_ui.translation_domain) }}
+            {{ 'button.close'|trans({}, 'admin') }}
         </button>
     </div>
 </twig:Admin:BaseModalBody>

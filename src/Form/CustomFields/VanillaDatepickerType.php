@@ -31,10 +31,11 @@ class VanillaDatepickerType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'widget'          => 'single_text',
-            'html5'           => false,
-            'format'          => 'dd.MM.yyyy',
-            'vanilla_format'  => 'dd.mm.yyyy',
+            'widget'            => 'single_text',
+            'html5'             => false,
+            'format'            => 'dd.MM.yyyy',
+            'vanilla_format'    => 'dd.mm.yyyy',
+            'translation_domain' => 'form',
             'min_date'        => null,
             'max_date'        => null,
             'live_component'  => false,
