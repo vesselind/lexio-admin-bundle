@@ -66,9 +66,9 @@ before the Phase 2/3 visual migration is accepted.
 
 | Check | Result |
 | --- | --- |
-| Bundle full Sass entry | Passed: `make assets-styles-build` generated `assets/dist/admin.css` with Bootstrap and bundle styles |
-| Bundle components-only entry | Passed: `make assets-styles-build` generated `assets/dist/components.css` without Bootstrap base rules |
-| Host theme compilation | Passed: `make assets-styles-build` in the starter compiled the bundle entry through `admin-theme.scss` and retained the Inter import |
+| Bundle full Sass entry | Passed: the asset contract test compiles `styles/admin` with Bootstrap and custom theme inputs |
+| Bundle components-only entry | Passed: the asset contract test compiles `styles/components` without Bootstrap base rules |
+| Host theme compilation | Passed: the starter build compiles the bundle entry through `admin-theme.scss` |
 | Sass/CSS contract tests | Added: `assets/tests/styles-contract.test.mjs`; run with `make assets-test` |
 | Host package dependency | Declared in `package.json`; Yarn install was blocked by a missing unrelated CKEditor cache tarball, so local verification used a junction to the existing vendor package |
 | Font Awesome/icon migration | Pending: current admin markup still has compatibility Font Awesome classes/CDN; UX Icon conversion remains a release gate |

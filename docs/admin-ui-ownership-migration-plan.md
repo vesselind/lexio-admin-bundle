@@ -180,11 +180,10 @@ Exit condition: bundle templates have no dependency on controller source stored 
   3. host brand tokens and optional overrides.
 - [x] Move reusable admin layout, sidebar, navbar, tables, tabs, cards, breadcrumbs, modal gallery,
   notifications, flash messages, CKEditor, and datepicker styles into the bundle.
-- [x] Provide two supported theme customization APIs:
-  - stable `--lexio-admin-*` CSS custom properties for runtime overrides and consumers of the
-    precompiled CSS;
-  - a documented public Sass configuration module whose curated variables use `!default`, for
-    Encore consumers that want to set theme values and compile the bundle source themselves.
+- [x] Provide a documented public Sass configuration module whose curated variables use
+  `!default`, so hosts configure theme values before compiling the bundle source.
+- [x] Emit stable `--lexio-admin-*` CSS custom properties for runtime values consumed by
+  bundle-owned rules; do not present them as a replacement for compile-time Bootstrap theming.
 - [x] Generate the default CSS custom-property values from the public Sass configuration so the two
   APIs do not drift. Colors, spacing, typography, radii, sidebar width, and logo dimensions should
   be available through both APIs where a compile-time value is meaningful.
@@ -197,8 +196,7 @@ Exit condition: bundle templates have no dependency on controller source stored 
   Declare supported versions and consume them as dependencies.
 - [ ] Replace legacy font files and CDN-coupled icon markup with Symfony UX Icons or bundle-owned
   SVG icons. Provide an override point for product-specific icons.
-- [x] Ship compiled `assets/dist/admin.css` for consumers without Sass and public source entries for
-  applications that intentionally customize the build:
+- [x] Ship public Sass source entries and require hosts to compile one of them:
   - `@lexio/admin-bundle/styles/admin` includes the supported Bootstrap build plus bundle styles;
   - `@lexio/admin-bundle/styles/components` includes only bundle components for hosts that compile
     and configure Bootstrap separately.
@@ -216,8 +214,7 @@ Exit condition: bundle templates have no dependency on controller source stored 
   @use 'admin-theme';
   ```
 
-- [x] Ensure each host selects exactly one base mode: compile the public Sass entry **or** load
-  `assets/dist/admin.css`. Loading both is unsupported because it duplicates the base rules.
+- [x] Ensure each host compiles exactly one public Sass base entry.
 - [x] Ensure the host loads bundle CSS before its `admin-theme.css` overrides.
 - [ ] Add visual regression checks at desktop and mobile widths, plus focus, reduced-motion,
   high-contrast, and keyboard navigation checks.
@@ -231,8 +228,7 @@ layout except for approved fixes.
 - [x] For the current Encore host, add:
   - [x] `"@lexio/admin-bundle": "file:vendor/lexio/admin-bundle/assets"` to `package.json`;
   - [x] the bundle package and enabled controllers to `assets/controllers.json`;
-  - [x] either the configurable public Sass entry or the precompiled bundle CSS before the host theme
-    override in the `admin` entry.
+  - [x] the configurable public Sass entry before the host theme override in the `admin` entry.
 - [x] Document the concrete host controller registration. The final controller list must match the
   bundle's `assets/package.json` metadata; for example:
 
