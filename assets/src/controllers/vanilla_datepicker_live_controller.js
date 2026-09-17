@@ -11,6 +11,9 @@ export default class extends Controller {
         componentName: {type: String, default: null},
         format: {type: String, default: 'dd/mm/yyyy'},
         weekStart: {type: Number, default: 0},
+        minDate: {type: String, default: null},
+        maxDate: {type: String, default: null},
+        locale: {type: String, default: 'en'},
     }
 
     async initialize() {
@@ -27,7 +30,10 @@ export default class extends Controller {
             buttonClass: 'btn',
             autohide: true,
             format: this.formatValue,
-            weekStart: this.weekStartValue
+            weekStart: this.weekStartValue,
+            minDate: this.minDateValue,
+            maxDate: this.maxDateValue,
+            language: this.localeValue,
         });
 
         this.onDatepickerHide = () => {

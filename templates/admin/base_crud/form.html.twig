@@ -29,7 +29,7 @@
                         {# @var tab \App\AdminCore\Tab\TabInterface #}
                         <li class="nav-item">
                             <a class="nav-link {{ tab.route == app.request.attributes.get('_route') ? 'active' }}"
-                               data-turbo-frame="main-form-content" {{ stimulus_action('toggle-class', 'toggle') }}
+                               data-turbo-frame="main-form" {{ stimulus_action('toggle-class', 'toggle') }}
                                href="{{ path(tab.route, tab.routeParams) }}">{{ tab.title|trans({}, 'admin') }}</a>
                         </li>
                     {% endfor %}

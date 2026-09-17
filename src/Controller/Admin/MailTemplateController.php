@@ -37,6 +37,9 @@ abstract class MailTemplateController extends BaseCrudController
 
     }
 
+    /** @return class-string */
+    abstract public function mailFormType(): string;
+
     #[Route('', name: 'admin.mail_template.index')]
     public function index(ListingContext $listingContext): Response
     {
@@ -59,7 +62,8 @@ abstract class MailTemplateController extends BaseCrudController
     public function create(Request $request, FormContext $formContext): Response
     {
         $entity = new MailTemplate();
-        $formContext->setEntityInstance($entity);
+        $formContext->setEntityInstance($entity)
+            ->setFormType($this->mailFormType());
 
         return $this->renderCreate($entity, $formContext);
     }
@@ -81,6 +85,7 @@ abstract class MailTemplateController extends BaseCrudController
     {
         $formContext
             ->setEntityInstance($mailTemplate)
+            ->setFormType($this->mailFormType())
             ->disableLocalesTab();
 
         $placeholders = $mailTemplate->getPlaceholders();

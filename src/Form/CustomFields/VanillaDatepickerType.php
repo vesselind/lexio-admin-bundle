@@ -6,7 +6,8 @@ namespace Lexio\AdminBundle\Form\CustomFields;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -41,20 +42,23 @@ class VanillaDatepickerType extends AbstractType
             'live_component'  => false,
             'week_start'      => 1,
             'locale'          => $this->defaultLocale,
-            'attr'            => function (Options $options): array {
-                $controller = $options['live_component']
-                    ? 'vanilla-datepicker-live'
-                    : 'vanilla-datepicker';
+        ]);
+    }
 
-                return [
-                    'autocomplete'                        => 'off',
-                    'data-controller'                     => $controller,
-                    "data-{$controller}-format-value"     => $options['vanilla_format'],
-                    "data-{$controller}-min-date-value"   => $options['min_date'],
-                    "data-{$controller}-max-date-value"   => $options['max_date'],
-                    "data-{$controller}-locale-value"     => $options['locale'],
-                ];
-            },
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        $controller = $options['live_component']
+            ? 'vanilla-datepicker-live'
+            : 'vanilla-datepicker';
+
+        $view->vars['attr'] = array_merge($view->vars['attr'], [
+            'autocomplete'                        => 'off',
+            'data-controller'                     => $controller,
+            "data-{$controller}-format-value"     => $options['vanilla_format'],
+            "data-{$controller}-min-date-value"   => $options['min_date'],
+            "data-{$controller}-max-date-value"   => $options['max_date'],
+            "data-{$controller}-locale-value"     => $options['locale'],
+            "data-{$controller}-week-start-value" => $options['week_start'],
         ]);
     }
 }

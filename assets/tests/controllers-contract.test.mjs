@@ -202,3 +202,24 @@ test('runtime dependencies are peers and controller source has no starter-app en
     assert.doesNotMatch(source, /admin\.[a-z_]+/);
     assert.doesNotMatch(source, /window\.bootstrap/);
 });
+
+test('vanilla datepicker live controller forwards range, locale and week-start options', () => {
+    const source = readFileSync(join(sourceDirectory, 'vanilla_datepicker_live_controller.js'), 'utf8');
+
+    assert.match(source, /minDate:\s*\{type:\s*String/);
+    assert.match(source, /maxDate:\s*\{type:\s*String/);
+    assert.match(source, /locale:\s*\{type:\s*String/);
+    assert.match(source, /minDate:\s*this\.minDateValue/);
+    assert.match(source, /maxDate:\s*this\.maxDateValue/);
+    assert.match(source, /language:\s*this\.localeValue/);
+
+    const typeSource = readFileSync(
+        join(assetsDirectory, '..', 'src', 'Form', 'CustomFields', 'VanillaDatepickerType.php'),
+        'utf8',
+    );
+
+    assert.match(typeSource, /data-\{\$controller\}-min-date-value/);
+    assert.match(typeSource, /data-\{\$controller\}-max-date-value/);
+    assert.match(typeSource, /data-\{\$controller\}-locale-value/);
+    assert.match(typeSource, /data-\{\$controller\}-week-start-value/);
+});
