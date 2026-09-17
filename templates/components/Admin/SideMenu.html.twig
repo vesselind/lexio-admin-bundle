@@ -21,7 +21,7 @@
 
                     {% if menuItem.type == 'Separator' %}
                         <h6 class="subtle-header text-uppercase">
-                            {{ menuItem.title }}
+                            {{ menuItem.title|trans({}, 'admin') }}
                         </h6>
                     {% endif %}
 
@@ -34,7 +34,7 @@
                                 {% if menuItem.icon %}
                                     {{ ux_icon(menuItem.icon, {height: '21px', width: '21px', 'aria-hidden': true}) }}
                                 {% endif %}
-                                {{ menuItem.title }}
+                                {{ menuItem.title|trans({}, 'admin') }}
                                 {% if badgeCaption is not null %}
                                     <span class="badge bg-{{ badge.color ?? 'secondary' }} ms-auto">
                                         {% if badge.icon %}
@@ -57,7 +57,7 @@
                                 {% if menuItem.icon %}
                                     {{ ux_icon(menuItem.icon, {height: '21px', width: '21px', 'aria-hidden': true}) }}
                                 {% endif %}
-                                {{ menuItem.title }}
+                                {{ menuItem.title|trans({}, 'admin') }}
                                 {% if badgeCaption is not null %}
                                     <span class="badge bg-{{ badge.color ?? 'secondary' }} ms-auto">
                                         {% if badge.icon %}
@@ -75,7 +75,7 @@
                                         {% set linkBadgeCaption = linkBadge ? linkBadge.caption : null %}
                                         <li class="{{ link.isActive ? 'active' }}"><a href="{{ link.url }}"
                                                                                       class="link-dark rounded">
-                                                {{ link.title }}
+                                                {{ link.title|trans({}, 'admin') }}
                                                 {% if linkBadgeCaption is not null %}
                                                     <span class="badge bg-{{ linkBadge.color ?? 'secondary' }} ms-auto">
                                                         {% if linkBadge.icon %}

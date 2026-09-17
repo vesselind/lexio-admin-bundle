@@ -111,7 +111,7 @@ final class BundleTwigTemplateContractTest extends TestCase
 
         $baseForm = file_get_contents(dirname(__DIR__, 3) . '/templates/admin/base_crud/form.html.twig');
         self::assertIsString($baseForm);
-        self::assertStringContainsString('data-turbo-frame="main-form-content"', $baseForm);
+        self::assertStringContainsString('data-turbo-frame="main-form"', $baseForm);
 
         foreach ([
             'admin/base_crud/form_tab.html.twig',
@@ -120,7 +120,7 @@ final class BundleTwigTemplateContractTest extends TestCase
             $source = file_get_contents(dirname(__DIR__, 3) . '/templates/' . $template);
 
             self::assertIsString($source);
-            self::assertStringStartsWith('<turbo-frame id="main-form-content">', $source);
+            self::assertStringStartsWith('<turbo-frame id="main-form">', $source);
         }
     }
 

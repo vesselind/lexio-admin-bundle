@@ -9,7 +9,7 @@ trait SortableEntity
 {
     #[Gedmo\SortablePosition]
     #[ORM\Column(type: 'integer')]
-    protected ?int $positionIndex;
+    protected ?int $positionIndex = null;
 
     public function getPositionIndex(): ?int
     {
