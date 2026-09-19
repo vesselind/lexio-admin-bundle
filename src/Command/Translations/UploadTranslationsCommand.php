@@ -17,7 +17,8 @@ final class UploadTranslationsCommand extends Command
     public function __construct(
         private readonly TranslationPackageSynchronizerInterface $synchronizer,
     ) {
-        parent::__construct('lexio:translations:upload');
+        parent::__construct('translation:push');
+        $this->setAliases(['lexio:translations:upload']);
         $this->setDescription('Send the local translation package to the configured deployed application.');
     }
 

@@ -46,7 +46,7 @@ When the operation succeeds or fails
 Then the request is protected against CSRF
 And the administrator receives a translated success or failure message
 
-Given an API request contains a valid timestamped signature derived from `APP_SECRET` and the configured synchronization salt
+Given an API request contains a valid timestamped signature derived from the shared `APP_SECRET`
 When the request reaches the translation package API
 Then the request is authorized without requiring an admin session
 
@@ -88,8 +88,8 @@ Then all supported translation YAML files are returned as one downloadable packa
 ## Technical Notes
 - The package format is ZIP and contains supported flat `*.yaml` translation files only.
 - The API exposes upload and download operations and is implemented by the reusable bundle, while the host owns the concrete routed controller.
-- Request authentication uses HMAC-SHA256 with `APP_SECRET`, a bundle-configured salt, and a timestamped request representation.
-- The deployed base URL comes from `DEPLOYED_APP_URL`; the relative API path and synchronization salt are bundle configuration.
+- Request authentication uses HMAC-SHA256 with the shared `APP_SECRET` and a timestamped request representation.
+- The deployed base URL comes from `DEPLOYED_APP_URL`; the relative API path is bundle configuration and synchronization is enabled automatically when the URL is present.
 - Optional HTTP Basic Auth username and password must be configurable without committing production credentials.
 - Both upload and download commands are provided by the bundle and operate against the configured deployed endpoint.
 - The reusable bundle translation controller exposes the non-production Send and Receive actions; the host controller continues to own the concrete route prefix and authorization policy.

@@ -68,6 +68,26 @@ final class LexioAdminBundleTest extends TestCase
         self::assertFalse($processed['sitemap']['enabled']);
     }
 
+    public function test_translation_synchronization_is_enabled_by_a_deployed_url_by_default(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = (new LexioAdminBundle())->getContainerExtension();
+
+        self::assertNotNull($extension);
+        $configuration = $extension->getConfiguration([], $container);
+        self::assertNotNull($configuration);
+
+        $processed = (new Processor())->processConfiguration($configuration, [[
+            'translation_management' => [
+                'synchronization' => [
+                    'deployed_app_url' => 'https://example.test',
+                ],
+            ],
+        ]]);
+
+        self::assertNull($processed['translation_management']['synchronization']['enabled']);
+    }
+
     public function test_sitemap_providers_are_autoconfigured_with_the_bundle_tag(): void
     {
         $container = new ContainerBuilder();

@@ -128,6 +128,21 @@ final class ServiceConfigurationTest extends TestCase
         );
     }
 
+    public function test_translation_commands_use_push_and_pull_names_with_legacy_aliases(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertStringContainsString(
+            "command: 'translation:push|lexio:translations:upload'",
+            $servicesConfig,
+        );
+        self::assertStringContainsString(
+            "command: 'translation:pull|lexio:translations:download'",
+            $servicesConfig,
+        );
+    }
+
     public function test_translation_cache_clearer_is_bound_to_the_kernel_cache_directory(): void
     {
         $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
