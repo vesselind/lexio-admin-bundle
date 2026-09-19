@@ -29,8 +29,11 @@ final class UploadTranslationsCommand extends Command
 
         try {
             $result = $this->synchronizer->upload();
-        } catch (TranslationSynchronizationException) {
-            $io->error('The translations could not be sent.');
+        } catch (TranslationSynchronizationException $exception) {
+            $io->error([
+                'The translations could not be sent.',
+                'Reason: ' . $exception->getMessage(),
+            ]);
 
             return self::FAILURE;
         }

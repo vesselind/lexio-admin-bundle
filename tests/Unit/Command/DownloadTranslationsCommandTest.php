@@ -27,11 +27,16 @@ final class DownloadTranslationsCommandTest extends TestCase
     public function test_it_returns_failure_when_the_download_cannot_be_completed(): void
     {
         $synchronizer = $this->createMock(TranslationPackageSynchronizerInterface::class);
-        $synchronizer->expects(self::once())->method('download')->willThrowException(new TranslationSynchronizationException('Sensitive detail'));
+        $synchronizer->expects(self::once())
+            ->method('download')
+            ->willThrowException(new TranslationSynchronizationException('The deployed application could not provide the translation package (HTTP 401 Unauthorized).'));
         $tester = new CommandTester(new DownloadTranslationsCommand($synchronizer));
 
         self::assertSame(Command::FAILURE, $tester->execute([]));
         self::assertStringContainsString('The translations could not be received.', $tester->getDisplay());
-        self::assertStringNotContainsString('Sensitive detail', $tester->getDisplay());
+        self::assertStringContainsString(
+            'The deployed application could not provide the translation package (HTTP 401 Unauthorized).',
+            $tester->getDisplay(),
+        );
     }
 }
