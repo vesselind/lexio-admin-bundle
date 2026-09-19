@@ -95,3 +95,32 @@ translation:pull
 The legacy aliases `lexio:translations:upload` and `lexio:translations:download` remain available.
 
 The translation admin page also shows Send and Receive actions when synchronization is enabled outside the `prod` environment. These actions are intentionally hidden and rejected in production; the signed API remains available there when enabled.
+
+## Translation scanning
+
+Use `translations:scan` to find potentially untranslated host-template text and translation placeholders:
+
+```text
+translations:scan
+translations:scan templates/checkout
+translations:scan translations/admin.bg.yaml
+translations:scan --format=json --fail-on-findings
+```
+
+Without a path, the command scans `%kernel.project_dir%/templates` and the configured `translation_management.translation_directory`. A supplied relative path is resolved from the host project root. Twig directories are scanned recursively; an explicit YAML file must be a managed flat `<domain>.<locale>.yaml` resource in the configured translation directory.
+
+The command reports hardcoded Twig text and visible/accessibility attributes such as `alt`, `title`, `placeholder`, and `aria-label`. It ignores Twig comments, Twig expressions, `{% trans %}` blocks, scripts, styles, HTML comments, and regions wrapped in:
+
+```twig
+{# translation-scan-ignore-start #}
+<span>Intentional brand name</span>
+{# translation-scan-ignore-end #}
+```
+
+A managed YAML value beginning with `__` is reported as a `placeholder` finding in every locale:
+
+```yaml
+admin.dashboard.title: __admin.dashboard.title
+```
+
+`--min-length` applies only to Twig text candidates. Use repeatable `--exclude=directory-name` to omit template directories. Findings return a success status by default; add `--fail-on-findings` for CI. Invalid or non-flat managed YAML is always reported as a scan failure.

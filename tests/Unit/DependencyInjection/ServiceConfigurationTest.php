@@ -11,11 +11,13 @@ use Lexio\AdminBundle\Contract\Translation\TranslationCatalogInterface;
 use Lexio\AdminBundle\Contract\Translation\TranslationPackageSynchronizerInterface;
 use Lexio\AdminBundle\Service\Translation\TranslationPackageSynchronizer;
 use Lexio\AdminBundle\Service\Translation\TranslationCacheClearer;
+use Lexio\AdminBundle\Service\Translation\TranslationScanner;
 use Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog;
 use Lexio\AdminBundle\Page\PageManager;
 use Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver;
 use Lexio\AdminBundle\Component\Admin\InputImageSelector;
 use Lexio\AdminBundle\Command\ProdDeployCommand;
+use Lexio\AdminBundle\Command\Translations\ScanTranslationsCommand;
 use Lexio\AdminBundle\Contract\Deployment\DeploymentRunnerInterface;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
@@ -141,6 +143,25 @@ final class ServiceConfigurationTest extends TestCase
             "command: 'translation:pull|lexio:translations:download'",
             $servicesConfig,
         );
+    }
+
+    public function test_translation_scan_command_is_registered_with_its_scanner(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(ScanTranslationsCommand::class));
+        self::assertTrue(class_exists(TranslationScanner::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Command\\Translations\\ScanTranslationsCommand:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString('command: translations:scan', $servicesConfig);
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Service\\Translation\\TranslationScanner:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString('$projectDirectory: \'%kernel.project_dir%\'', $servicesConfig);
     }
 
     public function test_translation_cache_clearer_is_bound_to_the_kernel_cache_directory(): void
