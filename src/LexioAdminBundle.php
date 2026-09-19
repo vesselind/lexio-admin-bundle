@@ -149,8 +149,8 @@ final class LexioAdminBundle extends AbstractBundle
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->booleanNode('enabled')
-                                    ->defaultFalse()
-                                    ->info('Enable signed translation package API and outbound synchronization.')
+                                    ->defaultNull()
+                                    ->info('Enable signed translation package API and outbound synchronization. If omitted, a deployed application URL enables it automatically.')
                                 ->end()
                                 ->scalarNode('deployed_app_url')
                                     ->defaultNull()
@@ -163,7 +163,7 @@ final class LexioAdminBundle extends AbstractBundle
                                 ->end()
                                 ->scalarNode('auth_salt')
                                     ->defaultNull()
-                                    ->info('Application-specific salt combined with kernel.secret for HMAC authentication.')
+                                    ->info('Optional legacy salt combined with kernel.secret for HMAC authentication.')
                                 ->end()
                                 ->integerNode('signature_ttl')
                                     ->defaultValue(300)
@@ -278,7 +278,7 @@ final class LexioAdminBundle extends AbstractBundle
          *     enabled: bool,
          *     translation_directory: string|null,
          *     synchronization: array{
-         *         enabled: bool,
+         *         enabled: bool|null,
          *         deployed_app_url: string|null,
          *         api_path: string,
          *         auth_salt: string|null,

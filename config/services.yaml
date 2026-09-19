@@ -27,7 +27,7 @@ services:
             - '../src/Controller/'
             - '../src/Message/'
             - '../src/Command/MakeAdminSectionCommand.php'
-            - '../src/Command/Trasnlations/UploadTranslationsCommand.php'
+            - '../src/Command/Translations/UploadTranslationsCommand.php'
             - '../src/Command/DownloadTranslationsCommand.php'
             - '../src/Command/ProdDeployCommand.php'
             - '../src/Contract/Deployment/'
@@ -184,12 +184,12 @@ services:
     Lexio\AdminBundle\Command\Translations\UploadTranslationsCommand:
         autoconfigure: false
         tags:
-            - { name: console.command, command: lexio:translations:upload }
+            - { name: console.command, command: 'translation:push|lexio:translations:upload' }
 
     Lexio\AdminBundle\Command\Translations\DownloadTranslationsCommand:
         autoconfigure: false
         tags:
-            - { name: console.command, command: lexio:translations:download }
+            - { name: console.command, command: 'translation:pull|lexio:translations:download' }
 
     Lexio\AdminBundle\Command\ProdDeployCommand:
         autoconfigure: false

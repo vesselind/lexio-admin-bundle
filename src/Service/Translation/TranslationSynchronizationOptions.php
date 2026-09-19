@@ -6,6 +6,9 @@ namespace Lexio\AdminBundle\Service\Translation;
 
 final readonly class TranslationSynchronizationOptions
 {
+    private const DEFAULT_AUTH_SALT = 'lexio_admin_translation_sync';
+
+    private bool $enabled;
     private ?string $deployedAppUrl;
     private string $apiPath;
     private string $authSalt;
@@ -13,7 +16,7 @@ final readonly class TranslationSynchronizationOptions
     private ?string $basicAuthPassword;
 
     public function __construct(
-        private bool $enabled,
+        ?bool $enabled,
         private string $environment,
         #[\SensitiveParameter]
         private string $appSecret,
@@ -29,13 +32,14 @@ final readonly class TranslationSynchronizationOptions
         ?string $basicAuthPassword,
     ) {
         $normalizedDeployedAppUrl = $this->normalizeNullable($deployedAppUrl);
+        $this->enabled = $enabled ?? (null !== $normalizedDeployedAppUrl);
         $this->apiPath = '/' . trim($apiPath, '/');
-        $this->authSalt = trim($authSalt ?? '');
+        $this->authSalt = trim($authSalt ?? '') ?: self::DEFAULT_AUTH_SALT;
         $this->basicAuthUsername = $this->normalizeNullable($basicAuthUsername);
         $this->basicAuthPassword = $this->normalizeNullable($basicAuthPassword);
 
-        if ($this->enabled && ('' === trim($this->appSecret) || '' === $this->authSalt)) {
-            throw new \LogicException('Translation synchronization requires kernel.secret and a non-empty auth_salt.');
+        if ($this->enabled && '' === trim($this->appSecret)) {
+            throw new \LogicException('Translation synchronization requires kernel.secret.');
         }
 
         if ((null === $this->basicAuthUsername) !== (null === $this->basicAuthPassword)) {

@@ -17,7 +17,8 @@ final class DownloadTranslationsCommand extends Command
     public function __construct(
         private readonly TranslationPackageSynchronizerInterface $synchronizer,
     ) {
-        parent::__construct('lexio:translations:download');
+        parent::__construct('translation:pull');
+        $this->setAliases(['lexio:translations:download']);
         $this->setDescription('Receive and merge the translation package from the configured deployed application.');
     }
 

@@ -36,7 +36,7 @@ class Page
     /**
      * @var Collection<int, ContentItem>
      */
-    #[ORM\OneToMany(targetEntity: ContentItem::class, mappedBy: 'page', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ContentItem::class, mappedBy: 'page', fetch: 'EAGER', orphanRemoval: true)]
     private Collection $contentItems;
 
     public function __construct()

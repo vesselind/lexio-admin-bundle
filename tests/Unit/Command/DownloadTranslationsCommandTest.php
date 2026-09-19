@@ -13,6 +13,17 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 final class DownloadTranslationsCommandTest extends TestCase
 {
+    public function test_it_exposes_the_pull_command_without_a_provider_argument(): void
+    {
+        $command = new DownloadTranslationsCommand(
+            $this->createStub(TranslationPackageSynchronizerInterface::class),
+        );
+
+        self::assertSame('translation:pull', $command->getName());
+        self::assertContains('lexio:translations:download', $command->getAliases());
+        self::assertCount(0, $command->getDefinition()->getArguments());
+    }
+
     public function test_it_returns_failure_when_the_download_cannot_be_completed(): void
     {
         $synchronizer = $this->createMock(TranslationPackageSynchronizerInterface::class);

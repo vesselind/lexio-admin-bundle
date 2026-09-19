@@ -73,33 +73,25 @@ lexio_admin:
         enabled: true
         translation_directory: '%kernel.project_dir%/translations'
         synchronization:
-            enabled: '%env(bool:TRANSLATION_SYNC_ENABLED)%'
             deployed_app_url: '%env(DEPLOYED_APP_URL)%'
             api_path: '/api/translations'
-            auth_salt: '%env(TRANSLATION_SYNC_SALT)%'
-            basic_auth_username: '%env(TRANSLATION_SYNC_BASIC_AUTH_USERNAME)%'
-            basic_auth_password: '%env(TRANSLATION_SYNC_BASIC_AUTH_PASSWORD)%'
 ```
 
 ```dotenv
-TRANSLATION_SYNC_ENABLED=1
 DEPLOYED_APP_URL=https://deployed.example.com
-TRANSLATION_SYNC_SALT=replace-with-a-long-random-value
-# Optional: set both values only when the deployed app requires HTTP Basic Auth.
-# Leave both empty when HMAC authentication is sufficient.
-TRANSLATION_SYNC_BASIC_AUTH_USERNAME=
-TRANSLATION_SYNC_BASIC_AUTH_PASSWORD=
 ```
 
-The communicating environments must use the same `APP_SECRET` and `TRANSLATION_SYNC_SALT`. Keep both values secret. Basic Auth credentials are optional, but username and password must either both be configured or both be empty. Redirects are disabled for outbound synchronization.
+The communicating environments must use the same `APP_SECRET`. The bundle derives the synchronization key from that existing Symfony secret; no provider or extra translation-synchronization salt is required. Optional HTTP Basic Auth remains available when the deployed application requires it. Redirects are disabled for outbound synchronization.
 
 The host owns a concrete controller extending `Lexio\AdminBundle\Controller\Api\TranslationPackageController` with the configured `/api/translations` prefix. Import that controller outside locale-prefixed route imports and allow `PUBLIC_ACCESS` for the exact API path; every API request is independently authenticated by its short-lived HMAC signature.
 
 Run synchronization from the local host application with:
 
 ```text
-lexio:translations:upload
-lexio:translations:download
+translation:push
+translation:pull
 ```
+
+The legacy aliases `lexio:translations:upload` and `lexio:translations:download` remain available.
 
 The translation admin page also shows Send and Receive actions when synchronization is enabled outside the `prod` environment. These actions are intentionally hidden and rejected in production; the signed API remains available there when enabled.

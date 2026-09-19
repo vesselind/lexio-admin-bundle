@@ -13,6 +13,17 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 final class UploadTranslationsCommandTest extends TestCase
 {
+    public function test_it_exposes_the_push_command_without_a_provider_argument(): void
+    {
+        $command = new UploadTranslationsCommand(
+            $this->createStub(TranslationPackageSynchronizerInterface::class),
+        );
+
+        self::assertSame('translation:push', $command->getName());
+        self::assertContains('lexio:translations:upload', $command->getAliases());
+        self::assertCount(0, $command->getDefinition()->getArguments());
+    }
+
     public function test_it_returns_success_after_uploading_the_package(): void
     {
         $synchronizer = $this->createMock(TranslationPackageSynchronizerInterface::class);
