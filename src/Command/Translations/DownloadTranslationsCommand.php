@@ -29,8 +29,11 @@ final class DownloadTranslationsCommand extends Command
 
         try {
             $result = $this->synchronizer->download();
-        } catch (TranslationSynchronizationException) {
-            $io->error('The translations could not be received.');
+        } catch (TranslationSynchronizationException $exception) {
+            $io->error([
+                'The translations could not be received.',
+                'Reason: ' . $exception->getMessage(),
+            ]);
 
             return self::FAILURE;
         }

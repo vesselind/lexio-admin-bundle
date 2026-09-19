@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Tests\Unit\Service\Translation;
 
+use Lexio\AdminBundle\Contract\Translation\TranslationSynchronizationException;
 use Lexio\AdminBundle\Service\Translation\TranslationPackageHttpClient;
 use Lexio\AdminBundle\Service\Translation\TranslationPackageRequestAuthenticator;
 use Lexio\AdminBundle\Service\Translation\TranslationSynchronizationOptions;
@@ -66,6 +67,23 @@ final class TranslationPackageHttpClientTest extends TestCase
         );
 
         self::assertSame('zip-content', $transport->download());
+    }
+
+    public function test_it_reports_the_remote_http_status_when_upload_is_rejected(): void
+    {
+        $options = $this->options('user', 'password');
+        $transport = new TranslationPackageHttpClient(
+            new MockHttpClient(new MockResponse('', ['http_code' => 401])),
+            $options,
+            new TranslationPackageRequestAuthenticator($options, new MockClock('2025-01-01 UTC')),
+        );
+
+        $this->expectException(TranslationSynchronizationException::class);
+        $this->expectExceptionMessage(
+            'The deployed application rejected the translation package (HTTP 401 Unauthorized).',
+        );
+
+        $transport->upload('archive');
     }
 
     private function options(?string $username = null, ?string $password = null): TranslationSynchronizationOptions

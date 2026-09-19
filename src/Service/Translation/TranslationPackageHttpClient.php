@@ -6,6 +6,7 @@ namespace Lexio\AdminBundle\Service\Translation;
 
 use Lexio\AdminBundle\Contract\Translation\TranslationPackageMergeResult;
 use Lexio\AdminBundle\Contract\Translation\TranslationSynchronizationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -94,8 +95,16 @@ final readonly class TranslationPackageHttpClient
     private function successfulContent(ResponseInterface $response, string $failureMessage): string
     {
         try {
-            if (200 !== $response->getStatusCode()) {
-                throw new TranslationSynchronizationException($failureMessage);
+            $statusCode = $response->getStatusCode();
+            if (200 !== $statusCode) {
+                $statusText = Response::$statusTexts[$statusCode] ?? 'Unknown status';
+
+                throw new TranslationSynchronizationException(sprintf(
+                    '%s (HTTP %d %s).',
+                    rtrim($failureMessage, '.'),
+                    $statusCode,
+                    $statusText,
+                ));
             }
 
             $headers = $response->getHeaders(false);
