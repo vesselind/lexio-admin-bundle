@@ -20,6 +20,8 @@ services:
             - '../src/Contract/Sitemap/SitemapUrl.php'
             - '../src/Service/Translation/InvalidTranslationDocumentException.php'
             - '../src/Service/Translation/TranslationCacheException.php'
+            - '../src/Service/Translation/TranslationScanException.php'
+            - '../src/Service/Translation/TranslationScanInputException.php'
             - '../src/Service/Translation/TranslationStorageException.php'
             - '../src/Filter/'
             - '../src/DependencyInjection/'
@@ -29,6 +31,7 @@ services:
             - '../src/Command/MakeAdminSectionCommand.php'
             - '../src/Command/Translations/UploadTranslationsCommand.php'
             - '../src/Command/DownloadTranslationsCommand.php'
+            - '../src/Command/Translations/ScanTranslationsCommand.php'
             - '../src/Command/ProdDeployCommand.php'
             - '../src/Contract/Deployment/'
             - '../src/Service/Deployment/'
@@ -126,6 +129,12 @@ services:
             $translationDirectory: '%lexio_admin.translation_directory%'
             $enabled: '%lexio_admin.translation_management_enabled%'
 
+    Lexio\AdminBundle\Service\Translation\TranslationScanner:
+        arguments:
+            $projectDirectory: '%kernel.project_dir%'
+            $translationDirectory: '%lexio_admin.translation_directory%'
+            $enabled: '%lexio_admin.translation_management_enabled%'
+
     Lexio\AdminBundle\Service\Translation\TranslationSynchronizationOptions:
         arguments:
             $enabled: '%lexio_admin.translation_synchronization_enabled%'
@@ -190,6 +199,11 @@ services:
         autoconfigure: false
         tags:
             - { name: console.command, command: 'translation:pull|lexio:translations:download' }
+
+    Lexio\AdminBundle\Command\Translations\ScanTranslationsCommand:
+        autoconfigure: false
+        tags:
+            - { name: console.command, command: translations:scan }
 
     Lexio\AdminBundle\Command\ProdDeployCommand:
         autoconfigure: false
