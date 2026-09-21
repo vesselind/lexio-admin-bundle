@@ -88,6 +88,16 @@ TWIG);
         ], $findings);
     }
 
+    public function test_it_accepts_quoted_translation_keys_containing_spaces(): void
+    {
+        $this->write(
+            'translations/messages.bg.yaml',
+            "'Your email is already confirmed': 'Вашият имейл вече е потвърден.'\n",
+        );
+
+        self::assertSame([], $this->scanner()->scan(null, 2, []));
+    }
+
     public function test_it_does_not_apply_the_twig_minimum_length_to_placeholder_values(): void
     {
         $this->write('templates/short.twig', '<p>Go</p>');

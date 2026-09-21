@@ -41,7 +41,7 @@ final readonly class TranslationPackageManager
             try {
                 $this->codec->parse($content);
             } catch (InvalidTranslationDocumentException $exception) {
-                throw new TranslationSynchronizationException('The local translation package contains an invalid document.', previous: $exception);
+                throw $this->invalidDocumentException('The local translation file', $filename, $exception);
             }
 
             $uncompressedBytes += strlen($content);
@@ -93,7 +93,7 @@ final readonly class TranslationPackageManager
                 try {
                     $localEntries = $this->codec->parse($content);
                 } catch (InvalidTranslationDocumentException $exception) {
-                    throw new TranslationSynchronizationException('A local translation document is invalid.', previous: $exception);
+                    throw $this->invalidDocumentException('A local translation file', $filename, $exception);
                 }
             }
 
@@ -120,7 +120,7 @@ final readonly class TranslationPackageManager
             try {
                 $writes[$path] = $this->codec->dump($mergedEntries);
             } catch (InvalidTranslationDocumentException $exception) {
-                throw new TranslationSynchronizationException('The merged translation package is invalid.', previous: $exception);
+                throw $this->invalidDocumentException('The merged translation file', $filename, $exception);
             }
 
             if ($exists) {
@@ -247,7 +247,7 @@ final readonly class TranslationPackageManager
                 try {
                     $documents[$filename] = $this->codec->parse($content);
                 } catch (InvalidTranslationDocumentException $exception) {
-                    throw new TranslationSynchronizationException('The translation package contains an invalid document.', previous: $exception);
+                    throw $this->invalidDocumentException('The translation package file', $filename, $exception);
                 }
             }
 
@@ -270,5 +270,19 @@ final readonly class TranslationPackageManager
         }
 
         return $directory;
+    }
+
+    private function invalidDocumentException(
+        string $subject,
+        string $filename,
+        InvalidTranslationDocumentException $exception,
+    ): TranslationSynchronizationException {
+        $line = $exception->getDocumentLine();
+        $location = null === $line ? '' : sprintf(' at line %d', $line);
+
+        return new TranslationSynchronizationException(
+            sprintf('%s "%s" is invalid%s: %s', $subject, $filename, $location, $exception->getMessage()),
+            previous: $exception,
+        );
     }
 }

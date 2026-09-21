@@ -43,6 +43,36 @@ final class TranslationPackageManagerTest extends TestCase
         self::assertSame(['admin.en.yaml' => "label.title: Title\n"], $files);
     }
 
+    public function test_it_reports_the_invalid_file_line_and_reason_when_exporting(): void
+    {
+        $this->write('admin.en.yaml', "label.title: First\nlabel.title: Second\n");
+
+        try {
+            $this->manager()->export();
+            self::fail('An invalid local translation document must be rejected.');
+        } catch (TranslationSynchronizationException $exception) {
+            self::assertSame(
+                'The local translation file "admin.en.yaml" is invalid at line 2: The translation document contains duplicate keys.',
+                $exception->getMessage(),
+            );
+        }
+    }
+
+    public function test_it_reports_the_yaml_parser_reason_when_exporting(): void
+    {
+        $this->write('admin.en.yaml', "label.title: [Unclosed\n");
+
+        try {
+            $this->manager()->export();
+            self::fail('An invalid YAML document must be rejected.');
+        } catch (TranslationSynchronizationException $exception) {
+            self::assertStringContainsString('admin.en.yaml', $exception->getMessage());
+            self::assertStringContainsString('at line 2', $exception->getMessage());
+            self::assertStringContainsString('invalid YAML', $exception->getMessage());
+            self::assertStringNotContainsString('contains an invalid document', $exception->getMessage());
+        }
+    }
+
     public function test_an_empty_translation_directory_produces_a_valid_no_op_package(): void
     {
         $archive = $this->manager()->export();
