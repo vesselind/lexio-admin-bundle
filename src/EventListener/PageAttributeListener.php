@@ -53,7 +53,10 @@ final readonly class PageAttributeListener
             throw new NotFoundHttpException(\sprintf('Page class "%s" does not exist.', $className));
         }
 
-        $page = $this->pageManager->getPageObject($className) ?? new $className();
+        $page = $this->pageManager->getPageObject(
+            $className,
+            $event->getRequest()->getLocale(),
+        ) ?? new $className();
         $this->twig->addGlobal('page', $page);
     }
 }
