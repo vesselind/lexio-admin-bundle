@@ -4,17 +4,29 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Tests\Unit\Form\CustomFields;
 
+use Lexio\AdminBundle\Contract\File\FileRepositoryInterface;
 use Lexio\AdminBundle\Form\CustomFields\AssociationModalType;
 use Lexio\AdminBundle\Form\CustomFields\CKEditorType;
+use Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType;
+use Lexio\AdminBundle\Form\Transformer\ImageEntityTransformer;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Test\FormLayoutTestCase;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
@@ -125,6 +137,69 @@ final class CustomFieldFormThemeRenderingTest extends FormLayoutTestCase
         self::assertStringContainsString('class="form-control"', $this->renderWidget($view));
     }
 
+    public function test_input_image_selector_row_renders_a_field_error(): void
+    {
+        $form = $this->factory->createNamed('product', InputImageSelectorFormTestType::class);
+        $form->get('image')->addError(new FormError('Select an image.'));
+
+        $html = $this->renderRow($form->get('image')->createView());
+
+        self::assertStringContainsString('invalid-feedback', $html);
+        self::assertSame(1, substr_count($html, 'Select an image.'));
+    }
+
+    public function test_admin_form_template_renders_a_root_form_error(): void
+    {
+        $form = $this->factory->createNamed('product', RootFormErrorTestType::class);
+        $form->addError(new FormError('The form is invalid.'));
+
+        $html = $this->renderAdminFormContent($form->createView());
+
+        self::assertStringContainsString('alert alert-danger', $html);
+        self::assertSame(1, substr_count($html, 'The form is invalid.'));
+    }
+
+    public function test_admin_page_form_inherits_the_root_form_error_once(): void
+    {
+        $form = $this->factory->createNamed('product', RootFormErrorTestType::class);
+        $form->addError(new FormError('The form is invalid.'));
+
+        $html = $this->renderAdminFormContent(
+            $form->createView(),
+            '@LexioAdmin/admin/page/form.html.twig',
+        );
+
+        self::assertSame(1, substr_count($html, 'The form is invalid.'));
+    }
+
+    private function renderAdminFormContent(
+        FormView $view,
+        string $template = '@LexioAdmin/admin/base_crud/form.html.twig',
+    ): string
+    {
+        $loader = new FilesystemLoader($this->getTemplatePaths());
+        $loader->addPath(__DIR__ . '/../../../../templates', 'LexioAdmin');
+        $environment = new Environment($loader, ['strict_variables' => true]);
+        $environment->setExtensions($this->getTwigExtensions());
+
+        $rendererEngine = new TwigRendererEngine($this->getThemes(), $environment);
+        $renderer = new FormRenderer($rendererEngine, new CsrfTokenManager());
+        $this->registerTwigRuntimeLoader($environment, $renderer);
+
+        return $environment
+            ->load($template)
+            ->renderBlock('main_form_content', [
+                'form' => $view,
+                'formContext' => [
+                    'showLocalesTab' => false,
+                    'modalRequest' => false,
+                ],
+                'adminUrlGenerator' => [
+                    'indexLink' => '/admin/products',
+                ],
+            ]);
+    }
+
     /** @return list<PreloadedExtension> */
     protected function getExtensions(): array
     {
@@ -135,8 +210,23 @@ final class CustomFieldFormThemeRenderingTest extends FormLayoutTestCase
             new PreloadedExtension([
                 new CKEditorType($router),
                 new AssociationModalThemeTestType(),
+                new InputImageSelectorType(
+                    $router,
+                    $this->translator(),
+                    new ImageEntityTransformer($this->createStub(FileRepositoryInterface::class)),
+                ),
+                new InputImageSelectorFormTestType(),
+                new RootFormErrorTestType(),
             ], []),
         ];
+    }
+
+    private function translator(): TranslatorInterface
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturn('Gallery');
+
+        return $translator;
     }
 
     /** @return list<string> */
@@ -182,6 +272,22 @@ final class AssociationModalThemeTestType extends AbstractType
     }
 }
 
+final class InputImageSelectorFormTestType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('image', InputImageSelectorType::class);
+    }
+}
+
+final class RootFormErrorTestType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('title', TextType::class);
+    }
+}
+
 final class CustomFieldThemeTwigExtension extends AbstractExtension implements GlobalsInterface
 {
     public function getGlobals(): array
@@ -201,6 +307,11 @@ final class CustomFieldThemeTwigExtension extends AbstractExtension implements G
             new TwigFunction(
                 'stimulus_controller',
                 self::renderStimulusController(...),
+                ['is_safe' => ['html_attr']],
+            ),
+            new TwigFunction(
+                'stimulus_action',
+                static fn (string $controller, string $action, array $values = []): string => '',
                 ['is_safe' => ['html_attr']],
             ),
             new TwigFunction(

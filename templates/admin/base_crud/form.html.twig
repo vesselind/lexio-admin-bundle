@@ -55,6 +55,10 @@
 
                         {{ form_start(form) }}
 
+                        {% if form.vars.errors|length > 0 %}
+                            <div class="alert alert-danger">{{ form_errors(form) }}</div>
+                        {% endif %}
+
                         {% for formElement in form %}
                             {% if formElement.children is empty %}
                                 {{ form_row(formElement) }}

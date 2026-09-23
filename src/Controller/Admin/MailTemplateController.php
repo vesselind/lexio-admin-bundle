@@ -17,6 +17,7 @@ use Lexio\AdminBundle\Controller\BaseCrudController;
 use Lexio\AdminBundle\Entity\MailTemplate;
 use Lexio\AdminBundle\Filter\BaseFilter;
 use Lexio\AdminBundle\Filter\MailTemplateFilter;
+use Lexio\AdminBundle\Form\MailTemplateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,7 +39,10 @@ abstract class MailTemplateController extends BaseCrudController
     }
 
     /** @return class-string */
-    abstract public function mailFormType(): string;
+    public function mailFormType(): string
+    {
+        return MailTemplateType::class;
+    }
 
     #[Route('', name: 'admin.mail_template.index')]
     public function index(ListingContext $listingContext): Response
