@@ -19,6 +19,7 @@ use Lexio\AdminBundle\Component\Admin\InputImageSelector;
 use Lexio\AdminBundle\Command\ProdDeployCommand;
 use Lexio\AdminBundle\Command\Translations\ScanTranslationsCommand;
 use Lexio\AdminBundle\Contract\Deployment\DeploymentRunnerInterface;
+use Lexio\AdminBundle\Form\Autocompleter\IconifyAutocompleter;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
 use Lexio\AdminBundle\Service\Deployment\ProcessRunnerInterface;
@@ -201,6 +202,22 @@ final class ServiceConfigurationTest extends TestCase
         );
         self::assertStringContainsString(
             '$defaultSiteKey: \'%env(default::GOOGLE_RECAPTCHA_SITE_KEY)%\'',
+            $servicesConfig,
+        );
+    }
+
+    public function test_iconify_autocompleter_is_registered_with_its_alias(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(IconifyAutocompleter::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Form\\Autocompleter\\IconifyAutocompleter:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString(
+            'name: ux.autocompleter, alias: iconify',
             $servicesConfig,
         );
     }

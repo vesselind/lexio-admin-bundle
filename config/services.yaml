@@ -72,6 +72,10 @@ services:
             $defaultLocale: '%lexio_admin.default_locale%'
         shared: false
 
+    Lexio\AdminBundle\Form\Autocompleter\IconifyAutocompleter:
+        tags:
+            - { name: ux.autocompleter, alias: iconify }
+
     Lexio\AdminBundle\AdminCore\Fields\HasRegisteredField:
         arguments:
             $userEntityClass: '%lexio_admin.user_entity_class%'

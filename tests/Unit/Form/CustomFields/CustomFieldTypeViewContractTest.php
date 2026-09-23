@@ -100,6 +100,7 @@ final class CustomFieldTypeViewContractTest extends TestCase
         $type->configureOptions($resolver);
         $options = $resolver->resolve();
 
+        self::assertFalse($options['error_bubbling']);
         self::assertSame('/media/gallery', $options['attr']['data-open-base-modal-visit-url-value']);
         self::assertSame('Gallery', $options['attr']['data-open-base-modal-modal-title-value']);
     }

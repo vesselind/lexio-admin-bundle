@@ -1,4 +1,8 @@
 <turbo-frame id="main-form">
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">{{ form_errors(form) }}</div>
+    {% endif %}
+
     {% block form_content %}
     {% endblock %}
     {% include '@LexioAdmin/admin/flash.stream.html.twig' %}

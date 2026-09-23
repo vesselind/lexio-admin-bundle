@@ -62,6 +62,8 @@ final class InputImageSelectorType extends AbstractType
 
         $resolver->setDefaults([
             'attr'               => $controllerAttributes,
+            // Hidden-based fields bubble errors by default, which would hide this field's errors at the root form.
+            'error_bubbling'     => false,
             'translation_domain' => 'form',
         ]);
 
