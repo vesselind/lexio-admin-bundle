@@ -5,6 +5,7 @@ __pycache__/
 
 /.serena
 /vendor/
+/var/
 /assets/node_modules/
 /assets/yarn.lock
 /composer.lock
