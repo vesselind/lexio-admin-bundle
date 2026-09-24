@@ -5,7 +5,7 @@
     {% set requested_frame = app.request.headers.get('Turbo-Frame') %}
     {% set content_frame = requested_frame and requested_frame != 'main-form' ? requested_frame : 'main-form-content' %}
 
-    <div class="col-12">
+    <div class="{{ formContext.containerClass }}">
         <turbo-frame id="main-tabs">
         </turbo-frame>
 
