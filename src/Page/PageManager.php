@@ -84,58 +84,121 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
                 ->setType($type);
 
 
-            if ($type === ContentItemTypes::IMAGE) {
-                if ($locale === $this->defaultLocale) {
-                    $image = $this->accessor()->getValue($page, $propertyName);
-
-                    if ($image !== null && !$image instanceof ImageEntityInterface) {
-                        throw new \LogicException(sprintf(
-                            'The image field %s::$%s must contain an %s or null.',
-                            $page::class,
-                            $propertyName,
-                            ImageEntityInterface::class,
-                        ));
-                    }
-
-                    $contentItem
-                        ->setImage($image)
-                        ->setValue(null);
-                }
-            } elseif ($locale === $this->defaultLocale) {
-                $value = $this->accessor()->getValue($page, $propertyName);
-
-                if ($value !== null && !is_string($value)) {
-                    throw new \LogicException(sprintf(
-                        'The content field %s::$%s must contain a string or null.',
-                        $page::class,
-                        $propertyName,
-                    ));
-                }
-
-                $contentItem->setValue($value);
-                $this->manager->flush();
-
-                $this->autoTranslator->translateField($contentItem, 'value', $locale);
-            } else {
-                $contentItem->setTranslatableLocale($locale);
-                $this->manager->refresh($contentItem);
-                $value = $this->accessor()->getValue($page, $propertyName);
-
-                if ($value !== null && !is_string($value)) {
-                    throw new \LogicException(sprintf(
-                        'The content field %s::$%s must contain a string or null.',
-                        $page::class,
-                        $propertyName,
-                    ));
-                }
-
-                $contentItem->setValue($value);
-            }
+            $this->persistContentItemField($contentItem, $page, $propertyName, $type, $locale);
 
             $this->manager->flush();
         }
 
         $this->manager->flush();
+    }
+
+    private function persistContentItemField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        ContentItemTypes $type,
+        string $locale,
+    ): void {
+        match (true) {
+            $type === ContentItemTypes::IMAGE => $this->persistImageField($contentItem, $page, $propertyName, $locale),
+            !$type->translatable() => $this->persistNonTranslatableField($contentItem, $page, $propertyName, $locale),
+            default => $this->persistTranslatableField($contentItem, $page, $propertyName, $locale),
+        };
+    }
+
+    private function persistImageField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        string $locale,
+    ): void {
+        if ($locale !== $this->defaultLocale) {
+            return;
+        }
+
+        $contentItem
+            ->setImage($this->getImageFieldValue($page, $propertyName))
+            ->setValue(null);
+    }
+
+    private function persistNonTranslatableField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        string $locale,
+    ): void {
+        if ($locale !== $this->defaultLocale) {
+            return;
+        }
+
+        $contentItem
+            ->setImage(null)
+            ->setValue($this->getStringFieldValue($page, $propertyName));
+    }
+
+    private function persistTranslatableField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        string $locale,
+    ): void {
+        match ($locale === $this->defaultLocale) {
+            true => $this->persistDefaultLocaleField($contentItem, $page, $propertyName, $locale),
+            false => $this->persistLocalizedField($contentItem, $page, $propertyName, $locale),
+        };
+    }
+
+    private function persistDefaultLocaleField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        string $locale,
+    ): void {
+        $contentItem->setValue($this->getStringFieldValue($page, $propertyName));
+        $this->manager->flush();
+        $this->autoTranslator->translateField($contentItem, 'value', $locale);
+    }
+
+    private function persistLocalizedField(
+        ContentItem $contentItem,
+        BasePage $page,
+        string $propertyName,
+        string $locale,
+    ): void {
+        $contentItem->setTranslatableLocale($locale);
+        $this->manager->refresh($contentItem);
+        $contentItem->setValue($this->getStringFieldValue($page, $propertyName));
+    }
+
+    private function getImageFieldValue(BasePage $page, string $propertyName): ?ImageEntityInterface
+    {
+        $image = $this->accessor()->getValue($page, $propertyName);
+
+        if ($image !== null && !$image instanceof ImageEntityInterface) {
+            throw new \LogicException(sprintf(
+                'The image field %s::$%s must contain an %s or null.',
+                $page::class,
+                $propertyName,
+                ImageEntityInterface::class,
+            ));
+        }
+
+        return $image;
+    }
+
+    private function getStringFieldValue(BasePage $page, string $propertyName): ?string
+    {
+        $value = $this->accessor()->getValue($page, $propertyName);
+
+        if ($value !== null && !is_string($value)) {
+            throw new \LogicException(sprintf(
+                'The content field %s::$%s must contain a string or null.',
+                $page::class,
+                $propertyName,
+            ));
+        }
+
+        return $value;
     }
 
 

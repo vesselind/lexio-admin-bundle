@@ -7,21 +7,24 @@ namespace Lexio\AdminBundle\AdminCore\Action;
 use Lexio\AdminBundle\AdminCore\Fields\BaseField;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Webmozart\Assert\Assert;
 use function Symfony\Component\String\u;
 
 final class Action
 {
     public ?BaseField $parentField = null;
 
-    private bool    $openInModal       = false;
-    private ?string $modalSize         = null;
-    private ?string $textClass         = null;
-    private bool    $confirmationModal = false;
-    private ?string $confirmationText  = null;
+    private bool $openInModal = false;
+    private ?string $modalSize = null;
+    private ?string $textClass = null;
+    private bool $confirmationModal = false;
+    private ?string $confirmationText = null;
     private ?string $confirmationRoute = null;
 
     /** @var array<string, string> */
-    private array   $confirmationParams = [];
+    private array $confirmationParams = [];
+
+    private bool $openInNewWindow = false;
 
     /**
      * @param array<string, string> $routeParams
@@ -31,11 +34,14 @@ final class Action
         private readonly string  $route,
         private readonly array   $routeParams = [],
         private readonly ?string $icon = null,
-    ) {
+    )
+    {
     }
 
     /**
-     * @param array<string, string> $routeParams
+     * @param string $label #TranslationKey
+     * @param string $route #Route
+     * @param array<string, string> $routeParams #RouteParams
      */
     public static function new(string $label, string $route, array $routeParams = [], ?string $icon = null): static
     {
@@ -88,11 +94,11 @@ final class Action
      */
     public function getRouteParams(): array
     {
-        $accessor       = PropertyAccess::createPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         $entityInstance = $this->getEntityInstance();
 
         return array_map(
-            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
+            static fn(string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->routeParams
         );
     }
@@ -105,7 +111,7 @@ final class Action
     public function openInModal(string $modalSize): static
     {
         $this->openInModal = true;
-        $this->modalSize   = $modalSize;
+        $this->modalSize = $modalSize;
 
         return $this;
     }
@@ -115,14 +121,28 @@ final class Action
         return $this->openInModal;
     }
 
+    public function openInNewWindow(): self
+    {
+        Assert::notEq($this->isOpenInModal(), true, 'The action cannot open a link both in modal and in new window.');
+
+        $this->openInNewWindow = true;
+
+        return $this;
+    }
+
+    public function isOpenInNewWindow(): bool
+    {
+        return $this->openInNewWindow;
+    }
+
     /**
      * @param array<string, string> $routeParams
      */
     public function confirmationModal(string $confirmationText, string $route, array $routeParams = []): static
     {
-        $this->confirmationModal  = true;
-        $this->confirmationText   = $confirmationText;
-        $this->confirmationRoute  = $route;
+        $this->confirmationModal = true;
+        $this->confirmationText = $confirmationText;
+        $this->confirmationRoute = $route;
         $this->confirmationParams = $routeParams;
 
         return $this;
@@ -156,11 +176,11 @@ final class Action
      */
     public function getConfirmationRouteParams(): array
     {
-        $accessor       = PropertyAccess::createPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         $entityInstance = $this->getEntityInstance();
 
         return array_map(
-            static fn (string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
+            static fn(string $propertyPath): mixed => $accessor->getValue($entityInstance, $propertyPath),
             $this->confirmationParams
         );
     }

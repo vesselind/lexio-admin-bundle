@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Controller\Admin;
 
+use Lexio\AdminBundle\AdminCore\Action\Action;
 use Lexio\AdminBundle\AdminCore\Action\UpdateAction;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkAction;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkContext;
@@ -20,6 +21,7 @@ use Lexio\AdminBundle\Entity\Page;
 use Lexio\AdminBundle\Enum\Flash;
 use Lexio\AdminBundle\Filter\PageFilter;
 use Lexio\AdminBundle\Form\PageObjectType;
+use Lexio\AdminBundle\Page\PageRouteResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -80,8 +82,12 @@ abstract class PageController extends BaseCrudController
     }
 
     #[Route('/{id}/update', name: 'admin.page.update')]
-    public function update(Page $page, FormContext $formContext, PageAdministrationInterface $pageManager): Response
-    {
+    public function update(
+        Page $page,
+        FormContext $formContext,
+        PageAdministrationInterface $pageManager,
+        PageRouteResolver $pageRouteResolver,
+    ): Response {
         $formContext->setEntityInstance($page);
 
         $pageName = $page->getName();
@@ -118,6 +124,14 @@ abstract class PageController extends BaseCrudController
             $this->getIndexTitle(),
             $formContext->getPageTitle(),
         );
+
+        $publicRoute = $pageRouteResolver->findRouteForPage($pageName);
+
+        if ($publicRoute !== null) {
+            $formContext->addAction(Action::new(label:'see.page', route: $publicRoute, icon: 'lets-icons:external')
+                ->openInNewWindow()
+            );
+        }
 
         return $this->render('@LexioAdmin/admin/page/form.html.twig', [
             'formContext' => $formContext,

@@ -4,6 +4,7 @@ namespace Lexio\AdminBundle\Page;
 
 use Lexio\AdminBundle\Form\CustomFields\CKEditorType;
 use Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType;
+use Lexio\AdminBundle\Form\IconifySearcherType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -15,6 +16,8 @@ enum ContentItemTypes: string
     case TEXTAREA = 'textarea';
     case TEXT_INPUT = 'text_input';
 
+    case ICON = 'icon';
+
 
     /**
      * @return class-string<\Symfony\Component\Form\FormTypeInterface>
@@ -25,14 +28,15 @@ enum ContentItemTypes: string
             self::IMAGE => InputImageSelectorType::class,
             self::LINK_URL, self::TEXT_INPUT => TextType::class,
             self::RICH_TEXT => CKEditorType::class,
-            self::TEXTAREA => TextareaType::class
+            self::TEXTAREA => TextareaType::class,
+            self::ICON => IconifySearcherType::class
         };
     }
 
     public function translatable(): bool
     {
         return match ($this) {
-            self::IMAGE => false,
+            self::IMAGE, self::ICON => false,
             default => true,
         };
     }
