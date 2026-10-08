@@ -266,7 +266,7 @@ their own domain model.
   - Layout (`header-navbar.scss`)
   - Mixins, utilities, variables
   - Datepicker & flash-message styles
-  - Font Awesome compatibility remains pending UX Icon migration
+  - Admin icons use Symfony UX Icons (`ux_icon()`); Font Awesome compatibility has been removed
 
 ---
 

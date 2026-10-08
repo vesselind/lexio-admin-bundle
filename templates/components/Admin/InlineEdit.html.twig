@@ -13,7 +13,7 @@
                     data-action="live#action"
                     data-live-action-param="save"
                     class="btn btn-success btn-sm">
-                <i class="fa fa-save"></i>
+                {{ ux_icon('fa6-solid:floppy-disk', {width: '1em', height: '1em'}) }}
             </button>
 
             <button type="button"
@@ -22,7 +22,7 @@
                     data-action="live#action"
                     data-live-action-param="toggleEditing"
                     class="btn btn-danger btn-sm">
-                <i class="fa fa-close"></i>
+                {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }}
             </button>
         </div>
     {% else %}
@@ -36,7 +36,7 @@
                     data-action="live#action"
                     data-live-action-param="toggleEditing"
                     class="btn btn-light btn-sm">
-                <i class="fa fa-edit"></i>
+                {{ ux_icon('fa6-solid:pen-to-square', {width: '1em', height: '1em'}) }}
             </button>
         </div>
     {% endif %}

@@ -4,11 +4,11 @@
     <template>
         <div class="flash-message shadow-sm alert alert-success position-relative d-flex gap-2" data-controller="flash-message">
             <div>
-                <i class="fa fa-check-circle text-success"></i>
+                {{ ux_icon('fa6-solid:circle-check', {width: '1em', height: '1em', class: 'text-success'}) }}
                 {{ message }}
             </div>
             <button type="button" class="bg-transparent text-decoration-none border-0" data-action="flash-message#close">
-                <i class="fa fa-xmark"></i>
+                {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }}
             </button>
             <div class="timer bg-success" data-flash-message-target="timer"></div>
         </div>
@@ -21,11 +21,11 @@
         <template>
             <div class="flash-message alert alert-danger position-relative d-flex gap-2" data-controller="flash-message">
                 <div>
-                    <i class="fa fa-circle-xmark text-danger"></i>
+                    {{ ux_icon('fa6-solid:circle-xmark', {width: '1em', height: '1em', class: 'text-danger'}) }}
                     {{ message }}
                 </div>
                 <button type="button" class="bg-transparent text-decoration-none border-0" data-action="flash-message#close">
-                    <i class="fa fa-xmark"></i>
+                    {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }}
                 </button>
                 <div class="timer bg-danger" data-flash-message-target="timer"></div>
             </div>

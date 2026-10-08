@@ -6,7 +6,7 @@
 
 
 {% if field.value is not null %}
-<i class="fa fa-x text-danger"></i>
+{{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em', class: 'text-danger'}) }}
 {% else %}
-<i class="fa fa-check text-success"></i>
+{{ ux_icon('fa6-solid:check', {width: '1em', height: '1em', class: 'text-success'}) }}
 {% endif %}

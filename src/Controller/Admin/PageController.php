@@ -53,7 +53,7 @@ abstract class PageController extends BaseCrudController
             )
             ->setFilter(new PageFilter())
             ->setShowCreateButton(false)
-            ->addBulkAction(new BulkAction('admin.page.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.page.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext);
     }

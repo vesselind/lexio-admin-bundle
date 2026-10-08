@@ -14,9 +14,6 @@
         {% endif %}
     {% endblock %}
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     {# CSRF Token #}
     <meta name="csrf-token" content="{{ csrf_token('authenticate') }}">
@@ -93,7 +90,7 @@
                                         aria-label="{{ 'header_search.placeholder'|trans({}, 'admin') }}"
                                 >
                                 </select>
-                                <i class="fa fa-search" id="header-search-icon"></i>
+                                {{ ux_icon('fa6-solid:magnifying-glass', {width: '1em', height: '1em', id: 'header-search-icon'}) }}
                             </div>
                         {% endblock %}
 
@@ -124,7 +121,7 @@
                                 {% block user_menu_items %}
                                     <li>
                                         <a class="dropdown-item" href="{{ path(lexio_admin_ui.routes.profile) }}">
-                                            <i class="fa-solid fa-id-card"></i>
+                                            {{ ux_icon('fa6-solid:id-card', {width: '1em', height: '1em'}) }}
                                             {{ 'user_menu.profile'|trans({}, 'admin') }}
                                         </a>
                                     </li>
@@ -135,14 +132,14 @@
                                         <li>
                                             <a class="dropdown-item"
                                                href="{{ path(lexio_admin_ui.routes.exit_impersonation, {'_switch_user': '_exit'}) }}">
-                                                <i class="fa-solid fa-user-secret"></i>
+                                                {{ ux_icon('fa6-solid:user-secret', {width: '1em', height: '1em'}) }}
                                                 {{ 'user_menu.exit_impersonation'|trans({}, 'admin') }}
                                             </a>
                                         </li>
                                     {% endif %}
                                     <li>
                                         <a class="dropdown-item" href="{{ path(lexio_admin_ui.routes.logout) }}">
-                                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                            {{ ux_icon('fa6-solid:arrow-right-from-bracket', {width: '1em', height: '1em'}) }}
                                             {{ 'user_menu.logout'|trans({}, 'admin') }}
                                         </a>
                                     </li>

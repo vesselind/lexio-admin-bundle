@@ -49,7 +49,7 @@ abstract class EmailDeliveryController extends BaseCrudController
                 ->addAction(DeleteAction::new('admin.email_delivery.delete'))
             )
             ->setShowCreateButton(false)
-            ->addBulkAction(new BulkAction('admin.email_delivery.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.email_delivery.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext);
     }

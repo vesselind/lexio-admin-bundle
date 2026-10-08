@@ -51,7 +51,7 @@ abstract class FileController extends BaseCrudController
             ->addColumn('size', new TitleField())
             ->addColumn('createdAt', new DateTimeField())
             ->setFilter($this->getFileListingFilter())
-            ->addBulkAction(new BulkAction('admin.file.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.file.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext, '@LexioAdmin/admin/file/file_listing.html.twig');
     }

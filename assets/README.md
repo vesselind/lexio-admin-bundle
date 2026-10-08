@@ -74,8 +74,8 @@ application overrides after it:
 ```
 
 The host owns product logos, favicons, marketing fonts, public-site styles,
-and product-specific icon choices. Font Awesome CDN usage remains a separate
-compatibility task until the admin templates have been migrated to UX Icons.
+and product-specific icon choices. Admin templates render icons through
+Symfony UX Icons with the `ux_icon()` Twig function.
 
 For a Reprise host, install the package as `@lexio/admin-bundle`, list only the
 bundle controllers required by public pages in `assets/controllers.json`, and

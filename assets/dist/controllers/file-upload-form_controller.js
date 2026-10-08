@@ -9,7 +9,7 @@ var file_upload_form_controller_default = class extends Controller {
     this.inputTarget.click();
   }
   submitForm() {
-    this.iconTarget.classList.toggle("fa-upload");
+    this.iconTarget.classList.toggle("d-none");
     this.spinnerTarget.classList.remove("d-none");
     if (this.hasSubmitButtonTarget) {
       this.submitButtonTarget.click();

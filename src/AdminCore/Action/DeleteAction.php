@@ -9,7 +9,7 @@ final class DeleteAction
     public static function new(
         string $route,
         string $label = 'button.delete',
-        string $icon  = 'fa fa-trash',
+        string $icon  = 'fa6-solid:trash',
     ): Action {
         return Action::new($label, $route, ['id' => 'id'], $icon)
             ->confirmationModal('delete_record.confirmation_text', $route, ['id' => 'id'])

@@ -50,7 +50,7 @@ abstract class SecurityLogController extends BaseCrudController
             ->addColumn('Actions', new DropdownActionsField()
                 ->addAction(DetailsAction::new('admin.security_log.details'))
             )
-            ->addBulkAction(new BulkAction('admin.security_log.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.security_log.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext);
     }

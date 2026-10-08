@@ -4,7 +4,7 @@
 <div>
     <a href="{{ path('acts.detail', {'id': field.entityInstance.id }) }}" target="_blank">{{ field.value }}</a>
     {% if field.entityInstance.annotation %}
-        <span class="ms-2 badge bg-success"><i class="fa fa-check"></i> Анотация</span>
+        <span class="ms-2 badge bg-success">{{ ux_icon('fa6-solid:check', {width: '1em', height: '1em'}) }} Анотация</span>
     {% endif %}
 </div>
 {% if field.entityInstance.subtitle %}

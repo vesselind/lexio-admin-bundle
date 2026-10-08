@@ -31,7 +31,7 @@
                 {% elseif action.hasConfirmationModal %}
                     <button class="dropdown-item {{ action.textClass }}" data-bs-toggle="modal"
                             data-bs-target="#confirmationModal_{{ field.entityInstance.id ~ '_' ~ action.snakeLabel }}">
-                        <i class="fa fa-remove me-1"></i> {{ action.label|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em', class: 'me-1'}) }} {{ action.label|trans({}, 'admin') }}
                     </button>
                 {% else %}
                     <a class="dropdown-item {{ action.textClass }}"

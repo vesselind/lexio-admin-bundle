@@ -37,7 +37,7 @@
             data-input-image-selector-target="emptyState"
             {% if hasImage %}hidden{% endif %}
         >
-            <i class="fa fa-image input-image-selector__empty-icon" aria-hidden="true"></i>
+            {{ ux_icon('fa6-solid:image', {width: '1em', height: '1em', class: 'input-image-selector__empty-icon', 'aria-hidden': true}) }}
             <span>{{ buttonLabel }}</span>
         </span>
 

@@ -20,7 +20,7 @@
                     class="btn btn-success"
                     {{ stimulus_action('file-upload-form', 'selectFile', 'click') }}
             >
-                <i class="fa fa-upload" {{ stimulus_target('file-upload-form', 'icon') }}></i>
+                <span class="d-inline-flex" {{ stimulus_target('file-upload-form', 'icon') }}>{{ ux_icon('fa6-solid:upload', {width: '1em', height: '1em'}) }}</span>
                 <span class="spinner-border spinner-border-sm d-none"
                       aria-hidden="true" {{ stimulus_target('file-upload-form', 'spinner') }}></span>
                 {{ 'button.upload_image'|trans({}, 'admin') }}
@@ -67,27 +67,27 @@
                     </div>
                     <div class="card-footer d-flex align-items-center">
                         <div class="small">
-                            <i class="fa fa-calendar-alt"></i> {{ item.createdAt|formatted_date }}
+                            {{ ux_icon('fa6-solid:calendar-days', {width: '1em', height: '1em'}) }} {{ item.createdAt|formatted_date }}
                         </div>
                         <div class="btn-group ms-auto">
                             <button type="button" class="btn btn-gray btn-sm dropdown-toggle" data-bs-toggle="dropdown"
                                     aria-expanded="true">
-                                <i class="fa fa-cog"></i>
+                                {{ ux_icon('fa6-solid:gear', {width: '1em', height: '1em'}) }}
                                 {{ 'button.select'|trans({}, 'admin') }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end" {{ stimulus_controller('clipboard') }}>
                                 <button class="dropdown-item" {{ stimulus_action('clipboard', 'copy') }}>
-                                    <i class="fa fa-copy me-1"></i> {{ 'button.copy_url'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:copy', {width: '1em', height: '1em', class: 'me-1'}) }} {{ 'button.copy_url'|trans({}, 'admin') }}
                                     <input type="hidden"
                                            value="{{ item.filePath }}" {{ stimulus_target('clipboard', 'source') }}>
                                 </button>
                                 <a class="dropdown-item" data-turbo="false" href="{{ path('admin.image.download', {'id': item.id}) }}">
-                                    <i class="fa fa-download"></i> {{ 'button.download'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:download', {width: '1em', height: '1em'}) }} {{ 'button.download'|trans({}, 'admin') }}
                                 </a>
 
                                 <button class="dropdown-item text-danger" data-bs-toggle="modal"
                                         data-bs-target="#confirmationModal_{{ item.id }}">
-                                    <i class="fa fa-remove me-1"></i> {{ 'button.delete'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em', class: 'me-1'}) }} {{ 'button.delete'|trans({}, 'admin') }}
                                 </button>
                             </div>
                         </div>
