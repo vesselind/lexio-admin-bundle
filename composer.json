@@ -57,7 +57,6 @@
         "symfony/phpunit-bridge": "^7.2 || ^8.0"
     },
     "suggest": {
-        "huluti/breadcrumbs-bundle": "Required if you use AdminBreadcrumbs or FrontBreadcrumbs services.",
         "symfony/maker-bundle": "Required for the make:admin code generator command.",
         "symfony/ux-turbo": "Required for TurboRedirectResponse / turbo-frame support in FormContext.",
         "bootstrap": "Required for admin UI styling (CSS framework).",
