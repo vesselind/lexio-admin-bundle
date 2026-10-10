@@ -7,8 +7,11 @@ namespace Lexio\AdminBundle;
 use Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface;
 use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveNotificationUserPass;
 use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveImageEntityPass;
+use Lexio\AdminBundle\EventListener\PageCacheInvalidationListener;
+use Lexio\AdminBundle\Page\PageManager;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
@@ -16,6 +19,19 @@ final class LexioAdminBundle extends AbstractBundle
 {
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
+        if ($container->hasExtension('framework')) {
+            $configurator->extension('framework', [
+                'cache' => [
+                    'pools' => [
+                        'lexio_admin.cache.pages' => [
+                            'adapter' => 'cache.adapter.filesystem',
+                            'tags' => true,
+                        ],
+                    ],
+                ],
+            ], prepend: true);
+        }
+
         // Register bundle templates under the @LexioAdmin namespace.
         // Must be in prependExtension() so the config is available when TwigBundle loads.
         if ($container->hasExtension('twig')) {
@@ -104,6 +120,25 @@ final class LexioAdminBundle extends AbstractBundle
                         ->booleanNode('enabled')
                             ->defaultTrue()
                             ->info('Enable bundle sitemap responses for imported sitemap routes.')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('page_cache')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultTrue()
+                            ->info('Cache localized page content between requests.')
+                        ->end()
+                        ->scalarNode('pool')
+                            ->defaultValue('lexio_admin.cache.pages')
+                            ->cannotBeEmpty()
+                            ->info('Service ID of a tag-aware cache pool. The default pool uses the filesystem.')
+                        ->end()
+                        ->integerNode('lifetime')
+                            ->defaultValue(3600)
+                            ->min(1)
+                            ->info('Maximum page content cache lifetime in seconds.')
                         ->end()
                     ->end()
                 ->end()
@@ -256,6 +291,18 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.image_entity_class', $config['image_entity_class']);
         $container->setParameter('lexio_admin.front_home_page_route', $config['front_home_page_route']);
         $container->setParameter('lexio_admin.sitemap.enabled', $config['sitemap']['enabled']);
+
+        /** @var array{enabled: bool, pool: string, lifetime: int} $pageCache */
+        $pageCache = $config['page_cache'];
+        $container->getDefinition(PageManager::class)
+            ->setArgument('$cache', $pageCache['enabled'] ? new Reference($pageCache['pool']) : null)
+            ->setArgument('$cacheLifetime', $pageCache['lifetime']);
+        if ($pageCache['enabled']) {
+            $container->getDefinition(PageCacheInvalidationListener::class)
+                ->setArgument('$cache', new Reference($pageCache['pool']));
+        } else {
+            $container->removeDefinition(PageCacheInvalidationListener::class);
+        }
 
         /** @var array{
          *     favicon_asset: string|null,
