@@ -43,3 +43,4 @@ const lazyControllers = {
 export function registerLexioAdminControllers(application) {
     return registerControllers(application, eagerControllers, lazyControllers);
 }
+

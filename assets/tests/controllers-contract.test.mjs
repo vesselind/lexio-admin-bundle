@@ -132,15 +132,16 @@ test('Turnstile uses a provider-specific Symfony UX controller identifier', () =
     assert.match(source, /window\.turnstile/);
 });
 
-test('Google reCAPTCHA Enterprise uses a generic captcha identifier and refreshes on submit', () => {
+test('classic Google reCAPTCHA v3 keeps the existing captcha identifier', () => {
     const metadata = packageJson.symfony.controllers.captcha;
 
     assert.equal(metadata.name, 'captcha');
     assert.equal(metadata.main, 'dist/controllers/captcha_controller.js');
 
     const source = readFileSync(join(sourceDirectory, 'captcha_controller.js'), 'utf8');
-    assert.match(source, /enterprise\.js/);
-    assert.match(source, /data-google-recaptcha-enterprise/);
+    assert.match(source, /recaptcha\/api\.js/);
+    assert.doesNotMatch(source, /enterprise/);
+    assert.match(source, /data-google-recaptcha-v3/);
     assert.match(source, /connect\(\)\s*\{\s*this\.element\.value = '';/);
     assert.match(source, /form\.addEventListener\('submit', this\.onSubmit, true\)/);
     assert.match(source, /event\.preventDefault\(\)/);
@@ -175,6 +176,14 @@ test('sidebar submenu headers toggle their targeted Bootstrap collapse instance'
     assert.match(source, /event\.stopPropagation\(\)/);
     assert.match(source, /getAttribute\('data-bs-target'\)/);
     assert.match(source, /this\.bsCollapse\[targetId\]\.toggle\(\)/);
+});
+
+test('CKEditor registers the built-in media embed plugin and toolbar button', () => {
+    const source = readFileSync(join(sourceDirectory, 'ckeditor_controller.js'), 'utf8');
+
+    assert.match(source, /import \{[\s\S]*?\bMediaEmbed\b[\s\S]*?\} from 'ckeditor5';/);
+    assert.match(source, /'mediaEmbed'/);
+    assert.match(source, /\n\s*MediaEmbed,/);
 });
 
 test('runtime dependencies are peers and controller source has no starter-app endpoints', () => {

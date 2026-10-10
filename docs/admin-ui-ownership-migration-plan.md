@@ -143,7 +143,7 @@ shared admin template.
 - [x] Add controller source under `assets/src/controllers/` and committed distributable builds
   under `assets/dist/controllers/`.
 - [x] Register provider-specific CAPTCHA controllers with explicit metadata names: `turnstile` for
-  Cloudflare Turnstile and `captcha` for Google reCAPTCHA Enterprise.
+  Cloudflare Turnstile and `captcha` for classic Google reCAPTCHA v3.
 - [x] Move controllers in feature slices, including their helpers:
   - core UI: `modal`, `base-modal`, `open-base-modal`, `tooltip`, `navigate-turbo`, `autosubmit`;
   - CRUD/listing: `bulk-action`, `check-selection`, `sortable`, `clipboard`, `toggle-class`;
