@@ -110,3 +110,13 @@ The bundle should support English and Bulgarian locales by default, and the tran
 
 ## Commiting and managing the version tag
 You should manage this bundle's version tag when git committing and/or git pushing changes within the bundle. You should update the revision version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9 should become 0.1.10, etc..
+
+## Git Tag vs GitHub Release
+A **git tag** is a pointer to a commit and is what Composer/Packagist uses to resolve installable versions. A **GitHub release** is a platform feature layered on top of a tag (tag + release notes + assets + "latest release" marker).
+
+When bumping this bundle's version:
+1. Update the version per the rule above.
+2. Create and push the tag: `git tag <version>` then `git push origin <version>`.
+3. Create a matching GitHub release from that tag with short changelog notes.
+
+The tag is mandatory for versioning; the release is the recommended human-facing wrapper and keeps changelogs aligned with installability.
