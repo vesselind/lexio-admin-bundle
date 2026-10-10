@@ -108,7 +108,16 @@ class MakeAdminSectionCommand extends Command
 
     private function getMetadata(string $shortClassName): array
     {
-        $reflection = new \ReflectionClass('\\App\\Entity\\' . $shortClassName);
+        $entityFqcn = '\\App\\Entity\\' . $shortClassName;
+
+        if (!class_exists($entityFqcn)) {
+            throw new RuntimeException(sprintf(
+                'Entity class "%s" was not found. Create the entity (e.g. with "make:entity") before running this generator.',
+                ltrim($entityFqcn, '\\'),
+            ));
+        }
+
+        $reflection = new \ReflectionClass($entityFqcn);
         $fieldsResult = [];
 
         foreach ($reflection->getProperties() as $property) {

@@ -79,13 +79,13 @@ abstract class MenuController extends BaseController
     {
         $item = null;
 
-        if ($currentItemId = $request->query->get('currentItemId')) {
+        if ($currentItemId = $request->request->get('currentItemId')) {
             /** @var HeaderMenu|null $item */
             $item = $this->headerMenuRepository->find($currentItemId);
         }
 
         if ($item) {
-            $item->setPositionIndex((int) $request->query->get('newIndex'));
+            $item->setPositionIndex((int) $request->request->get('newIndex'));
             $this->menuRepository->flush();
         } else {
             return $this->json(['message' => $this->translate('sorting_error')], 500);
@@ -177,13 +177,13 @@ abstract class MenuController extends BaseController
     {
         $item = null;
 
-        if ($currentItemId = $request->query->get('currentItemId')) {
+        if ($currentItemId = $request->request->get('currentItemId')) {
             /** @var FooterMenu|null $item */
             $item = $this->footerMenuRepository->find($currentItemId);
         }
 
         if ($item) {
-            $item->setPositionIndex((int) $request->query->get('newIndex'));
+            $item->setPositionIndex((int) $request->request->get('newIndex'));
             $this->menuRepository->flush();
         } else {
             return $this->json(['message' => $this->translate('sorting_error')], 500);
