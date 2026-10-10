@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\AdminCore\Listing;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexio\AdminBundle\AdminCore\Breadcrumbs\AdminBreadcrumbs;
 use Lexio\AdminBundle\AdminCore\Bulk\BulkAction;
@@ -38,7 +37,7 @@ class ListingContext
     public function __construct(
         private readonly RequestStack           $requestStack,
         private readonly RouterInterface        $router,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly EntitySortabilityPropertiesResolver $entitySortabilityPropertiesResolver,
         public readonly PaginatorInterface      $paginator,
         public readonly AdminBreadcrumbs        $breadcrumbs
     )
@@ -153,8 +152,7 @@ class ListingContext
      */
     public function refreshColumnsSortability(): static
     {
-        $entityFields = $this->entityManager->getClassMetadata($this->getEntityFqcnOrFail())->fieldNames;
-        $properties = array_values($entityFields);
+        $properties = $this->entitySortabilityPropertiesResolver->resolve($this->getEntityFqcnOrFail());
 
         foreach ($this->getColumns() as $column) {
             $column->setSortable(in_array($column->propertyName, $properties, true));
