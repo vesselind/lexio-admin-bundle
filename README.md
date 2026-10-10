@@ -23,6 +23,12 @@ A Symfony 8+ bundle that provides a rich admin CRUD layer with:
 | Doctrine ORM | ^3.0 |
 | Doctrine Bundle | ^3.0 |
 | KnpPaginatorBundle | ^6.0 |
+| huluti/breadcrumbs-bundle | ^1.7 (required — powers `AdminBreadcrumbs` / `FrontBreadcrumbs`) |
+| symfony/maker-bundle | ^1.0 (dev-only — required only by the `make:admin-crud` generator) |
+
+The bundle declares these in `composer.json`: `huluti/breadcrumbs-bundle` is a hard
+runtime requirement, while `symfony/maker-bundle` is a `require-dev`/`suggest`
+dependency that is only needed to run the code generator.
 
 ## Installation
 
@@ -122,6 +128,13 @@ The bundle uses esbuild for controllers and Sass for styles. Runtime libraries
 remain peer dependencies and are supplied by the host.
 
 
+## CAPTCHA fields
+
+Use the existing `CaptchaType` and `captcha` controller for classic Google reCAPTCHA v3.
+`TurnstileType` retains its separate Cloudflare integration. Hosts provide credentials,
+provider selection and server-side validation, including through form type extensions.
+See [CAPTCHA field options and asset registration](docs/captcha.md).
+
 ## Configuration
 
 ```yaml
@@ -133,6 +146,10 @@ lexio_admin:
     listing_items_per_page: 20
     user_entity_class: App\Entity\User   # required only for HasRegisteredField
     image_entity_class: App\Entity\Image # required for relation-backed image fields
+    page_cache:
+        enabled: true
+        pool: lexio_admin.cache.pages
+        lifetime: 3600 # seconds
     sitemap:
         enabled: true
 ```
@@ -142,6 +159,28 @@ ManyToOne relation. Configure image_entity_class with a class implementing
 ImageEntityInterface; the bundle resolves its Doctrine interface mapping at
 compile time. The host file repository must implement
 FileRepositoryInterface::findById().
+
+### Page content caching
+
+`PageManager` caches page content separately for each page class and locale in the
+tag-aware `lexio_admin.cache.pages` filesystem pool. Repeated reads skip Page and
+ContentItem database queries. Each read returns a fresh page object; cached data
+contains text values and image IDs, while images are restored as managed Doctrine
+references and may load their data when accessed.
+
+The public page contracts and the original three constructor arguments remain
+unchanged. The optional cache and lifetime arguments are wired by the bundle;
+existing host calls require no changes.
+
+Page, ContentItem, and their Gedmo translation inserts, updates, and deletes clear
+the page content cache after a successful Doctrine flush, including every locale.
+Changes made through direct SQL or DQL bulk operations bypass these listeners;
+clear the pool with Symfony's `cache:pool:clear lexio_admin.cache.pages` command
+or wait for the configured lifetime to expire.
+
+Set `lexio_admin.page_cache.enabled: false` to read directly from Doctrine. To use
+Redis or another backend, configure a tag-aware Symfony cache pool and set
+`lexio_admin.page_cache.pool` to its service ID.
 
 ### Sitemaps
 
@@ -215,17 +254,17 @@ Prompts for an entity name and scaffolds:
 - Foundry factory (if available)
 - Integration test skeleton
 
-## Missing Files Warning
+## Optional & host-provided dependencies
 
-The following items were extracted from an existing application and **may require app-specific files that were not included**:
+All PHP dependencies required by the bundle are declared in `composer.json`, so a
+plain `composer require lexio/admin-bundle` installs everything needed. The
+following points are the only host-specific expectations:
 
-| File | Missing dependency |
+| Item | Expectation |
 |---|---|
-| `AdminBreadcrumbs` / `FrontBreadcrumbs` | `huluti/breadcrumbs-bundle` |
-| `MakeAdminSectionCommand` | `symfony/maker-bundle`, `App\Entity\*` classes at scaffold time |
-| Twig templates under `templates/` | May reference app-specific partials |
-
-Please review and adapt templates for your application.
+| `AdminBreadcrumbs` / `FrontBreadcrumbs` | Uses `huluti/breadcrumbs-bundle` (declared as a hard requirement). |
+| `MakeAdminSectionCommand` (`make:admin-crud`) | Needs `symfony/maker-bundle` (dev/suggest). The command is registered only when that bundle is present, so the application boots without it. Resolving the target entity requires the host's own `App\Entity\*` class to exist at scaffold time. |
+| Twig templates under `templates/` | Bundle-owned; hosts may override them via the `@LexioAdmin` namespace. |
 
 ## Namespace Map (migration from `App\AdminCore\*`)
 
@@ -259,5 +298,5 @@ entity and repository) are host-application responsibilities.
 
 ## License
 
-MIT
+Proprietary
 
