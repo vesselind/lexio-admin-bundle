@@ -9,7 +9,7 @@
                     modalTitle: modalTitle|trans({}, 'form'),
                     closeOnSuccess: true,
                 }) }}
-        ><i class="fa fa-plus" aria-hidden="true"></i></button>
+        >{{ ux_icon('fa6-solid:plus', {width: '1em', height: '1em', 'aria-hidden': true}) }}</button>
     </div>
 {%- endblock association_modal_widget %}
 
@@ -68,7 +68,7 @@
 
                         }}
                 >
-                    <i class="fa fa-link" aria-hidden="true"></i>
+                    {{ ux_icon('fa6-solid:link', {width: '1em', height: '1em', 'aria-hidden': true}) }}
                 </button>
 
                 <div class="modal fade" id="addLink_{{ form.vars.unique_block_prefix }}" tabindex="-1"
@@ -94,6 +94,14 @@
                 </div>
             {% endif %}
         </div>
+        {% if linksSearch %}
+            <template {{ stimulus_target('links-search-field', 'addedBadgeTemplate') }}>
+                <span class="badge bg-success ms-1">
+                    {{ ux_icon('fa6-solid:check', {width: '1em', height: '1em', class: 'me-1', 'aria-hidden': true}) }}
+                    <span data-added-badge-text></span>
+                </span>
+            </template>
+        {% endif %}
     </div>
 
 {% endblock %}

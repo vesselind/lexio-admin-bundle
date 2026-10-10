@@ -43,7 +43,7 @@ class {{ shortClassName }}Controller extends BaseCrudController
                 ->addAction(UpdateAction::new('admin.{{ snakeCaseClassName }}.update'))
                 ->addAction(DeleteAction::new('admin.{{ snakeCaseClassName }}.delete'))
             )
-            ->addBulkAction(new BulkAction('admin.{{ snakeCaseClassName }}.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.{{ snakeCaseClassName }}.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext);
     }

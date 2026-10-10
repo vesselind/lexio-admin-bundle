@@ -217,6 +217,22 @@ final class CustomFieldTypeViewContractTest extends TestCase
         $resolver->resolve(['captcha_action' => ' ']);
     }
 
+    public function test_google_recaptcha_can_be_disabled_without_a_browser_dependency(): void
+    {
+        $type = new CaptchaType();
+        $resolver = new OptionsResolver();
+        $type->configureOptions($resolver);
+        $options = $resolver->resolve(['captcha_enabled' => false]);
+        $view = new FormView();
+        $view->vars['attr'] = ['data-controller' => 'other-controller', 'class' => 'custom'];
+
+        $type->buildView($view, $this->createStub(FormInterface::class), $options);
+
+        self::assertSame(['data-controller' => 'other-controller', 'class' => 'custom'], $view->vars['attr']);
+        self::assertFalse($options['mapped']);
+        self::assertSame(HiddenType::class, $type->getParent());
+    }
+
     private function imageTransformer(): ImageEntityTransformer
     {
         return new ImageEntityTransformer($this->createStub(FileRepositoryInterface::class));

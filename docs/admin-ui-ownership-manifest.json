@@ -144,7 +144,6 @@
     "host_only": [
       "assets/styles/app/**",
       "assets/styles/email.css",
-      "assets/styles/font-awesome.css",
       "assets/styles/flash-messages.scss"
     ]
   },

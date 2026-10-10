@@ -1,7 +1,7 @@
 {# @var entityInstance \App\Entity\AiTask #}
 {# @var field \App\AdminCore\Listing\Fields\TitleField #}
 {% if field.value == true %}
-    <i class="fa fa-check text-success"></i>
+    {{ ux_icon('fa6-solid:check', {width: '1em', height: '1em', class: 'text-success'}) }}
 {% else %}
-    <i class="fa fa-times text-danger"></i>
+    {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em', class: 'text-danger'}) }}
 {% endif %}

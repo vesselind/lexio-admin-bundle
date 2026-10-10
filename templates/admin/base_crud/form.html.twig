@@ -84,16 +84,16 @@
                         <div class="d-flex justify-content-end align-items-center gap-2 my-3">
                             {% if formContext.modalRequest %}
                                 <button data-bs-toggle="modal" data-bs-dismiss="modal" class="btn btn-secondary">
-                                    <i class="fa-solid fa-xmark"></i> {{ 'button.cancel'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }} {{ 'button.cancel'|trans({}, 'admin') }}
                                 </button>
                             {% else %}
                                 <a href="{{ adminUrlGenerator.indexLink }}" data-turbo-frame="_top" class="btn btn-secondary">
-                                    <i class="fa-solid fa-xmark"></i> {{ 'button.cancel'|trans({}, 'admin') }}
+                                    {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }} {{ 'button.cancel'|trans({}, 'admin') }}
                                 </a>
                             {% endif %}
 
                             <button type="submit" class="btn btn-primary">
-                                <i class="fa fa-save me-1"></i>
+                                {{ ux_icon('fa6-solid:floppy-disk', {width: '1em', height: '1em', class: 'me-1'}) }}
                                 {{ 'button.save'|trans({}, 'admin') }}
                             </button>
                         </div>

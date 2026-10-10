@@ -138,7 +138,7 @@ Public-site components such as `BlogRatingWidget`, `BlogSearchWidget`, `Featured
 - **9.3** `AssociationModalType` — entity association picker via modal
 - **9.4** `VanillaDatepickerType` — date picker
 - **9.5** `TurnstileType` — Cloudflare Turnstile CAPTCHA
-- **9.6** `CaptchaType` — Google reCAPTCHA Enterprise
+- **9.6** `CaptchaType` — classic Google reCAPTCHA v3 ([integration](captcha.md))
 - **9.7** `BaseFilterType` — auto-generated filter forms
 - **9.8** Standard admin forms (`SeoType`, `BlogShortType`, `PageObjectType`, `HeaderMenuType`, `FooterMenuType`)
 
@@ -266,7 +266,7 @@ their own domain model.
   - Layout (`header-navbar.scss`)
   - Mixins, utilities, variables
   - Datepicker & flash-message styles
-  - Font Awesome compatibility remains pending UX Icon migration
+  - Admin icons use Symfony UX Icons (`ux_icon()`); Font Awesome compatibility has been removed
 
 ---
 

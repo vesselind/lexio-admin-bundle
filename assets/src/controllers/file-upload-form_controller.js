@@ -14,7 +14,7 @@ export default class extends Controller {
 
     submitForm() {
 
-        this.iconTarget.classList.toggle('fa-upload');
+        this.iconTarget.classList.toggle('d-none');
         this.spinnerTarget.classList.remove('d-none');
 
         if (this.hasSubmitButtonTarget) {

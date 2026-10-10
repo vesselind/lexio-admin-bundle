@@ -233,9 +233,16 @@ services:
             $locales: '%lexio_admin.locales%'
 
     Lexio\AdminBundle\Page\PageManager:
-      $manager: '@doctrine.orm.entity_manager'
-      $autoTranslator: '@Lexio\AdminBundle\Service\AutoTranslator\EntityAutoTranslator'
-      $defaultLocale: '%lexio_admin.default_locale%'
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+
+    Lexio\AdminBundle\EventListener\PageCacheInvalidationListener:
+        arguments:
+            $cache: '@lexio_admin.cache.pages'
+        tags:
+            # Capture translation-only changes before Gedmo rewrites the update schedule.
+            - { name: doctrine.event_listener, event: onFlush, priority: 500, connection: default }
+            - { name: doctrine.event_listener, event: postFlush, connection: default }
 
     # ImageCacheResolver — needs %kernel.project_dir%
     Lexio\AdminBundle\File\ImageCacheResolver:

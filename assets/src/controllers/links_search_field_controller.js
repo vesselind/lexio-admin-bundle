@@ -1,6 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
+    static targets = ['addedBadgeTemplate'];
+
     static values = {
         addedBadgeText: {type: String},
     }
@@ -30,9 +32,8 @@ export default class extends Controller {
             this.editor.model.insertContent(modelFragment, this.editor.model.document.selection);
         });
 
-        let badgeAdded = document.createElement('span');
-        badgeAdded.classList.add('badge', 'bg-success', 'ms-1');
-        badgeAdded.innerHTML = '<i class="fa fa-check"></i> ' + this.addedBadgeTextValue;
+        const badgeAdded = this.addedBadgeTemplateTarget.content.cloneNode(true);
+        badgeAdded.querySelector('[data-added-badge-text]').textContent = this.addedBadgeTextValue;
         e.currentTarget.append(badgeAdded)
     }
 }

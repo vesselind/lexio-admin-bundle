@@ -33,7 +33,7 @@ assets-build:
 	node assets/build.mjs
 
 assets-test:
-	node --test assets/tests/controllers-contract.test.mjs assets/tests/styles-contract.test.mjs
+	node --test assets/tests/*.test.mjs
 
 # ─── Quality tooling setup ───────────────────────────────────────────────────
 quality-install:

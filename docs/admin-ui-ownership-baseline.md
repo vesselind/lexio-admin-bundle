@@ -71,7 +71,7 @@ before the Phase 2/3 visual migration is accepted.
 | Host theme compilation | Passed: the starter build compiles the bundle entry through `admin-theme.scss` |
 | Sass/CSS contract tests | Added: `assets/tests/styles-contract.test.mjs`; run with `make assets-test` |
 | Host package dependency | Declared in `package.json`; Yarn install was blocked by a missing unrelated CKEditor cache tarball, so local verification used a junction to the existing vendor package |
-| Font Awesome/icon migration | Pending: current admin markup still has compatibility Font Awesome classes/CDN; UX Icon conversion remains a release gate |
+| Symfony UX Icons migration | Complete: admin Twig templates use `ux_icon()`, legacy Font Awesome classes/CDN are removed, and action icon identifiers use the `fa6-*` format |
 | Visual regression/browser checks | Pending: no browser automation or running application URL is available |
 
 ## Phase 4 verification

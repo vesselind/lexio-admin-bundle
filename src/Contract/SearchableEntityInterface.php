@@ -22,7 +22,7 @@ use Lexio\AdminBundle\Model\SearchableParam;
  *               searchableFields: ['title', 'content'],
  *               routeName: 'admin.post.update',
  *               routeParams: ['id' => 'id'],
- *               icon: 'fa-solid:pen',
+ *               icon: 'fa6-solid:pen-to-square',
  *           );
  *       }
  *   }

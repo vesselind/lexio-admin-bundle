@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lexio\AdminBundle\Page;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,13 +14,26 @@ use Lexio\AdminBundle\Entity\ContentItem;
 use Lexio\AdminBundle\Entity\Page;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
+/**
+ * @phpstan-type PageContentData array{
+ *     id: int|null,
+ *     fields: array<string, string|null|array{class: class-string<ImageEntityInterface>, id: int}>
+ * }
+ */
 readonly class PageManager implements PageManagerInterface, PageAdministrationInterface
 {
-    public function __construct(private EntityManagerInterface        $manager,
-                                private EntityAutoTranslatorInterface $autoTranslator,
-                                private string                        $defaultLocale)
-    {
+    public const CACHE_TAG = 'lexio_admin.pages';
+
+    public function __construct(
+        private EntityManagerInterface $manager,
+        private EntityAutoTranslatorInterface $autoTranslator,
+        private string $defaultLocale,
+        private ?TagAwareCacheInterface $cache = null,
+        private int $cacheLifetime = 3600,
+    ) {
     }
 
     public function createOrUpdatePage(BasePage $page, ?string $locale = null): void
@@ -201,25 +216,23 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
         return $value;
     }
 
-
     public function getPageObject(string $pageNameFqcn, ?string $locale = null): ?BasePage
     {
+        $locale ??= $this->defaultLocale;
 
-        if ($locale === null) {
-            $locale = $this->defaultLocale;
-        }
+        /** @var PageContentData|null $content */
+        $content = $this->cache === null
+            ? $this->loadPageContent($pageNameFqcn, $locale)
+            : $this->cache->get('page.v2.' . hash('sha256', $pageNameFqcn . "\0" . $locale),
+                function (ItemInterface $item) use ($pageNameFqcn, $locale): ?array {
+                    $item->expiresAfter($this->cacheLifetime);
+                    $item->tag(self::CACHE_TAG);
 
-        $pageEntity = $this->manager->getRepository(Page::class)->findOneBy(['name' => $pageNameFqcn]);
-
-        if (!$pageEntity) {
+                    return $this->loadPageContent($pageNameFqcn, $locale);
+                });
+        if ($content === null) {
             return null;
         }
-
-        $pageEntity->setTranslatableLocale($locale);
-
-        $this->manager->refresh($pageEntity);
-
-        $contentItems = $pageEntity->getContentItems();
 
         $pageInstance = new $pageNameFqcn();
 
@@ -227,32 +240,63 @@ readonly class PageManager implements PageManagerInterface, PageAdministrationIn
             throw new \LogicException(sprintf('Page class "%s" must extend %s.', $pageNameFqcn, BasePage::class));
         }
 
-        foreach ($contentItems as $contentItem) {
+        $accessor = $this->accessor();
+        foreach ($content['fields'] as $propertyName => $value) {
+            if (is_array($value)) {
+                $value = $this->manager->getReference($value['class'], $value['id']);
+                if (!$value instanceof ImageEntityInterface) {
+                    throw new \LogicException('A page image reference must resolve to an image entity.');
+                }
+            }
 
+            $accessor->setValue($pageInstance, $propertyName, $value);
+        }
+
+        return $pageInstance->setId($content['id']);
+    }
+
+    /** @return PageContentData|null */
+    private function loadPageContent(string $pageClass, string $locale): ?array
+    {
+        $page = $this->manager->getRepository(Page::class)->findOneBy(['name' => $pageClass]);
+        if ($page === null) {
+            return null;
+        }
+
+        $page->setTranslatableLocale($locale);
+        $this->manager->refresh($page);
+
+        $fields = [];
+        foreach ($page->getContentItems() as $contentItem) {
             $contentItem->setTranslatableLocale($locale);
             $this->manager->refresh($contentItem);
 
-            $propertyName = $contentItem->getName();
-            $value = $contentItem->getValue();
-            $type = $contentItem->getType();
-
-            if ($propertyName === null) {
+            $name = $contentItem->getName();
+            if ($name === null) {
                 throw new \LogicException('A content item must have a property name.');
             }
 
-            if ($type === ContentItemTypes::IMAGE) {
-                $value = $contentItem->getImage();
+            $value = $contentItem->getValue();
+            if ($contentItem->getType() === ContentItemTypes::IMAGE) {
+                $image = $contentItem->getImage();
+                $value = null;
+                if ($image !== null) {
+                    $id = $image->getId();
+                    if ($id === null) {
+                        throw new \LogicException('A page image must be persisted before it can be referenced.');
+                    }
+
+                    // Cache identifiers instead of serializing Doctrine entities or proxies.
+                    /** @var class-string<ImageEntityInterface> $imageClass */
+                    $imageClass = $this->manager->getClassMetadata($image::class)->getName();
+                    $value = ['class' => $imageClass, 'id' => $id];
+                }
             }
 
-            $this->accessor()->setValue($pageInstance, $propertyName, $value);
+            $fields[$name] = $value;
         }
 
-        //clone page entity into page class
-
-        $pageInstance->setId($pageEntity->getId());
-
-
-        return $pageInstance;
+        return ['id' => $page->getId(), 'fields' => $fields];
     }
 
     public function accessor(): PropertyAccessor

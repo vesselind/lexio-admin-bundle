@@ -57,7 +57,7 @@ abstract class SystemNotificationController extends BaseCrudController
             ->addColumn('Actions', $actions)
             ->setFilter($filter)
             ->setShowCreateButton(false)
-            ->addBulkAction(new BulkAction('admin.system_notification.bulk_delete', 'button.delete', 'fa fa-trash', 'danger'));
+            ->addBulkAction(new BulkAction('admin.system_notification.bulk_delete', 'button.delete', 'fa6-solid:trash', 'danger'));
 
         return $this->renderListing($listingContext);
     }

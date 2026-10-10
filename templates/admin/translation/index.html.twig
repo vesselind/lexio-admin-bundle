@@ -15,7 +15,7 @@
             <input type="hidden" name="search_value" value="{{ searchValue }}">
             <input type="hidden" name="page" value="{{ currentPage }}">
             <button type="submit" class="btn btn-warning">
-                <i class="fa fa-cloud-upload me-1" aria-hidden="true"></i>
+                {{ ux_icon('fa6-solid:cloud-arrow-up', {width: '1em', height: '1em', class: 'me-1', 'aria-hidden': true}) }}
                 {{ 'translation.sync.send'|trans({}, 'admin') }}
             </button>
         </form>
@@ -26,7 +26,7 @@
             <input type="hidden" name="search_value" value="{{ searchValue }}">
             <input type="hidden" name="page" value="{{ currentPage }}">
             <button type="submit" class="btn btn-info">
-                <i class="fa fa-cloud-download me-1" aria-hidden="true"></i>
+                {{ ux_icon('fa6-solid:cloud-arrow-down', {width: '1em', height: '1em', class: 'me-1', 'aria-hidden': true}) }}
                 {{ 'translation.sync.receive'|trans({}, 'admin') }}
             </button>
         </form>
@@ -38,7 +38,7 @@
         <input type="hidden" name="search_value" value="{{ searchValue }}">
         <input type="hidden" name="page" value="{{ currentPage }}">
         <button type="submit" class="btn btn-primary">
-            <i class="fa fa-refresh me-1" aria-hidden="true"></i>
+            {{ ux_icon('fa6-solid:rotate', {width: '1em', height: '1em', class: 'me-1', 'aria-hidden': true}) }}
             {{ 'translation.cache.clear'|trans({}, 'admin') }}
         </button>
     </form>

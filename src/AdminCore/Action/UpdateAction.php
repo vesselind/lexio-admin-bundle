@@ -9,7 +9,7 @@ final class UpdateAction
     public static function new(
         string $route,
         string $label = 'button.update',
-        string $icon  = 'fa fa-edit',
+        string $icon  = 'fa6-solid:pen-to-square',
     ): Action {
         return Action::new($label, $route, ['id' => 'id'], $icon);
     }

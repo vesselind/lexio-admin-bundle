@@ -49,6 +49,11 @@ final class ImageCacheResolver
         }
 
         $systemFilePath    = $this->fileManager->getSystemPath($image);
+
+        if (!file_exists($systemFilePath)) {
+            throw new \RuntimeException('Image file does not exist: ' . $systemFilePath);
+        }
+
         $interventionImage = $this->interventionImageManager->getInstance()->read($systemFilePath);
         $interventionImage = $this->downscaleIfOversized($interventionImage);
         $interventionImage = $this->applyFilter($interventionImage, $config);

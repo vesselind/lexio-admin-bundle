@@ -15,7 +15,7 @@
 {% block page_actions %}
     {% if listingContext.showCreateButton %}
         <a href="{{ adminUrlGenerator.createLink(entityFqcn) }}" class="btn btn-success">
-            <i class="fa fa-plus"></i>
+            {{ ux_icon('fa6-solid:plus', {width: '1em', height: '1em'}) }}
             {{ 'button.add'|trans({}, 'admin') }}
         </a>
     {% endif %}
@@ -43,10 +43,9 @@
                 </div>
                 <div class="card-footer py-2 d-flex justify-content-end gap-2">
                     <a href="{{ adminUrlGenerator.indexLink }}" class="btn btn-secondary btn-sm">
-                        <i class="fa fa-remove"></i> {{ 'button.clear_filter'|trans({}, 'admin') }}
+                        {{ ux_icon('fa6-solid:xmark', {width: '1em', height: '1em'}) }} {{ 'button.clear_filter'|trans({}, 'admin') }}
                     </a>
-                    <button type="submit" class="btn btn-primary btn-sm"><i
-                                class="fa fa-filter"></i> {{ 'button.filter'|trans({}, 'admin') }}</button>
+                    <button type="submit" class="btn btn-primary btn-sm">{{ ux_icon('fa6-solid:filter', {width: '1em', height: '1em'}) }} {{ 'button.filter'|trans({}, 'admin') }}</button>
                 </div>
 
                 {{ form_end(filtersForm) }}
@@ -74,12 +73,12 @@
                                 <th style="max-width: 150px; min-width: 70px"><a href="{{ column.sortLink }}">
                                         {{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}
                                         {% if not column.sorted %}
-                                            <i class="fa fa-fw fa-sort text-muted"></i>
+                                            {{ ux_icon('fa6-solid:sort', {width: '1em', height: '1em', class: 'text-muted'}) }}
                                         {% else %}
                                             {% if column.sortedAsc %}
-                                                <i class="fa fa-fw fa-arrow-up"></i>
+                                                {{ ux_icon('fa6-solid:arrow-up', {width: '1em', height: '1em'}) }}
                                             {% else %}
-                                                <i class="fa fa-fw fa-arrow-down"></i>
+                                                {{ ux_icon('fa6-solid:arrow-down', {width: '1em', height: '1em'}) }}
                                             {% endif %}
                                         {% endif %}
                                     </a>
@@ -113,7 +112,7 @@
                     {% else %}
                         <tr>
                             <td class="text-center" colspan="{{ listingContext.columns|length + 1 }}">
-                                <i class="fa fa-info-circle text-gray"></i> {{ 'no_records_found'|trans({}, 'admin') }}
+                                {{ ux_icon('fa6-solid:circle-info', {width: '1em', height: '1em', class: 'text-gray'}) }} {{ 'no_records_found'|trans({}, 'admin') }}
                             </td>
                         </tr>
                     {% endfor %}

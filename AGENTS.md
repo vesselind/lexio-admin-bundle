@@ -9,6 +9,7 @@
 - NEVER guess Symfony conventions; read the rule from `.agents/rules/` first.
 - ALWAYS use `make`; never raw composer/php/docker/phpunit/phpstan.
 - After PHP changes run `make ci`; if missing suggest running the `quality-install` skill.
+- After frontend asset changes run `make assets-build` and `make assets-test`; these checks are separate from `make ci`.
 - **Bundle layer order** — Extension/config → services → public Contract/events → tests → optional Doctrine/API/UX/Flex (see `.agents/rules/architecture.md`, `.agents/rules/symfony-bundle.md`).
 - **Challenge everything** — Value, architecture, risk. Propose alternatives before implementing.
 - Skills are under `.agents/skills/`; follow instructions in each SKILL.md when invoked.
@@ -16,6 +17,20 @@
 - **On PHP changes**, apply: `symfony-bundle`, `coding-standards`, `dto`, `testing`, `security` rules as relevant.
 - When reading a rule, challenge if principles apply.
 - Check `docs/lessons-learned.md` if present.
+
+## Frontend Asset Workflow
+
+Run these commands from the bundle root:
+
+| Command | Purpose |
+|---------|---------|
+| `make assets-install` | Install frontend dependencies on first setup or after changes to `assets/package.json` or `assets/yarn.lock`. |
+| `make assets-build` | Build distributable JavaScript from `assets/src/` into `assets/dist/` and generate the controller registrar from `assets/package.json`. |
+| `make assets-test` | Run frontend tests, including controller behavior and Sass contracts. |
+
+Edit asset source files and controller metadata, then rebuild and test. Include regenerated `assets/dist/` files with the changes; do not edit generated files manually.
+
+The bundle uses Node.js and esbuild for its JavaScript package. The host application compiles the published Sass sources into its final CSS.
 
 ## Project DNA
 
