@@ -304,6 +304,12 @@ final class CustomFieldThemeTwigExtension extends AbstractExtension implements G
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('ux_icon', static fn (string $name, array $attributes = []): string => '', ['is_safe' => ['html']]),
+            new TwigFunction(
+                'stimulus_target',
+                static fn (string $controller, string $target): string => 'data-' . $controller . '-target="' . $target . '"',
+                ['is_safe' => ['html_attr']],
+            ),
             new TwigFunction(
                 'stimulus_controller',
                 self::renderStimulusController(...),

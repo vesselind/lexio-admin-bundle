@@ -20,7 +20,7 @@ final class CustomFieldFormThemeTest extends TestCase
         $loader->addPath(__DIR__ . '/../../../../templates', 'LexioAdmin');
 
         $twig = new Environment($loader);
-        foreach (['form_errors', 'form_help', 'form_label', 'form_widget', 'path', 'stimulus_controller'] as $function) {
+        foreach (['form_errors', 'form_help', 'form_label', 'form_widget', 'path', 'stimulus_controller', 'stimulus_target', 'ux_icon'] as $function) {
             $twig->addFunction(new TwigFunction($function, static fn (mixed ...$arguments): string => ''));
         }
         foreach (['stimulus_controller', 'trans'] as $filter) {

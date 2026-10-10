@@ -7,6 +7,12 @@
 @import "admin/variables";
 @import "bootstrap/scss/bootstrap";
 
+// Boolean switches use the warning accent from the public admin theme.
+.form-switch .form-check-input:checked {
+  background-color: var(--lexio-admin-warning, #{$warning});
+  border-color: var(--lexio-admin-warning, #{$warning});
+}
+
 @import "admin/layout/layout";
 @import "admin/components/components";
 @import "admin/mixins/mixins";
