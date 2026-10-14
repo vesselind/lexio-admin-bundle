@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Textarea that activates the CKEditor Stimulus controller.
@@ -20,9 +21,21 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class CKEditorType extends AbstractType
 {
+    private const MEDIA_RESIZE_KEYS = [
+        'media_resize.label',
+        'media_resize.current_width',
+        'media_resize.original',
+        'media_resize.preset_75',
+        'media_resize.preset_50',
+        'media_resize.preset_25',
+        'media_resize.custom',
+        'media_resize.width_prompt',
+    ];
+
     public function __construct(
         private readonly RouterInterface $router,
         private readonly string $uploadRouteName = 'admin.ckeditor.upload',
+        private readonly ?TranslatorInterface $translator = null,
     )
     {
     }
@@ -61,6 +74,23 @@ class CKEditorType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['linksSearch'] = $options['links_search'];
+
+        if (null === $this->translator) {
+            return;
+        }
+
+        $locale = $this->translator->getLocale();
+        $translations = [];
+        foreach (array_unique(['en', 'bg', $locale]) as $language) {
+            $dictionary = [];
+            foreach (self::MEDIA_RESIZE_KEYS as $key) {
+                $dictionary[$key] = $this->translator->trans($key, [], 'ckeditor', $language);
+            }
+            $translations[$language] = ['dictionary' => $dictionary];
+        }
+
+        $view->vars['attr']['data-ckeditor-locale-value'] ??= $locale;
+        $view->vars['attr']['data-ckeditor-translations-value'] ??= json_encode($translations, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
     }
 }
 

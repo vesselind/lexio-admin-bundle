@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle;
 
+use Lexio\AdminBundle\Contract\MediaResolver\MediaEmbedStrategyInterface;
 use Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface;
 use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveNotificationUserPass;
 use Lexio\AdminBundle\DependencyInjection\Compiler\ResolveImageEntityPass;
@@ -71,6 +72,9 @@ final class LexioAdminBundle extends AbstractBundle
         $container
             ->registerForAutoconfiguration(SitemapProviderInterface::class)
             ->addTag('lexio_admin.sitemap_provider');
+        $container
+            ->registerForAutoconfiguration(MediaEmbedStrategyInterface::class)
+            ->addTag('lexio_admin.media_embed_strategy');
     }
 
     public function configure(DefinitionConfigurator $definition): void

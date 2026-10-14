@@ -8,6 +8,7 @@ use Lexio\AdminBundle\Contract\Translation\TranslationCatalogException;
 use Lexio\AdminBundle\Service\Translation\AtomicTranslationFileWriter;
 use Lexio\AdminBundle\Service\Translation\FlatTranslationDocumentCodec;
 use Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
@@ -78,6 +79,47 @@ final class YamlTranslationCatalogTest extends TestCase
         $parsed = Yaml::parse($content);
         self::assertIsArray($parsed);
         self::assertSame('Избери файл2', $parsed['translation.select_file']);
+    }
+
+    #[DataProvider('quotedRecordProvider')]
+    public function test_it_updates_quoted_keys_and_preserves_other_lines_and_line_endings(
+        string $rawKey,
+        string $key,
+        string $lineEnding,
+        bool $trailingLineEnding,
+    ): void {
+        $prefix = '# ' . $rawKey . ': keep this comment' . $lineEnding . 'neighbor.before: "Before"' . $lineEnding;
+        $suffix = $lineEnding . '# Keep the next comment' . $lineEnding . "neighbor.after: 'After'" . ($trailingLineEnding ? $lineEnding : '');
+        $this->write('messages.en.yaml', $prefix . $rawKey . ': "Original"' . $suffix);
+        $value = "Updated: # translation\nSecond line's value";
+
+        $this->catalog()->update('messages', 'en', $key, $value);
+
+        $content = (string) file_get_contents($this->directory . DIRECTORY_SEPARATOR . 'messages.en.yaml');
+        self::assertSame($prefix . $rawKey . ': ' . (new FlatTranslationDocumentCodec())->serializeValue($value) . $suffix, $content);
+        self::assertSame([
+            'neighbor.before' => 'Before',
+            $key => $value,
+            'neighbor.after' => 'After',
+        ], Yaml::parse($content));
+    }
+
+    /** @return iterable<string, array{string, string, string, bool}> */
+    public static function quotedRecordProvider(): iterable
+    {
+        yield 'single-quoted sentence' => ["'Invalid credentials.'", 'Invalid credentials.', "\n", true];
+        yield 'double-quoted dot key with CRLF' => ['"label.title"', 'label.title', "\r\n", true];
+        yield 'escaped apostrophe and colon with CR' => ["'User''s name: invalid'", "User's name: invalid", "\r", true];
+        yield 'escaped quote and backslash' => [
+            <<<'YAML'
+            "Auth \"token\": C:\\records"
+            YAML,
+            'Auth "token": C:\\records',
+            "\n",
+            false,
+        ];
+        yield 'Unicode escape spelling' => ['"\u0041uth token"', 'Auth token', "\r\n", false];
+        yield 'quoted key containing slash' => ["'auth/token'", 'auth/token', "\n", true];
     }
 
     public function test_it_rejects_nested_records(): void

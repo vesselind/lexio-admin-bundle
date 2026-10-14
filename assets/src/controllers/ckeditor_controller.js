@@ -34,6 +34,7 @@ import {
     Link,
     LinkImage,
     MediaEmbed,
+    MediaEmbedToolbar,
     List,
     ListProperties,
     Paragraph,
@@ -59,11 +60,14 @@ import {
 import 'ckeditor5/ckeditor5.css';
 import InsertImage from '../CKEditor/InsertImage';
 import CustomUploadAdapter from '../CKEditor/CustomUploadAdapter';
+import MediaEmbedResize from '../CKEditor/MediaEmbedResize';
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         uploadUrl: String,
+        locale: {type: String, default: 'en'},
+        translations: Object,
     };
 
     initialize() {
@@ -76,6 +80,8 @@ export default class extends Controller {
     connect() {
 
        this.editorPromise = ClassicEditor.create(this.element, {
+            language: this.localeValue,
+            translations: [this.translationsValue],
             toolbar: {
                 items: [
                     'undo',
@@ -140,6 +146,8 @@ export default class extends Controller {
                 Link,
                 LinkImage,
                 MediaEmbed,
+                MediaEmbedToolbar,
+                MediaEmbedResize,
                 List,
                 ListProperties,
                 Paragraph,
@@ -250,6 +258,9 @@ export default class extends Controller {
                     startIndex: true,
                     reversed: true
                 }
+            },
+            mediaEmbed: {
+                toolbar: ['resizeMediaEmbed']
             },
             placeholder: '',
             table: {

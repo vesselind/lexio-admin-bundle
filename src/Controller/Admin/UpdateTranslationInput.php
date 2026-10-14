@@ -16,7 +16,7 @@ final readonly class UpdateTranslationInput
         #[Assert\Regex(pattern: '/^[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*$/D')]
         public string $locale,
         #[Assert\NotBlank]
-        #[Assert\Regex(pattern: '/^[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*$/D')]
+        #[Assert\Regex(pattern: '/^(?=.*\S)[^\r\n]+$/uD')]
         public string $key,
         #[Assert\Length(max: 100000)]
         public string $value,

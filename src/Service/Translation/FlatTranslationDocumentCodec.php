@@ -92,6 +92,29 @@ final readonly class FlatTranslationDocumentCodec
         return $serialized;
     }
 
+    public function replaceValue(string $content, string $key, string $value): string
+    {
+        $lineNumber = $this->assertFlatDocument($content)[$key] ?? null;
+        if (null === $lineNumber) {
+            throw new InvalidTranslationDocumentException('The translation key does not exist.');
+        }
+
+        $lines = preg_split('/(\r\n|\n|\r)/', $content, flags: PREG_SPLIT_DELIM_CAPTURE);
+        $lineIndex = 2 * ($lineNumber - 1);
+        if (false === $lines || !isset($lines[$lineIndex])) {
+            throw new InvalidTranslationDocumentException('The translation document cannot be inspected.');
+        }
+
+        $separator = $this->findMappingSeparator($lines[$lineIndex]);
+        if (false === $separator) {
+            throw new InvalidTranslationDocumentException('The translation key could not be updated.');
+        }
+
+        $lines[$lineIndex] = substr($lines[$lineIndex], 0, $separator + 1) . ' ' . $this->serializeValue($value);
+
+        return implode('', $lines);
+    }
+
     /** @return array{domain: string, locale: string}|null */
     public function parseFilename(string $filename): ?array
     {

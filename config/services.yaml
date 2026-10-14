@@ -10,6 +10,7 @@ services:
             - '../src/LexioAdminBundle.php'
             - '../src/Entity/'
             - '../src/Enum/'
+            - '../src/Exception/'
             - '../src/Contract/Translation/TranslationCatalogException.php'
             - '../src/Contract/Translation/TranslationCatalogInterface.php'
             - '../src/Contract/Translation/TranslationEntry.php'
@@ -18,6 +19,7 @@ services:
             - '../src/Contract/Translation/TranslationPackageSynchronizerInterface.php'
             - '../src/Contract/Translation/TranslationSynchronizationException.php'
             - '../src/Contract/Sitemap/SitemapUrl.php'
+            - '../src/Contract/MediaResolver/MediaEmbed.php'
             - '../src/Service/Translation/InvalidTranslationDocumentException.php'
             - '../src/Service/Translation/TranslationCacheException.php'
             - '../src/Service/Translation/TranslationScanException.php'
@@ -93,6 +95,7 @@ services:
     Lexio\AdminBundle\Form\CustomFields\CKEditorType:
         arguments:
             $uploadRouteName: '%lexio_admin.ui.routes.ckeditor_upload%'
+            $translator: '@translator'
         tags: ['form.type']
 
     Lexio\AdminBundle\Form\CustomFields\InputImageSelectorType:
@@ -120,6 +123,10 @@ services:
     Lexio\AdminBundle\Sitemap\SitemapProviderRegistry:
         arguments:
             $providers: !tagged_iterator lexio_admin.sitemap_provider
+
+    Lexio\AdminBundle\Service\MediaResolver\MediaResolver:
+        arguments:
+            $strategies: !tagged_iterator lexio_admin.media_embed_strategy
 
     Lexio\AdminBundle\Controller\SitemapController:
         arguments:
@@ -220,6 +227,10 @@ services:
             $frontHomePageRoute: '%lexio_admin.front_home_page_route%'
             $ui: '%lexio_admin.ui%'
         tags: ['twig.extension']
+
+    Lexio\AdminBundle\Twig\CKEditorExtension:
+        arguments:
+            $contentSanitizer: '@Lexio\AdminBundle\Service\MediaResolver\CKEditorContentSanitizer'
 
     Lexio\AdminBundle\Twig\AppExtension:
         arguments:

@@ -6,8 +6,10 @@ namespace Lexio\AdminBundle\Tests\Unit\Controller;
 
 use Lexio\AdminBundle\Controller\Admin\FileController;
 use Lexio\AdminBundle\Controller\Admin\MenuController;
+use Lexio\AdminBundle\Controller\Admin\ModalController;
 use Lexio\AdminBundle\Controller\Admin\PageController;
 use Lexio\AdminBundle\Controller\Admin\SecurityLogController;
+use Lexio\AdminBundle\Controller\Admin\UserController;
 use Lexio\AdminBundle\Contract\Page\PageAdministrationInterface;
 use Lexio\AdminBundle\Filter\BaseFilter;
 use Lexio\AdminBundle\Filter\SecurityLogFilter;
@@ -18,7 +20,7 @@ final class AdminControllerOwnershipTest extends TestCase
 {
     public function test_bundle_owns_the_reusable_admin_controller_boundaries(): void
     {
-        foreach ([FileController::class, MenuController::class, PageController::class, SecurityLogController::class] as $controller) {
+        foreach ([FileController::class, MenuController::class, ModalController::class, PageController::class, SecurityLogController::class, UserController::class] as $controller) {
             self::assertTrue(class_exists($controller));
             self::assertTrue((new \ReflectionClass($controller))->isAbstract());
         }

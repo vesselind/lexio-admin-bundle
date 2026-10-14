@@ -1,0 +1,19 @@
+{% extends '@LexioAdmin/admin/base_crud/form.html.twig' %}
+
+{% block main_form_content %}
+
+    {% for flash in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">
+            {{ flash }}
+        </div>
+    {% endfor %}
+
+    {% for flash in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">
+            {{ flash }}
+        </div>
+    {% endfor %}
+
+    {{ parent() }}
+
+{% endblock %}

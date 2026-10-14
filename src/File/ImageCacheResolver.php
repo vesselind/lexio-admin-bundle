@@ -6,6 +6,8 @@ namespace Lexio\AdminBundle\File;
 
 use Intervention\Image\Interfaces\ImageInterface;
 use Lexio\AdminBundle\Contract\File\ImageEntityInterface;
+use Lexio\AdminBundle\Exception\ImageCacheException;
+use Lexio\AdminBundle\Exception\UnsupportedImageFilterException;
 
 /**
  * Resolves an image entity to a cached WebP file, creating it on demand.
@@ -51,7 +53,7 @@ final class ImageCacheResolver
         $systemFilePath    = $this->fileManager->getSystemPath($image);
 
         if (!file_exists($systemFilePath)) {
-            throw new \RuntimeException('Image file does not exist: ' . $systemFilePath);
+            throw new ImageCacheException('Image file does not exist: ' . $systemFilePath);
         }
 
         $interventionImage = $this->interventionImageManager->getInstance()->read($systemFilePath);
@@ -85,7 +87,7 @@ final class ImageCacheResolver
         return match ($config->getFilter()) {
             ImageCacheConfig::FILTER_COVER => $image->cover((int) $config->width, (int) $config->height),
             ImageCacheConfig::FILTER_SCALE => $image->scale((int) $config->width, (int) $config->height),
-            default => throw new \InvalidArgumentException('Unsupported filter type: ' . $config->getFilter()),
+            default => throw new UnsupportedImageFilterException('Unsupported filter type: ' . $config->getFilter()),
         };
     }
 

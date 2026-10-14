@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexio\AdminBundle\Tests\Unit\DependencyInjection;
 
 use Lexio\AdminBundle\Service\EntityFilterer;
+use Lexio\AdminBundle\Service\MediaResolver\MediaResolver;
 use Lexio\AdminBundle\File\ImageCacheResolver;
 use Lexio\AdminBundle\File\FileManager;
 use Lexio\AdminBundle\Contract\Translation\TranslationCatalogInterface;
@@ -271,6 +272,22 @@ final class ServiceConfigurationTest extends TestCase
         self::assertSame('addListener', $methodCalls[0][0]);
         self::assertSame(KernelEvents::CONTROLLER_ARGUMENTS, $methodCalls[0][1][0]);
         self::assertSame('onKernelControllerArguments', $methodCalls[0][1][1][1]);
+    }
+
+    public function test_media_resolver_is_registered_with_the_tagged_strategies(): void
+    {
+        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
+
+        self::assertIsString($servicesConfig);
+        self::assertTrue(class_exists(MediaResolver::class));
+        self::assertStringContainsString(
+            'Lexio\\AdminBundle\\Service\\MediaResolver\\MediaResolver:',
+            $servicesConfig,
+        );
+        self::assertStringContainsString(
+            '$strategies: !tagged_iterator lexio_admin.media_embed_strategy',
+            $servicesConfig,
+        );
     }
 
     public function test_deployment_command_and_runner_contracts_are_registered(): void

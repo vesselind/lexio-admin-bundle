@@ -61,6 +61,8 @@
   - `BaseFilterInterface`, `BaseFilter` DTO
   - `BaseFilterType` — auto-generated filter forms
   - `EntityFilterer` — QueryBuilder builder with filter, search, sorting
+- **3.10** [User administration controller](admin-user-controller.md)
+  - Inherited user routes and bundle templates with host-owned entities, forms, roles and invitations
 
 ---
 
@@ -134,6 +136,12 @@ Public-site components such as `BlogRatingWidget`, `BlogSearchWidget`, `Featured
 ## 9. Custom Form Types
 
 - **9.1** `CKEditorType` — CKEditor 5 integration
+  - Media embeds include a free "Resize media" dropdown in the media widget toolbar
+    (custom `MediaEmbedResize` plugin; writes a width style on the media `<figure>`, honored by `ckeditor_content`)
+  - Resize controls use the editor locale and the bundle's English/Bulgarian `ckeditor` YAML catalogues;
+    host translations can override them. `CKEditorType` supplies locale and dictionaries automatically
+    when used as a service. Manually constructed types must receive the optional `translator` argument;
+    standalone resize plugins must receive equivalent CKEditor `translations` configuration.
 - **9.2** `InputImageSelectorType` — relation-backed image selection field (hidden image ID + derived preview URL)
 - **9.3** `AssociationModalType` — entity association picker via modal
 - **9.4** `VanillaDatepickerType` — date picker
@@ -155,6 +163,16 @@ Public-site components such as `BlogRatingWidget`, `BlogSearchWidget`, `Featured
   - Filters: `formatted_date`, `formatted_datetime`, `strip_words`, `highlight`, `list_style`, `add_links`, `cast_to_array`, `camel_to_title`, `anonymize`, `format_bytes`
 - **10.3** `AdminExtensionRuntime`
 - **10.4** `ImageRuntimeExtension`
+- **10.5** `CKEditorExtension`
+  - `ckeditor_content` filter — renders CKEditor content and converts semantic media embeds
+    (`<figure class="media"><oembed …></figure>`) into responsive iframes; already HTML-safe, no `|raw` needed
+  - Stored content is cleaned with Symfony HTML Sanitizer before media rendering. Safe semantic formatting,
+    relative links/images and numeric figure widths (`px`, `%`, `em`, `rem`) remain. Scripts, event handlers,
+    raw iframes and other inline styles are removed. Custom Twig services must inject the bundle's
+    `CKEditorContentSanitizer` as `contentSanitizer` rather than the host's generic sanitizer.
+  - Built-in strategies: `youtube`, `instagram`, `facebook`
+    (`src/Service/MediaResolver/`); extend via `MediaEmbedStrategyInterface`
+    (autoconfigured with `lexio_admin.media_embed_strategy`)
 
 ---
 
@@ -310,6 +328,7 @@ their own domain model.
 - **23.6** `PageManagerInterface`
 - **23.7** `SearchableEntityInterface`
 - **23.8** `SeedersRegistryInterface`
+- **23.9** `UserEntityInterface` / `UserInvitationInterface`
 
 ---
 

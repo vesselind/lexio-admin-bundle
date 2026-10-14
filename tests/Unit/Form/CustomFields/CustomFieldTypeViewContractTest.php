@@ -20,6 +20,8 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 final class CustomFieldTypeViewContractTest extends TestCase
 {
@@ -60,6 +62,40 @@ final class CustomFieldTypeViewContractTest extends TestCase
         );
 
         self::assertFalse($view->vars['linksSearch']);
+    }
+
+    public function test_ck_editor_supplies_locale_dictionaries_and_preserves_custom_attributes(): void
+    {
+        $translator = new Translator('bg');
+        $translator->addLoader('yaml', new YamlFileLoader());
+        foreach (['en', 'bg'] as $locale) {
+            $translator->addResource('yaml', __DIR__ . '/../../../../translations/ckeditor.' . $locale . '.yaml', $locale, 'ckeditor');
+        }
+        $view = new FormView();
+        $view->vars['attr'] = ['class' => 'custom-editor'];
+
+        (new CKEditorType($this->createStub(RouterInterface::class), translator: $translator))->buildView(
+            $view,
+            $this->createStub(FormInterface::class),
+            ['links_search' => false],
+        );
+
+        self::assertSame('custom-editor', $view->vars['attr']['class']);
+        self::assertSame('bg', $view->vars['attr']['data-ckeditor-locale-value']);
+        $dictionaries = json_decode($view->vars['attr']['data-ckeditor-translations-value'], true, flags: JSON_THROW_ON_ERROR);
+        self::assertSame('Resize media', $dictionaries['en']['dictionary']['media_resize.label']);
+        self::assertSame('Преоразмеряване на медия', $dictionaries['bg']['dictionary']['media_resize.label']);
+        self::assertSame('Преоразмеряване на медия (%0)', $dictionaries['bg']['dictionary']['media_resize.current_width']);
+    }
+
+    public function test_empty_link_search_is_translated_in_both_shipped_locales(): void
+    {
+        $translator = new Translator('en');
+        $translator->addLoader('yaml', new YamlFileLoader());
+        foreach (['en' => 'No links found.', 'bg' => 'Няма намерени връзки.'] as $locale => $expected) {
+            $translator->addResource('yaml', __DIR__ . '/../../../../translations/admin.' . $locale . '.yaml', $locale, 'admin');
+            self::assertSame($expected, $translator->trans('no_links_found', [], 'admin', $locale));
+        }
     }
 
     public function test_custom_field_block_prefixes_match_their_theme_contracts(): void

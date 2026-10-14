@@ -4,13 +4,15 @@
 
 ## Behavioral Directives
 
-- **Language** — Reply in user's language. Generated content in English. User-facing strings in bundle code: translation keys only (see `.agents/rules/symfony-bundle.md`).
+- **Language** — Reply in user's language. Generated content in English. User-facing strings in bundle code: translation
+  keys only (see `.agents/rules/symfony-bundle.md`).
 - **Token-efficient** — Concise, no recap, straight to point. Expand when needed.
 - NEVER guess Symfony conventions; read the rule from `.agents/rules/` first.
 - ALWAYS use `make`; never raw composer/php/docker/phpunit/phpstan.
 - After PHP changes run `make ci`; if missing suggest running the `quality-install` skill.
 - After frontend asset changes run `make assets-build` and `make assets-test`; these checks are separate from `make ci`.
-- **Bundle layer order** — Extension/config → services → public Contract/events → tests → optional Doctrine/API/UX/Flex (see `.agents/rules/architecture.md`, `.agents/rules/symfony-bundle.md`).
+- **Bundle layer order** — Extension/config → services → public Contract/events → tests → optional Doctrine/API/UX/Flex
+  (see `.agents/rules/architecture.md`, `.agents/rules/symfony-bundle.md`).
 - **Challenge everything** — Value, architecture, risk. Propose alternatives before implementing.
 - Skills are under `.agents/skills/`; follow instructions in each SKILL.md when invoked.
 - Bundle root = directory of the package `composer.json` (not the host application).
@@ -22,15 +24,17 @@
 
 Run these commands from the bundle root:
 
-| Command | Purpose |
-|---------|---------|
-| `make assets-install` | Install frontend dependencies on first setup or after changes to `assets/package.json` or `assets/yarn.lock`. |
-| `make assets-build` | Build distributable JavaScript from `assets/src/` into `assets/dist/` and generate the controller registrar from `assets/package.json`. |
-| `make assets-test` | Run frontend tests, including controller behavior and Sass contracts. |
+| Command               | Purpose                                                                                                                                 |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `make assets-install` | Install frontend dependencies on first setup or after changes to `assets/package.json` or `assets/yarn.lock`.                           |
+| `make assets-build`   | Build distributable JavaScript from `assets/src/` into `assets/dist/` and generate the controller registrar from `assets/package.json`. |
+| `make assets-test`    | Run frontend tests, including controller behavior and Sass contracts.                                                                   |
 
-Edit asset source files and controller metadata, then rebuild and test. Include regenerated `assets/dist/` files with the changes; do not edit generated files manually.
+Edit asset source files and controller metadata, then rebuild and test. Include regenerated `assets/dist/` files with
+the changes; do not edit generated files manually.
 
-The bundle uses Node.js and esbuild for its JavaScript package. The host application compiles the published Sass sources into its final CSS.
+The bundle uses Node.js and esbuild for its JavaScript package. The host application compiles the published Sass sources
+into its final CSS.
 
 ## Project DNA
 
@@ -42,81 +46,95 @@ The bundle uses Node.js and esbuild for its JavaScript package. The host applica
 
 All rules live in `.agents/rules/`. Load a rule by reading its `.md` file before implementing.
 
-| File | Topic |
-|------|-------|
-| `symfony-bundle.md` | AbstractBundle, Contract pattern, final readonly, config-driven services, semver public API. **Always apply.** |
-| `api.md` | Symfony native API: MapRequestPayload, MapQueryString, Serializer groups, RFC 7807. |
-| `api-platform.md` | API Platform: Resources, providers/processors, serialization, validation, Problem Details. |
-| `architecture.md` | Bundle architecture: Extension, services, Contract API, tests, Flex. |
-| `caching.md` | Caching: HTTP cache, app cache pools, decorator, tag invalidation, stampede, ESI. |
-| `coding-standards.md` | PHP 8.2+ coding: strict_types, final, SOLID, DI, TaggedIterator, iterables, no dump/dd. |
-| `console-commands.md` | Console commands: ProgressBar, SymfonyStyle, scheduling, exit codes, CommandTester. |
-| `doctrine.md` | Doctrine in bundles: entities, XML mapping, repos when the bundle persists data. |
-| `dto.md` | DTOs: immutability, context-based naming, validation at boundary, mapping, no public setters. |
-| `error-handling.md` | Error handling: custom exceptions, ExceptionListener, RFC 7807 Problem Details, errors. |
-| `forms.md` | Forms: DTO binding, FormType, EventSubscriber, DataTransformer. |
-| `frontend.md` | Frontend: Stimulus, Turbo, Twig/Live Components, AssetMapper in bundle assets/templates. |
-| `http-client.md` | HTTP Client: scoped clients, retry, rate limiting, SSRF prevention, MockHttpClient. |
-| `i18n.md` | i18n: TranslatableMessage, ICU MessageFormat, semantic keys, XLIFF in translations/. |
-| `mailer.md` | Mailer/Notifier: templated emails, transports, async Messenger dispatch, testing. |
-| `messenger.md` | Messenger CQRS: commands, handlers, buses, transports, stamps, idempotence, failure handling. |
-| `observability.md` | Observability: PSR-3, structured logging, LogSubscriber, Monolog, FingersCrossed, PII masking. |
-| `quality-pipeline.md` | Quality pipeline: make ci/tests/quality, PHPStan L9, Deptrac, GrumPHP. |
-| `security.md` | Security: JWT, Voters, rate limiting, CORS, OWASP API Top 10, secrets management. |
-| `serializer.md` | Serializer: normalizers, groups, context builders, circular refs, discriminator map. |
-| `testing.md` | Testing: unit/integration, TDD, DAMA, KernelTestCase minimal app, Infection MSI>=70%. |
-| `twig.md` | Twig v3: arrow functions, CVA, enum(), cache/types tags, Intl filters, null-safe, embed. |
-| `validator.md` | Validator: constraints, groups, sequences, CompoundConstraint, ConstraintValidator, tests. |
-| `workflow.md` | Workflow: state machine, enum places/transitions, guards, subscribers, apply() in handlers. |
+| File                  | Topic                                                                                                          |
+|-----------------------|----------------------------------------------------------------------------------------------------------------|
+| `symfony-bundle.md`   | AbstractBundle, Contract pattern, final readonly, config-driven services, semver public API. **Always apply.** |
+| `api.md`              | Symfony native API: MapRequestPayload, MapQueryString, Serializer groups, RFC 7807.                            |
+| `api-platform.md`     | API Platform: Resources, providers/processors, serialization, validation, Problem Details.                     |
+| `architecture.md`     | Bundle architecture: Extension, services, Contract API, tests, Flex.                                           |
+| `caching.md`          | Caching: HTTP cache, app cache pools, decorator, tag invalidation, stampede, ESI.                              |
+| `coding-standards.md` | PHP 8.2+ coding: strict_types, final, SOLID, DI, TaggedIterator, iterables, no dump/dd.                        |
+| `console-commands.md` | Console commands: ProgressBar, SymfonyStyle, scheduling, exit codes, CommandTester.                            |
+| `doctrine.md`         | Doctrine in bundles: entities, XML mapping, repos when the bundle persists data.                               |
+| `dto.md`              | DTOs: immutability, context-based naming, validation at boundary, mapping, no public setters.                  |
+| `error-handling.md`   | Error handling: custom exceptions, ExceptionListener, RFC 7807 Problem Details, errors.                        |
+| `forms.md`            | Forms: DTO binding, FormType, EventSubscriber, DataTransformer.                                                |
+| `frontend.md`         | Frontend: Stimulus, Turbo, Twig/Live Components, AssetMapper in bundle assets/templates.                       |
+| `http-client.md`      | HTTP Client: scoped clients, retry, rate limiting, SSRF prevention, MockHttpClient.                            |
+| `i18n.md`             | i18n: TranslatableMessage, ICU MessageFormat, semantic keys, XLIFF in translations/.                           |
+| `mailer.md`           | Mailer/Notifier: templated emails, transports, async Messenger dispatch, testing.                              |
+| `messenger.md`        | Messenger CQRS: commands, handlers, buses, transports, stamps, idempotence, failure handling.                  |
+| `observability.md`    | Observability: PSR-3, structured logging, LogSubscriber, Monolog, FingersCrossed, PII masking.                 |
+| `quality-pipeline.md` | Quality pipeline: make ci/tests/quality, PHPStan L9, Deptrac, GrumPHP.                                         |
+| `security.md`         | Security: JWT, Voters, rate limiting, CORS, OWASP API Top 10, secrets management.                              |
+| `serializer.md`       | Serializer: normalizers, groups, context builders, circular refs, discriminator map.                           |
+| `testing.md`          | Testing: unit/integration, TDD, DAMA, KernelTestCase minimal app, Infection MSI>=70%.                          |
+| `twig.md`             | Twig v3: arrow functions, CVA, enum(), cache/types tags, Intl filters, null-safe, embed.                       |
+| `validator.md`        | Validator: constraints, groups, sequences, CompoundConstraint, ConstraintValidator, tests.                     |
+| `workflow.md`         | Workflow: state machine, enum places/transitions, guards, subscribers, apply() in handlers.                    |
 
 ## Skills Index
 
 Skills live in `.agents/skills/`. Read the `SKILL.md` file to get full instructions.
 
-| Skill | Trigger | Description |
-|-------|---------|-------------|
-| `/feature` | User types `/feature` or requests the feature workflow | Full pipeline PM→Architect→Dev→QA for new bundle functionality |
-| `/bug-fix` | User reports a bug or unexpected behavior | TDD pipeline — regression test first, then fix |
-| `/refactor` | User mentions code smell, SOLID violations, technical debt | Safe refactoring — coverage first, then refactor |
-| `/onboard` | User types `/onboard` | Profile bundle package, generate Project DNA, adapt Makefile |
-| `/learn` | User says "lesson", "capture this", "what did we learn" | Extract lessons to docs/lessons-learned.md |
-| `/quality-install` | User types `/quality-install` | Setup quality tooling (make ci, tests, quality) |
-| `/create-branch` | User asks to create a branch or starts new work | Create branch type/kebab-case |
-| `/commit` | User wants to commit, push, or save changes | Validate, commit, push (Conventional Commits) |
+| Skill              | Trigger                                                    | Description                                                    |
+|--------------------|------------------------------------------------------------|----------------------------------------------------------------|
+| `/feature`         | User types `/feature` or requests the feature workflow     | Full pipeline PM→Architect→Dev→QA for new bundle functionality |
+| `/bug-fix`         | User reports a bug or unexpected behavior                  | TDD pipeline — regression test first, then fix                 |
+| `/refactor`        | User mentions code smell, SOLID violations, technical debt | Safe refactoring — coverage first, then refactor               |
+| `/onboard`         | User types `/onboard`                                      | Profile bundle package, generate Project DNA, adapt Makefile   |
+| `/learn`           | User says "lesson", "capture this", "what did we learn"    | Extract lessons to docs/lessons-learned.md                     |
+| `/quality-install` | User types `/quality-install`                              | Setup quality tooling (make ci, tests, quality)                |
+| `/create-branch`   | User asks to create a branch or starts new work            | Create branch type/kebab-case                                  |
+| `/commit`          | User wants to commit, push, or save changes                | Validate, commit, push (Conventional Commits)                  |
 
 ## Agent Personas
 
 Agent definitions live in `.agents/agents/`. When a skill launches a subagent, load the relevant persona.
 
-| File | Role |
-|------|------|
-| `pm.md` | Product Manager — requirements, acceptance criteria, edge cases |
+| File           | Role                                                                 |
+|----------------|----------------------------------------------------------------------|
+| `pm.md`        | Product Manager — requirements, acceptance criteria, edge cases      |
 | `architect.md` | Software Architect — technical design, layer order, applicable rules |
-| `qa.md` | QA Engineer — specification compliance, rule compliance, verdict |
-
+| `qa.md`        | QA Engineer — specification compliance, rule compliance, verdict     |
 
 ## Tranlations
-For translations both in the host apps and in the bundle we use yaml translation files, which are containing one single record per row. Example:
+
+For translations both in the host apps and in the bundle we use yaml translation files, which are containing one single
+record per row. Example:
 
 ```yaml
 # translations/messages.en.yaml
 button.save: "Save"
 ```
+
 ```yaml
 # translations/messages.bg.yaml
 button.save: "Запази"
 ```
-The bundle should support English and Bulgarian locales by default, and the translation files should be located in the `translations` directory of the bundle - but only for the translations needed by the bundle itself.
+
+The bundle should support English and Bulgarian locales by default, and the translation files should be located in the
+`translations` directory of the bundle - but only for the translations needed by the bundle itself.
 
 ## Commiting and managing the version tag
-You should manage this bundle's version tag when git committing and/or git pushing changes within the bundle. You should update the revision version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9 should become 0.1.10, etc..
+
+You should manage this bundle's version tag when git committing and/or git pushing changes within the bundle. You should
+update the PATCH version, unless you are prompted something different, e.g. 0.1.1, should become 0.1.2, and 0.1.9
+should become 0.1.10, etc..
+We follow the following convention in versioning: <major>.<minor>.<patch>.
 
 ## Git Tag vs GitHub Release
-A **git tag** is a pointer to a commit and is what Composer/Packagist uses to resolve installable versions. A **GitHub release** is a platform feature layered on top of a tag (tag + release notes + assets + "latest release" marker).
+
+A **git tag** is a pointer to a commit and is what Composer/Packagist uses to resolve installable versions. A **GitHub
+release** is a platform feature layered on top of a tag (tag + release notes + assets + "latest release" marker).
 
 When bumping this bundle's version:
+
 1. Update the version per the rule above.
 2. Create and push the tag: `git tag <version>` then `git push origin <version>`.
-3. Create a matching GitHub release from that tag with short changelog notes.
-
-The tag is mandatory for versioning; the release is the recommended human-facing wrapper and keeps changelogs aligned with installability.
+3. Create a matching GitHub release from that tag with short changelog notes. In changelog notes as final section, among
+   others, include migration notes: what the host applications, integrating this bundle, should do and should change to
+   migrate from the previous version. If there is no any affected changes, you should write "None" in this section of
+   the release notes.
+4. The tag is mandatory for versioning; the release is the recommended human-facing wrapper and keeps changelogs aligned
+   with installability.

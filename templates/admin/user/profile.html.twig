@@ -1,0 +1,52 @@
+{% extends '@LexioAdmin/admin_base.html.twig' %}
+
+{% block title %}
+    {{ 'admin.user.profile'|trans({}, 'admin') }}
+{% endblock %}
+
+{% block heading %}
+    {{ 'admin.user.profile'|trans({}, 'admin') }}
+{% endblock %}
+
+{% block content %}
+    <div class="card my-3">
+        <div class="card-header">
+            {{ 'admin.user.profile.update_profile'|trans({}, 'admin') }}
+        </div>
+        {{ form_start(profileForm) }}
+        <div class="card-body">
+            {% block profile_form_fields %}
+            {{ form_row(profileForm.email) }}
+            {{ form_row(profileForm.firstName) }}
+            {{ form_row(profileForm.lastName) }}
+            {{ form_row(profileForm.avatarColor) }}
+            {% endblock %}
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">{{ 'button.save'|trans({}, 'admin') }}</button>
+        </div>
+
+        {{ form_end(profileForm) }}
+    </div>
+
+    <div class="card my-3">
+        <div class="card-header">
+            {{ 'admin.user.profile.password_form'|trans({}, 'admin') }}
+        </div>
+        {{ form_start(passwordForm) }}
+        <div class="card-body">
+            {% block password_form_fields %}
+            {{ form_row(passwordForm.oldPassword) }}
+            {{ form_row(passwordForm.newPassword.first) }}
+            {{ form_row(passwordForm.newPassword.second) }}
+            {% endblock %}
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">{{ 'button.save'|trans({}, 'admin') }}</button>
+        </div>
+
+        {{ form_end(passwordForm) }}
+    </div>
+{% endblock %}

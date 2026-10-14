@@ -186,6 +186,20 @@ test('CKEditor registers the built-in media embed plugin and toolbar button', ()
     assert.match(source, /\n\s*MediaEmbed,/);
 });
 
+test('CKEditor registers the custom media embed resize plugin and widget toolbar item', () => {
+    const source = readFileSync(join(sourceDirectory, 'ckeditor_controller.js'), 'utf8');
+    const pluginSource = readFileSync(join(assetsDirectory, 'src', 'CKEditor', 'MediaEmbedResize.js'), 'utf8');
+
+    assert.match(source, /import MediaEmbedResize from '\.\.\/CKEditor\/MediaEmbedResize';/);
+    assert.match(source, /\bMediaEmbedToolbar\b/);
+    assert.match(source, /\n\s*MediaEmbedResize,/);
+    assert.match(source, /mediaEmbed: \{\s*toolbar: \['resizeMediaEmbed'\]/);
+    assert.match(pluginSource, /attribute:htmlFigureAttributes:media/);
+    assert.match(pluginSource, /'htmlFigureAttributes'/);
+    assert.match(pluginSource, /editor\.commands\.add\('resizeMediaEmbed'/);
+    assert.match(pluginSource, /editor\.ui\.componentFactory\.add\('resizeMediaEmbed'/);
+});
+
 test('runtime dependencies are peers and controller source has no starter-app endpoints', () => {
     for (const dependency of [
         '@hotwired/stimulus',
