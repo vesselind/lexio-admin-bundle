@@ -1,0 +1,8 @@
+media_resize.label: "Преоразмеряване на медия"
+media_resize.current_width: "Преоразмеряване на медия (%0)"
+media_resize.original: "Оригинален размер"
+media_resize.preset_75: "75%"
+media_resize.preset_50: "50%"
+media_resize.preset_25: "25%"
+media_resize.custom: "По избор…"
+media_resize.width_prompt: "Ширина на медията (например 50% или 560px):"

@@ -29,6 +29,7 @@
         "symfony/filesystem": "^7.2 || ^8.0",
         "symfony/form": "^7.2 || ^8.0",
         "symfony/framework-bundle": "^7.2 || ^8.0",
+        "symfony/html-sanitizer": "^7.2 || ^8.0",
         "symfony/http-client": "^8.0",
         "symfony/http-kernel": "^7.2 || ^8.0",
         "symfony/mailer": "^8.1",

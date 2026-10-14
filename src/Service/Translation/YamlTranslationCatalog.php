@@ -98,11 +98,10 @@ final readonly class YamlTranslationCatalog implements TranslationCatalogInterfa
         }
 
         try {
-            $serializedValue = $this->codec->serializeValue($value);
+            $updatedContent = $this->codec->replaceValue($document['content'], $key, $value);
         } catch (InvalidTranslationDocumentException $exception) {
-            throw new TranslationCatalogException('The translation value could not be serialized.', previous: $exception);
+            throw new TranslationCatalogException('The translation value could not be updated.', previous: $exception);
         }
-        $updatedContent = $this->replaceValue($document['content'], $key, $serializedValue);
         $this->parseContent($updatedContent);
 
         try {
@@ -179,35 +178,6 @@ final readonly class YamlTranslationCatalog implements TranslationCatalogInterfa
         } catch (InvalidTranslationDocumentException $exception) {
             throw new TranslationCatalogException('The translation file contains invalid YAML.', previous: $exception);
         }
-    }
-
-    private function replaceValue(string $content, string $key, string $serializedValue): string
-    {
-        $pattern = '/^' . preg_quote($key, '/') . ':[^\r\n]*(?:\r\n|\n|\r|$)/m';
-        $updatedContent = preg_replace_callback(
-            $pattern,
-            static function (array $match) use ($key, $serializedValue): string {
-                $matchedLine = $match[0] ?? null;
-                if (!is_string($matchedLine)) {
-                    throw new TranslationCatalogException('The translation key could not be updated.');
-                }
-
-                $lineEnding = str_ends_with($matchedLine, "\r\n")
-                    ? "\r\n"
-                    : (str_ends_with($matchedLine, "\n") ? "\n" : (str_ends_with($matchedLine, "\r") ? "\r" : ''));
-
-                return $key . ': ' . $serializedValue . $lineEnding;
-            },
-            $content,
-            -1,
-            $count,
-        );
-
-        if (null === $updatedContent || 1 !== $count) {
-            throw new TranslationCatalogException('The translation key could not be updated.');
-        }
-
-        return $updatedContent;
     }
 
     private function assertEnabled(): void

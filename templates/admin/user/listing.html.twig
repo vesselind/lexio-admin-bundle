@@ -1,0 +1,130 @@
+{% extends '@LexioAdmin/admin/base_crud/listing.html.twig' %}
+{# @var title string #}
+{# @var listingContext \Lexio\AdminBundle\AdminCore\Listing\ListingContext #}
+{# @var items object[] #}
+{# @var entityFqcn string #}
+{# @var adminUrlGenerator \Lexio\AdminBundle\AdminCore\AdminUrlGenerator #}
+{# @var filtersForm null|Symfony\Component\Form\FormView #}
+
+
+{% block table %}
+
+    <section {{ stimulus_controller('check-selection') }}>
+        {% block user_listing_toolbar %}
+        <div class="d-flex mt-1 mb-3 align-items-center">
+            <div class="form-check ms-1">
+                <label for="selectAll">
+                    {{ 'label.select_all'|trans({}, 'admin') }}
+                </label>
+                <input id="selectAll" class="form-check-input"
+                       type="checkbox" {{ stimulus_action('check-selection', 'selectAll', 'change') }}>
+            </div>
+
+            <div class="btn-group ms-auto">
+                {% set sort = app.request.query.get('sort') %}
+                {% set order = app.request.query.get('order') %}
+
+                <a href="{{ path('admin.user.index', {'sort': 'id', 'order': 'desc'}) }}"
+                   class="btn btn-primary {{ sort == 'id' and order == 'desc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-descending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.newest'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.user.index', {'sort': 'id', 'order': 'asc'}) }}"
+                   class="btn btn-primary {{ sort == 'id' and order == 'asc' ? 'active' }}">
+                    {{ ux_icon('tabler:sort-ascending', {height: '16px', width: '16px', 'aria-hidden': true}) }} {{ 'filter.oldest'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('admin.user.index', {'sort': 'firstName', 'order': 'asc'}) }}"
+                   class="btn btn-primary {{ sort == 'firstName' and order == 'asc' ? 'active' }}">
+                    {{ ux_icon('lsicon:sort-a-to-z-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
+                </a>
+                <a href="{{ path('admin.user.index', {'sort': 'firstName', 'order': 'desc'}) }}"
+                   class="btn btn-primary {{ sort == 'firstName' and order == 'desc' ? 'active' }}">
+                    {{ ux_icon('lsicon:sort-z-to-a-filled', {height: '23px', width: '23px', 'aria-hidden': true}) }}
+                </a>
+            </div>
+        </div>
+        {% endblock %}
+
+        <div class="list-group">
+            {% for item in items %}
+                {# @var item \Lexio\AdminBundle\Contract\User\UserEntityInterface #}
+                {% block user_listing_item %}
+                <section class="list-group-item list-group-item-action align-items-center d-flex gap-3">
+
+                    {% if listingContext.bulkActions is not empty %}
+                        <div>
+                            <input class="form-check-input m-0 align-middle" type="checkbox"
+                                   data-item-id="{{ item.id }}"
+                                {{ stimulus_target('check-selection', 'checkboxItem') }}
+                                {{ stimulus_action('check-selection', 'selectItem', null, {'itemId': item.id}) }}
+                            />
+                        </div>
+                    {% endif %}
+
+                    {% block user_listing_avatar %}
+                    <div class="user-avatar rounded-circle bg-{{ item.avatarColor.value }} text-light d-flex flex-shrink-0 align-items-center justify-content-center">
+                        {{ item.initials }}
+                    </div>
+                    {% endblock %}
+                    {% block user_listing_details %}
+                    <div>
+                        <div class="h6">
+                            {{ item.fullName }}
+
+                            {% if item.blocked == true %}
+                                <div class="badge bg-danger-subtle text-danger" id="status_{{ item.id }}">
+                                    {{ ux_icon('fa6-solid:user-slash', {'height': '1em', 'width': '1em'}) }} {{ 'status.blocked'|trans({}, 'admin') }}
+                                </div>
+                            {% endif %}
+
+                            {% if item.confirmedAt %}
+                                <div class="badge bg-success-subtle text-success" id="status_{{ item.id }}">
+                                    {{ ux_icon('fa6-solid:check', {'height': '1em', 'width': '1em'}) }} {{ 'status.confirmed'|trans({}, 'admin') }} ({{ item.confirmedAt|formatted_datetime }})
+                                </div>
+                            {% else %}
+                                <div class="badge bg-warning-subtle text-warning" id="status_{{ item.id }}">
+                                    {{ ux_icon('fa6-solid:triangle-exclamation', {'height': '1em', 'width': '1em'}) }} {{ 'status.not_confirmed'|trans({}, 'admin') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="my-1 small">
+                            {{ item.email }}
+                        </div>
+                        <div class="badge bg-info-subtle fw-normal text-primary">{{ ux_icon('fa6-solid:calendar-days', {'height': '1em', 'width': '1em'}) }} {{ item.createdAt|formatted_date }}</div>
+                        {% if item.roles %}
+                            {% for role in item.roles %}
+                                <div class="badge bg-primary-subtle text-primary">
+                                    {{ ux_icon('fa6-solid:user-shield', {'height': '1em', 'width': '1em'}) }} {{ role|trans({}, 'admin') }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endblock %}
+                    {% block user_listing_actions %}
+                    <div class="ms-auto">
+                        <div class="btn-group ms-auto">
+                            <a href="{{ path('admin.user.update', {'id': item.id}) }}" class="btn btn-success btn-sm">
+                                {{ ux_icon('fa6-solid:pen-to-square', {'height': '1em', 'width': '1em'}) }}
+                            </a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#confirmationModal_{{ item.id }}">
+                                {{ ux_icon('fa6-solid:xmark', {'class': 'me-1', 'height': '1em', 'width': '1em'}) }}
+                            </button>
+                        </div>
+                    </div>
+                    {% endblock %}
+                </section>
+
+                {% component 'ConfirmationModal' with {
+                    subjectId: item.id ~ '',
+                    confirmUrl: path('admin.user.delete', {'id': item.id})
+                } %}
+                    {% block content %}
+                        {{ 'delete_user.confirmation_text'|trans({}, 'admin') }}
+                    {% endblock %}
+                {% endcomponent %}
+                {% endblock %}
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}

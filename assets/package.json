@@ -2,7 +2,7 @@
     "name": "@lexio/admin-bundle",
     "description": "Reusable Stimulus controllers and structural styles for the Lexio Symfony admin UI bundle.",
     "license": "MIT",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "keywords": [
         "symfony",
         "symfony-ux",

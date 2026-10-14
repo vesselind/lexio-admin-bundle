@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexio\AdminBundle\Tests\Unit\DependencyInjection;
 
+use Lexio\AdminBundle\Contract\MediaResolver\MediaEmbedStrategyInterface;
 use Lexio\AdminBundle\Contract\Sitemap\SitemapProviderInterface;
 use Lexio\AdminBundle\LexioAdminBundle;
 use PHPUnit\Framework\TestCase;
@@ -100,6 +101,21 @@ final class LexioAdminBundleTest extends TestCase
         self::assertArrayHasKey(
             'lexio_admin.sitemap_provider',
             $autoconfiguration[SitemapProviderInterface::class]->getTags(),
+        );
+    }
+
+    public function test_media_embed_strategies_are_autoconfigured_with_the_bundle_tag(): void
+    {
+        $container = new ContainerBuilder();
+
+        (new LexioAdminBundle())->build($container);
+
+        $autoconfiguration = $container->getAutoconfiguredInstanceof();
+
+        self::assertArrayHasKey(MediaEmbedStrategyInterface::class, $autoconfiguration);
+        self::assertArrayHasKey(
+            'lexio_admin.media_embed_strategy',
+            $autoconfiguration[MediaEmbedStrategyInterface::class]->getTags(),
         );
     }
 

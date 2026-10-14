@@ -1,0 +1,8 @@
+media_resize.label: "Resize media"
+media_resize.current_width: "Resize media (%0)"
+media_resize.original: "Original"
+media_resize.preset_75: "75%"
+media_resize.preset_50: "50%"
+media_resize.preset_25: "25%"
+media_resize.custom: "Custom…"
+media_resize.width_prompt: "Media width (for example 50% or 560px):"
