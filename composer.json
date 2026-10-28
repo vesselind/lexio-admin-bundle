@@ -5,8 +5,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Lexio",
-            "homepage": "https://github.com/lexio"
+            "name": "Veselin Dimitrov",
+            "homepage": "https://github.com/vesselind"
         }
     ],
     "require": {
@@ -34,7 +34,6 @@
         "symfony/http-kernel": "^7.2 || ^8.0",
         "symfony/mailer": "^8.1",
         "symfony/messenger": "^7.2 || ^8.0",
-        "symfony/process": "^7.2 || ^8.0",
         "symfony/property-access": "^7.2 || ^8.0",
         "symfony/routing": "^7.2 || ^8.0",
         "symfony/security-bundle": "^7.2 || ^8.0",
@@ -53,11 +52,13 @@
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.0",
+        "symfony/object-mapper": "^7.4 || ^8.0",
         "phpunit/phpunit": "^11.0 || ^12.0",
         "phpstan/phpstan": "^2.0",
         "symfony/phpunit-bridge": "^7.2 || ^8.0"
     },
     "suggest": {
+        "symfony/object-mapper": "Required for the optional native API module (Symfony 7.4 or 8.x).",
         "symfony/maker-bundle": "Required for the make:admin code generator command.",
         "symfony/ux-turbo": "Required for TurboRedirectResponse / turbo-frame support in FormContext.",
         "bootstrap": "Required for admin UI styling (CSS framework).",

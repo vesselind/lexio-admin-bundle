@@ -1,0 +1,48 @@
+<div {{ attributes }}>
+    {# @var form \Symfony\Component\Form\FormView #}
+    {# @var formContext \App\AdminCore\FormContext #}
+
+    {{ form_start(form) }}
+
+    {% for formElement in form %}
+        {% if formElement.children is empty %}
+            {{ form_row(formElement) }}
+        {% else %}
+            {# Display form collections if any #}
+            <div class="card ms-2 my-2">
+                <div class="card-header">
+                    <h5>{{ formElement.vars.label }}</h5>
+                </div>
+                <div class="card-body">
+                    {% for child in formElement %}
+                        <div class="card-body bg-secondary my-2">
+                            {{ form_widget(child) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {# Submit buttons #}
+    <hr class="my-4">
+    <div class="d-flex justify-content-end align-items-center gap-2 my-3">
+        {% if formContext.modalRequest %}
+            <button data-bs-toggle="modal" data-bs-dismiss="modal" class="btn btn-primary">
+                <i class="fa fa-remove"></i>
+                {{ 'button.cancel'|trans({}, 'admin') }}
+            </button>
+        {% else %}
+            <a href="{{ formContext.links.indexLink }}" data-turbo-frame="_top" class="btn btn-primary">
+                <i class="fa fa-remove"></i>
+                {{ 'button.cancel'|trans({}, 'admin') }}
+            </a>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-save"></i>
+            {{ 'button.save'|trans({}, 'admin') }}
+        </button>
+    </div>
+    {{ form_end(form) }}
+</div>

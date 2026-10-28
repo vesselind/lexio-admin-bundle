@@ -17,14 +17,10 @@ use Lexio\AdminBundle\Service\Translation\YamlTranslationCatalog;
 use Lexio\AdminBundle\Page\PageManager;
 use Lexio\AdminBundle\AdminCore\Resolver\MapQueryStringValueResolver;
 use Lexio\AdminBundle\Component\Admin\InputImageSelector;
-use Lexio\AdminBundle\Command\ProdDeployCommand;
 use Lexio\AdminBundle\Command\Translations\ScanTranslationsCommand;
-use Lexio\AdminBundle\Contract\Deployment\DeploymentRunnerInterface;
 use Lexio\AdminBundle\Form\Autocompleter\IconifyAutocompleter;
 use Lexio\AdminBundle\Form\CustomFields\CaptchaType;
 use Lexio\AdminBundle\Form\CustomFields\TurnstileType;
-use Lexio\AdminBundle\Service\Deployment\ProcessRunnerInterface;
-use Lexio\AdminBundle\Service\Deployment\SymfonyProcessRunner;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -290,27 +286,4 @@ final class ServiceConfigurationTest extends TestCase
         );
     }
 
-    public function test_deployment_command_and_runner_contracts_are_registered(): void
-    {
-        $servicesConfig = file_get_contents(__DIR__ . '/../../../config/services.yaml');
-
-        self::assertIsString($servicesConfig);
-        self::assertTrue(class_exists(ProdDeployCommand::class));
-        self::assertTrue(interface_exists(DeploymentRunnerInterface::class));
-        self::assertTrue(interface_exists(ProcessRunnerInterface::class));
-        self::assertTrue(class_exists(SymfonyProcessRunner::class));
-        self::assertStringContainsString(
-            'Lexio\\AdminBundle\\Command\\ProdDeployCommand:',
-            $servicesConfig,
-        );
-        self::assertStringContainsString('command: prod:deploy', $servicesConfig);
-        self::assertStringContainsString(
-            'Lexio\\AdminBundle\\Contract\\Deployment\\DeploymentRunnerInterface:',
-            $servicesConfig,
-        );
-        self::assertStringContainsString(
-            'Lexio\\AdminBundle\\Service\\Deployment\\ProcessRunnerInterface:',
-            $servicesConfig,
-        );
-    }
 }

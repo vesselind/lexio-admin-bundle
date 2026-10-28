@@ -90,6 +90,32 @@ final class LexioAdminBundle extends AbstractBundle
                     ->defaultValue(['en'])
                     ->info('Available locales for the admin panel.')
                 ->end()
+                ->arrayNode('api')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')->defaultFalse()->end()
+                        ->scalarNode('path_prefix')
+                            ->defaultValue('/api/v1')
+                            ->cannotBeEmpty()
+                            ->validate()
+                                ->ifTrue(static fn (string $value): bool => !str_starts_with($value, '/') || trim($value, '/') === '')
+                                ->thenInvalid('The API path prefix must be an absolute, non-root path.')
+                            ->end()
+                        ->end()
+                        ->arrayNode('security')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('enabled')->defaultFalse()->end()
+                                ->booleanNode('registration_listener')->defaultFalse()->end()
+                                ->scalarNode('user_provider')
+                                    ->defaultValue(\Lexio\AdminBundle\Api\Service\DoctrineApiKeyUserProvider::class)
+                                ->end()
+                                ->scalarNode('identifier_property')->defaultValue('email')->cannotBeEmpty()->end()
+                                ->scalarNode('hash_property')->defaultValue('apiKeyHash')->cannotBeEmpty()->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->scalarNode('admin_route_prefix')
                     ->defaultValue('/admin')
                     ->info('URL prefix for all admin routes (used by RouteLoader).')
@@ -236,47 +262,6 @@ final class LexioAdminBundle extends AbstractBundle
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('deployment')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('enabled')
-                            ->defaultFalse()
-                            ->info('Enable the SSH production deployment command.')
-                        ->end()
-                        ->scalarNode('host')
-                            ->defaultNull()
-                            ->info('SSH host for production deployment. Required when deployment is enabled.')
-                        ->end()
-                        ->scalarNode('user')
-                            ->defaultNull()
-                            ->info('SSH user for production deployment. Required when deployment is enabled.')
-                        ->end()
-                        ->integerNode('port')
-                            ->defaultValue(22)
-                            ->min(1)
-                            ->max(65535)
-                            ->info('SSH port for production deployment.')
-                        ->end()
-                        ->scalarNode('remote_path')
-                            ->defaultNull()
-                            ->info('Remote application path. Required when deployment is enabled.')
-                        ->end()
-                        ->scalarNode('deploy_script')
-                            ->defaultValue('scripts/dev_next_deploy.sh')
-                            ->cannotBeEmpty()
-                            ->info('Remote deployment script path.')
-                        ->end()
-                        ->scalarNode('identity_file')
-                            ->defaultNull()
-                            ->info('Optional local SSH identity file path.')
-                        ->end()
-                        ->integerNode('timeout')
-                            ->defaultNull()
-                            ->min(1)
-                            ->info('Optional deployment timeout in seconds.')
-                        ->end()
-                    ->end()
-                ->end()
             ->end();
     }
 
@@ -293,6 +278,7 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.google_translation_api_key', $config['google_translation_api_key']);
         $container->setParameter('lexio_admin.user_entity_class', $config['user_entity_class']);
         $container->setParameter('lexio_admin.image_entity_class', $config['image_entity_class']);
+        $this->loadApi($config, $configurator, $container);
         $container->setParameter('lexio_admin.front_home_page_route', $config['front_home_page_route']);
         $container->setParameter('lexio_admin.sitemap.enabled', $config['sitemap']['enabled']);
 
@@ -368,27 +354,6 @@ final class LexioAdminBundle extends AbstractBundle
         $container->setParameter('lexio_admin.translation_synchronization_basic_auth_username', $synchronization['basic_auth_username']);
         $container->setParameter('lexio_admin.translation_synchronization_basic_auth_password', $synchronization['basic_auth_password']);
 
-        /** @var array{
-         *     enabled: bool,
-         *     host: string|null,
-         *     user: string|null,
-         *     port: int,
-         *     remote_path: string|null,
-         *     deploy_script: string,
-         *     identity_file: string|null,
-         *     timeout: int|null
-         * } $deployment
-         */
-        $deployment = $config['deployment'];
-        $container->setParameter('lexio_admin.deployment.enabled', $deployment['enabled']);
-        $container->setParameter('lexio_admin.deployment.host', $deployment['host']);
-        $container->setParameter('lexio_admin.deployment.user', $deployment['user']);
-        $container->setParameter('lexio_admin.deployment.port', $deployment['port']);
-        $container->setParameter('lexio_admin.deployment.remote_path', $deployment['remote_path']);
-        $container->setParameter('lexio_admin.deployment.deploy_script', $deployment['deploy_script']);
-        $container->setParameter('lexio_admin.deployment.identity_file', $deployment['identity_file']);
-        $container->setParameter('lexio_admin.deployment.timeout', $deployment['timeout']);
-
         // Conditionally register MakeAdminSectionCommand only when symfony/maker-bundle is installed
         if (class_exists(\Symfony\Bundle\MakerBundle\Str::class)) {
             $configurator->services()
@@ -396,6 +361,61 @@ final class LexioAdminBundle extends AbstractBundle
                 ->autowire()
                 ->autoconfigure()
                 ->tag('console.command');
+        }
+    }
+
+    /** @param array<string, mixed> $config */
+    private function loadApi(array $config, ContainerConfigurator $configurator, ContainerBuilder $container): void
+    {
+        /** @var array{enabled: bool, path_prefix: string, security: array{enabled: bool, registration_listener: bool, user_provider: string, identifier_property: string, hash_property: string}} $api */
+        $api = $config['api'];
+        $container->setParameter('lexio_admin.api.path_prefix', rtrim($api['path_prefix'], '/'));
+        $configurator->services()->set(\Lexio\AdminBundle\Api\ApiRequestMatcher::class, \Lexio\AdminBundle\Api\ApiRequestMatcher::class)
+            ->arg('$pathPrefix', '%lexio_admin.api.path_prefix%');
+
+        if (!$api['enabled']) {
+            if ($api['security']['enabled']) {
+                throw new \LogicException('Enable lexio_admin.api before enabling its security services.');
+            }
+
+            return;
+        }
+
+        if (!interface_exists(\Symfony\Component\ObjectMapper\ObjectMapperInterface::class)) {
+            throw new \LogicException('The Lexio API requires symfony/object-mapper. Install it before enabling lexio_admin.api.');
+        }
+
+        $configurator->import('../config/api.yaml');
+
+        if (!$api['security']['enabled']) {
+            return;
+        }
+
+        $security = $api['security'];
+        $configurator->import('../config/api_security.yaml');
+        $services = $configurator->services();
+        $services->alias(\Lexio\AdminBundle\Contract\Api\ApiKeyUserProviderInterface::class, $security['user_provider']);
+
+        if ($security['user_provider'] === \Lexio\AdminBundle\Api\Service\DoctrineApiKeyUserProvider::class) {
+            $userClass = $config['user_entity_class'];
+            if (!is_string($userClass) || !is_a($userClass, \Lexio\AdminBundle\Contract\Api\ApiKeyUserInterface::class, true)) {
+                throw new \LogicException('The default API user provider requires a user_entity_class implementing ApiKeyUserInterface.');
+            }
+
+            $services->set(\Lexio\AdminBundle\Api\Service\DoctrineApiKeyUserProvider::class, \Lexio\AdminBundle\Api\Service\DoctrineApiKeyUserProvider::class)
+                ->autowire()
+                ->arg('$userEntityClass', $userClass)
+                ->arg('$identifierProperty', $security['identifier_property'])
+                ->arg('$hashProperty', $security['hash_property']);
+        }
+
+        if ($security['registration_listener']) {
+            $services->set(\Lexio\AdminBundle\EventListener\UserApiKeyListener::class, \Lexio\AdminBundle\EventListener\UserApiKeyListener::class)
+                ->autowire()
+                ->tag('kernel.event_listener', [
+                    'event' => \Lexio\AdminBundle\Event\Security\UserHasRegistered::class,
+                    'method' => '__invoke',
+                ]);
         }
     }
 

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Lexio\AdminBundle\Api\Service\ApiKeyGenerator:
+        arguments:
+            $siteBaseUrl: '%env(SITE_BASE_URL)%'
+    Lexio\AdminBundle\Api\Service\ApiKeyIssuer: ~
+    Lexio\AdminBundle\Security\ApiKeyHandler: ~
+    Lexio\AdminBundle\Security\ApiAuthenticationHandler: ~
+    Lexio\AdminBundle\Security\ApiAccessDeniedHandler: ~
+
+    Lexio\AdminBundle\Command\ApiKeyIssueCommand:
+        tags:
+            - { name: console.command, command: 'lexio:api-key:issue' }
+    Lexio\AdminBundle\Command\ApiKeyBackfillCommand:
+        tags:
+            - { name: console.command, command: 'lexio:api-key:backfill' }

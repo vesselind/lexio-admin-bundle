@@ -28,6 +28,7 @@
 - **2.4** Twig Namespaces & UX Components Default Directory Mapping
 - **2.5** Key Third-Party Integrations (Gedmo, KNP Paginator, Intervention, PhpSpreadsheet, DeepL, Symfony UX)
 - **2.6** Sitemap controller, provider contract, registry, URL factory, and host route import
+- **2.7** [Native API controllers, infrastructure and optional bearer security](native-api.md)
 
 ---
 

@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Lexio\AdminBundle\Api\MapTransformer\:
+        resource: '../src/Api/MapTransformer/'
+
+    # Keep Symfony's English MIME-type template instead of the browser translation key.
+    lexio_admin.api.file_validator:
+        parent: Lexio\AdminBundle\File\FileValidator
+        arguments:
+            $mimeTypesMessage: null
+
+    Lexio\AdminBundle\Api\Service\ApiProblemFactory: ~
+    Lexio\AdminBundle\Api\Service\PageContentItemUpdater: ~
+    Lexio\AdminBundle\Api\Service\TranslationEntryManager:
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+            $locales: '%lexio_admin.locales%'
+
+    Lexio\AdminBundle\EventSubscriber\ApiExceptionSubscriber:
+        arguments:
+            $debug: '%kernel.debug%'
+
+    Lexio\AdminBundle\EventSubscriber\ApiLocaleSubscriber:
+        arguments:
+            $defaultLocale: '%lexio_admin.default_locale%'
+            $locales: '%lexio_admin.locales%'

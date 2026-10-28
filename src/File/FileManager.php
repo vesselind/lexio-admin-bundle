@@ -92,7 +92,12 @@ class FileManager
 
     public function getAbsoluteUrl(FileEntityInterface $fileEntity): string
     {
-        return rtrim($this->siteBaseUrl, '/') . '/' . ltrim($fileEntity->getFilePath(), '/');
+        return $this->getAbsoluteUrlForPath($fileEntity->getFilePath());
+    }
+
+    public function getAbsoluteUrlForPath(string $path): string
+    {
+        return rtrim($this->siteBaseUrl, '/') . '/' . ltrim($path, '/');
     }
 }
 

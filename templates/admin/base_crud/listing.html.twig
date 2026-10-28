@@ -20,7 +20,7 @@
         </a>
     {% endif %}
 
-    {{ component('Admin:BulkActions', {bulkActions: listingContext.bulkActions}) }}
+    <twig:Admin:BulkActions :bulkActions="listingContext.bulkActions" />
 {% endblock %}
 
 {% block content %}
@@ -55,75 +55,7 @@
 
     <turbo-frame id="listing-results" target="_top">
         {% block table %}
-            <div class="card">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" {{ stimulus_controller('check-selection') }}>
-                    <thead>
-                    <tr class="align-middle">
-                        {% if listingContext.bulkActions is not empty %}
-                            <th>
-                                <input class="form-check-input m-0 align-middle"
-                                       type="checkbox" {{ stimulus_action('check-selection', 'selectAll') }}>
-                            </th>
-                        {% endif %}
-
-                        {% for column in listingContext.columns %}
-                            {# @var column \App\AdminCore\Listing\Column #}
-                            {% if column.sortable %}
-                                <th style="max-width: 150px; min-width: 70px"><a href="{{ column.sortLink }}">
-                                        {{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}
-                                        {% if not column.sorted %}
-                                            {{ ux_icon('fa6-solid:sort', {width: '1em', height: '1em', class: 'text-muted'}) }}
-                                        {% else %}
-                                            {% if column.sortedAsc %}
-                                                {{ ux_icon('fa6-solid:arrow-up', {width: '1em', height: '1em'}) }}
-                                            {% else %}
-                                                {{ ux_icon('fa6-solid:arrow-down', {width: '1em', height: '1em'}) }}
-                                            {% endif %}
-                                        {% endif %}
-                                    </a>
-                                </th>
-                            {% else %}
-                                <th>{{ ('column.' ~ column.fieldName)|trans({}, 'admin') }}</th>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {# An item represents an instance of entity object. Each entity has at least id. #}
-                    {% for item in items %}
-                        <tr>
-                            {% if listingContext.bulkActions is not empty %}
-                                <td>
-                                    <label>
-                                        <input class="form-check-input m-0 align-middle" type="checkbox"
-                                               data-item-id="{{ item.id }}"
-                                                {{ stimulus_target('check-selection', 'checkboxItem') }}
-                                                {{ stimulus_action('check-selection', 'selectItem', null, {'itemId': item.id}) }}
-                                        />
-                                    </label>
-                                </td>
-                            {% endif %}
-
-                            {% for column in listingContext.columns %}
-                                <td>{{ render_field(item, column) }}</td>
-                            {% endfor %}
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td class="text-center" colspan="{{ listingContext.columns|length + 1 }}">
-                                {{ ux_icon('fa6-solid:circle-info', {width: '1em', height: '1em', class: 'text-gray'}) }} {{ 'no_records_found'|trans({}, 'admin') }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                <twig:Admin:ItemsPerPage class="small px-3 py-2"
-                                         :url="app.request.uri"
-                                         :routeName="app.request.attributes.get('_route')"
-                                         :itemsPerPage="listingContext.itemsPerPage" />
-                </div>
-            </div>
+            <twig:Admin:Table :listingContext="listingContext" :items="items" />
         {% endblock %}
     </turbo-frame>
 

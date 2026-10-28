@@ -23,6 +23,7 @@ final class FileValidator
         private readonly ValidatorInterface $validator,
         private readonly string $maxUploadSize = '10M',
         private readonly string $imageMaxSize = '5M',
+        private readonly ?string $mimeTypesMessage = 'unsupported_file_type',
     ) {
         $this->rules = $this->buildRules();
     }
@@ -65,7 +66,7 @@ final class FileValidator
                 'video/mp4',
                 'video/mpeg',
             ],
-            mimeTypesMessage: 'unsupported_file_type',
+            mimeTypesMessage: $this->mimeTypesMessage,
             extensions: [
                 // documents
                 'pdf', 'odf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'rtf', 'txt', 'csv',

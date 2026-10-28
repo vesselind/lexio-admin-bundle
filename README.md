@@ -9,10 +9,10 @@ A Symfony 8+ bundle that provides a rich admin CRUD layer with:
 - **Menu builder** — nested menus with active-link detection
 - **Dashboard builder** — stat cards
 - **Breadcrumbs** — admin & front breadcrumbs (requires `huluti/breadcrumbs-bundle`)
-- **Settings** — generic key-value `Setting` entity + `SettingRepository`
-- **File & Image entities** — base entities with repository helpers
+- **File & Image integration** — host entity contracts and reusable repository helpers
 - **Code generator** — `make:admin` command scaffolds controller, filter DTO, repository method, translations, factory and tests
 - **MapQueryString resolver** — extends Symfony's built-in resolver to auto-hydrate entity-typed filter properties
+- **Native API** — optional reusable controllers, DTOs, Problem Details and bearer API key infrastructure; see [integration and migration](docs/native-api.md).
 
 ## Requirements
 
